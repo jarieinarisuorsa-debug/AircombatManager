@@ -70,10 +70,10 @@ function renderChatView(state, currentUserId) {
   }).join("");
 
   const formHtml = `
-    <form data-action="send-message" style="display: flex; gap: 10px; margin-top: 20px; padding-top: 15px; border-top: 1px solid var(--border); background: var(--bg); position: sticky; bottom: -15px; padding-bottom: 15px; z-index: 10;">
-      <input type="text" name="content" class="ui-input" placeholder="Kirjoita yhteiselle viestiseinälle..." required style="flex: 1; border-radius: 20px; padding: 10px 15px;" autocomplete="off" />
-      <button type="submit" class="button primary" style="border-radius: 20px; padding: 10px 20px;">
-        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 5px; vertical-align: text-bottom;"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+    <form data-action="send-message" style="display: flex; gap: 10px; margin-top: 20px; padding: 8px; border-radius: 30px; background: var(--bg); position: sticky; bottom: 0; z-index: 10; box-shadow: 0 4px 12px rgba(0,0,0,0.15); border: 1px solid var(--border);">
+      <input type="text" name="content" placeholder="Kirjoita yhteiselle viestiseinälle..." required style="flex: 1; background: transparent; border: none; color: inherit; padding: 0 15px; outline: none; font-size: 0.95rem; width: 100%;" autocomplete="off" />
+      <button type="submit" class="button primary" style="border-radius: 24px; padding: 10px 24px; margin: 0; white-space: nowrap;">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px; vertical-align: text-bottom;"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
         Lähetä
       </button>
     </form>
