@@ -89,23 +89,9 @@ function renderChatView(state, currentUserId) {
   `;
 
   const adminClearBtn = isUserAdmin(state) ? `
-    <button type="button" data-action="clear-all-messages-prompt" title="Tyhjennä viestiseinä" class="ui-shrink-0" style="
-      margin-left: auto;
-      background: rgba(255, 59, 48, 0.1);
-      color: #ff3b30;
-      border: 1px solid rgba(255, 59, 48, 0.2);
-      border-radius: 8px;
-      padding: 6px 12px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 0.8rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.2s ease;
-    " onmouseover="this.style.background='rgba(255, 59, 48, 0.2)'" onmouseout="this.style.background='rgba(255, 59, 48, 0.1)'">
+    <button type="button" data-action="clear-all-messages-prompt" title="Tyhjennä viestiseinä" class="ui-shrink-0 ui-chat-clear-btn">
       <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
-      Tyhjennä
+      <span class="ui-chat-clear-text">Tyhjennä</span>
     </button>
   ` : '';
 
@@ -119,7 +105,7 @@ function renderChatView(state, currentUserId) {
 
   const roleSelectHtml = showRoleSwitch ? `
     <label class="role-switch" style="margin: 0; display: flex; align-items: center; gap: 4px;">
-      <select id="current-role-select" aria-label="Valitse käyttörooli" style="background: rgba(255,255,255,0.1); color: inherit; border: 1px solid rgba(255,255,255,0.2); border-radius: 4px; padding: 4px 8px; font-size: 0.85rem; cursor: pointer;">
+      <select id="current-role-select" aria-label="Valitse käyttörooli" class="ui-chat-role-select">
         ${roleSelectOptions}
       </select>
     </label>
@@ -128,9 +114,9 @@ function renderChatView(state, currentUserId) {
   // Hyödynnämme Aircombat UI Engineä joustavan rakenteen luomiseen
   return `
     <div class="ui-chat-wrapper">
-      <div class="ui-chat-header" style="display: flex; align-items: center; gap: 8px; flex-wrap: nowrap; overflow: hidden;">
-        <div class="ui-chat-header-title" style="flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Viestiseinä</div>
-        <button id="theme-toggle-btn" class="button small ui-shrink-0" type="button" data-action="toggle-theme" title="Vaihda valoisuustilaa (Aurinkotila)" style="background: rgba(255,255,255,0.1); color: inherit; border: 1px solid rgba(255,255,255,0.2); font-size: 1.1rem; padding: 0; border-radius: 4px; cursor: pointer; display: flex; align-items: center; justify-content: center; width: 32px; height: 32px;">☀️</button>
+      <div class="ui-chat-header ui-chat-header-flex">
+        <div class="ui-chat-header-title ui-chat-title-shrink">Viestiseinä</div>
+        <button id="theme-toggle-btn" class="ui-shrink-0 ui-chat-theme-btn" type="button" data-action="toggle-theme" title="Vaihda valoisuustilaa (Aurinkotila)">☀️</button>
         ${roleSelectHtml}
         ${adminClearBtn}
       </div>

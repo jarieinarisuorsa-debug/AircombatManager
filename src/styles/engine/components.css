@@ -47,6 +47,95 @@
   text-overflow: ellipsis;
 }
 
+.ui-chat-header-flex {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: nowrap;
+  overflow: hidden;
+}
+
+.ui-chat-title-shrink {
+  flex: 1;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ui-chat-theme-btn {
+  background: rgba(255,255,255,0.1);
+  color: inherit;
+  border: 1px solid rgba(255,255,255,0.2);
+  font-size: 1.1rem;
+  padding: 0;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+}
+
+.ui-chat-role-select {
+  width: auto !important;
+  min-height: 32px !important;
+  background: rgba(255,255,255,0.1);
+  color: inherit;
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 4px;
+  padding: 4px 24px 4px 8px !important;
+  font-size: 0.85rem;
+  cursor: pointer;
+  background-position: right 6px center !important;
+  background-size: 14px !important;
+}
+
+.ui-chat-clear-btn {
+  margin-left: auto;
+  background: rgba(255, 59, 48, 0.1);
+  color: #ff3b30;
+  border: 1px solid rgba(255, 59, 48, 0.2);
+  border-radius: 8px;
+  padding: 6px 12px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.ui-chat-clear-btn:hover {
+  background: rgba(255, 59, 48, 0.2);
+}
+
+@media (max-width: 480px) {
+  .ui-chat-clear-text {
+    display: none;
+  }
+  .ui-chat-clear-btn {
+    padding: 6px 8px;
+    gap: 0;
+  }
+  .ui-chat-role-select {
+    padding: 2px 18px 2px 6px !important;
+    font-size: 0.75rem;
+    min-height: 26px !important;
+  }
+  .ui-chat-theme-btn {
+    width: 28px;
+    height: 28px;
+    font-size: 1rem;
+  }
+  .ui-chat-header {
+    padding: 10px 8px;
+    gap: 6px;
+  }
+}
+
 /* --- Chat Messages Area --- */
 .ui-chat-messages {
   padding: 20px 16px;
