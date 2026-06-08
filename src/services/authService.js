@@ -8,6 +8,18 @@
 import { supabase } from "./supabaseClient.js";
 import { isCloudMode } from "./storageMode.js";
 
+async function ensurePermissionRequestExists(email) {
+  if (!email || !isCloudMode() || !supabase) return;
+  const { error } = await supabase.from("permissions").insert({
+    email: email,
+    role: "pending"
+  });
+  // Ignore unique constraint violation (code 23505), log others
+  if (error && error.code !== '23505') {
+    console.error("Failed to ensure permission:", error);
+  }
+}
+
 export async function getCurrentUser() {
   if (isCloudMode() && supabase) {
     const {
@@ -18,6 +30,10 @@ export async function getCurrentUser() {
     if (error) {
       console.error("Auth error:", error);
       return null;
+    }
+
+    if (session?.user?.email) {
+      await ensurePermissionRequestExists(session.user.email);
     }
 
     return session?.user || null;
@@ -54,6 +70,11 @@ export async function signInWithPassword(email, password) {
     });
 
     if (error) throw error;
+
+    if (data?.user?.email) {
+      await ensurePermissionRequestExists(data.user.email);
+    }
+
     return data;
   }
 
@@ -87,15 +108,6 @@ export async function signUpWithPassword(email, password) {
     });
 
     if (error) throw error;
-    
-    // Auto-create a pending permission request so the admin sees the new user
-    if (data?.user?.email) {
-      const { error: permError } = await supabase.from("permissions").insert({
-        email: data.user.email,
-        role: "pending"
-      });
-      if (permError) console.error("Failed to insert pending permission:", permError);
-    }
 
     return data;
   }
