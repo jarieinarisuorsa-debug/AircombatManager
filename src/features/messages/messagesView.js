@@ -55,13 +55,17 @@ function renderChatView(state, currentUserId) {
     const canDelete = isMe || isUserAdmin(state);
     const deleteBtn = canDelete ? `<button type="button" data-action="delete-message-prompt" data-message-id="${escapeHtml(m.id)}" class="button danger small" style="background: none; border: none; color: ${isMe ? 'rgba(255,255,255,0.7)' : 'var(--danger)'}; padding: 0; font-size: 0.75rem; cursor: pointer; text-decoration: underline;">Poista</button>` : '';
 
+    const bubbleStyle = isMe 
+      ? `background: linear-gradient(135deg, #3b82f6, #1d4ed8); color: #ffffff; padding: 10px 16px; border-radius: 18px 18px 4px 18px; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.25); border: none; font-size: 0.95rem; line-height: 1.4;`
+      : `background: rgba(255, 255, 255, 0.06); color: var(--text); padding: 10px 16px; border-radius: 18px 18px 18px 4px; border: 1px solid rgba(255, 255, 255, 0.05); font-size: 0.95rem; line-height: 1.4;`;
+
     return `
-      <div style="display: flex; flex-direction: column; align-items: ${isMe ? 'flex-end' : 'flex-start'}; margin-bottom: 15px;">
-        ${!isMe ? `<div style="font-size: 0.8rem; color: var(--muted); margin-bottom: 2px; margin-left: 5px;">${escapeHtml(senderName)}</div>` : ''}
-        <div style="max-width: 85%; background: ${isMe ? 'var(--primary)' : 'var(--surface)'}; color: ${isMe ? 'white' : 'var(--text)'}; padding: 10px 15px; border-radius: 12px; border: ${isMe ? 'none' : '1px solid var(--border)'}; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+      <div style="display: flex; flex-direction: column; align-items: ${isMe ? 'flex-end' : 'flex-start'}; margin-bottom: 18px; animation: fadeIn 0.3s ease;">
+        ${!isMe ? `<div style="font-size: 0.75rem; color: var(--muted); margin-bottom: 4px; margin-left: 8px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;">${escapeHtml(senderName)}</div>` : ''}
+        <div style="max-width: 85%; ${bubbleStyle}">
           ${escapeHtml(m.content)}
         </div>
-        <div style="font-size: 0.75rem; color: var(--muted); margin-top: 4px; display: flex; align-items: center; gap: 10px;">
+        <div style="font-size: 0.7rem; color: var(--muted); margin-top: 6px; display: flex; align-items: center; gap: 12px;">
           <span>${time}</span>
           ${deleteBtn}
         </div>
@@ -70,9 +74,9 @@ function renderChatView(state, currentUserId) {
   }).join("");
 
   const formHtml = `
-    <form data-action="send-message" style="display: flex; gap: 10px; margin-top: 20px; padding: 8px; border-radius: 30px; background: var(--bg); position: sticky; bottom: 0; z-index: 10; box-shadow: 0 4px 12px rgba(0,0,0,0.15); border: 1px solid var(--border);">
-      <input type="text" name="content" placeholder="Kirjoita yhteiselle viestiseinälle..." required style="flex: 1; background: transparent; border: none; color: inherit; padding: 0 15px; outline: none; font-size: 0.95rem; width: 100%;" autocomplete="off" />
-      <button type="submit" class="button primary" style="border-radius: 24px; padding: 10px 24px; margin: 0; white-space: nowrap;">
+    <form data-action="send-message" style="display: flex; gap: 10px; margin-top: 20px; padding: 8px; border-radius: 30px; background: rgba(0, 0, 0, 0.25); backdrop-filter: blur(10px); position: sticky; bottom: 0; z-index: 10; box-shadow: 0 8px 24px rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.08);">
+      <input type="text" name="content" placeholder="Kirjoita yhteiselle viestiseinälle..." required style="flex: 1; background: transparent; border: none; color: white; padding: 0 16px; outline: none; font-size: 0.95rem; width: 100%;" autocomplete="off" />
+      <button type="submit" class="button primary" style="background: linear-gradient(135deg, #3b82f6, #1d4ed8); border: none; color: white; border-radius: 24px; padding: 10px 24px; margin: 0; white-space: nowrap; font-weight: 600; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);">
         <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px; vertical-align: text-bottom;"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
         Lähetä
       </button>
@@ -80,8 +84,11 @@ function renderChatView(state, currentUserId) {
   `;
 
   return UI.Panel({ kicker: "Viestit", title: "Yhteinen Keskustelu" }, `
-    <div id="chat-messages-container" style="max-height: 50vh; overflow-y: auto; padding: 10px; display: flex; flex-direction: column;">
-      ${msgHtml.length > 0 ? msgHtml : '<div class="muted" style="text-align: center; margin: 40px 0;">Viestiseinä on tyhjä. Aloita keskustelu kirjoittamalla alle.</div>'}
+    <style>
+      @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+    <div id="chat-messages-container" style="max-height: 55vh; overflow-y: auto; padding: 10px 5px; display: flex; flex-direction: column; scroll-behavior: smooth;">
+      ${msgHtml.length > 0 ? msgHtml : '<div class="muted" style="text-align: center; margin: 60px 0; font-size: 0.9rem;">Viestiseinä on tyhjä.<br><br><span style="font-size: 3rem; opacity: 0.2; display: block; margin-top: 10px;">💬</span></div>'}
     </div>
     ${formHtml}
   `);
