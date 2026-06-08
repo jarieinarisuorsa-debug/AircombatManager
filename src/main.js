@@ -57,7 +57,6 @@ const appEl = document.querySelector("#app");
 const titleEl = document.querySelector("#page-title");
 const activeEventPillEl = document.querySelector("#active-event-pill");
 const navEl = document.querySelector("#main-nav");
-const roleSelectEl = document.querySelector("#current-role-select");
 
 // HMR-turvalliset event listenerit (estää tuplaklikkaukset jne.)
 if (window.__appListenersAdded) {
@@ -291,14 +290,16 @@ export function renderApp() {
   renderNavigation(state, routeKey);
   renderRoleSwitch(state);
   
-    // Auth status is now rendered inside renderNavigation()
-
   const isDebug = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
+  const roleSelectEl = document.querySelector("#current-role-select");
   if (roleSelectEl) {
     const showRoleSwitch = isDebug || isUserAdmin(state);
-    roleSelectEl.parentElement.style.display = showRoleSwitch ? "flex" : "none";
+    if (roleSelectEl.parentElement) {
+      roleSelectEl.parentElement.style.display = showRoleSwitch ? "flex" : "none";
+    }
   }
 
+  // Näytä admin-näkymä otsikko (esim. kun pilotti onkin admin ja simuloi toista roolia);
   const brandMarkEl = document.querySelector(".brand-mark");
   if (brandMarkEl) {
     if (state.settings.organizationLogoData) {
@@ -450,6 +451,7 @@ function renderNavigation(state, routeKey) {
 }
 
 function renderRoleSwitch(state) {
+  const roleSelectEl = document.querySelector("#current-role-select");
   if (!roleSelectEl) return;
   const isDebug = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
   

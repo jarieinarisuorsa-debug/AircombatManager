@@ -1,6 +1,6 @@
 import { escapeHtml } from "../../utils/html.js";
 import { UI } from "../../ui/engine.js";
-import { isAdmin, isUserAdmin } from "../../users/roles.js";
+import { isAdmin, isUserAdmin, getCurrentRole, ROLE_LABELS } from "../../users/roles.js";
 import { getRouteParam } from "../../router.js";
 import { markThreadAsRead } from "./messageActions.js";
 
@@ -82,7 +82,7 @@ function renderChatView(state, currentUserId) {
       <div class="ui-grow ui-row ui-chat-input-wrapper">
         <input type="text" name="content" placeholder="Viesti" required class="ui-grow ui-chat-input" autocomplete="off" />
       </div>
-      <button type="submit" class="ui-chat-send-btn" onmousedown="event.preventDefault()" ontouchstart="event.preventDefault()">
+      <button type="submit" class="ui-chat-send-btn">
         <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-left: -2px; margin-top: 2px;"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
       </button>
     </form>
@@ -109,11 +109,29 @@ function renderChatView(state, currentUserId) {
     </button>
   ` : '';
 
+  const isDebug = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
+  const showRoleSwitch = isDebug || isUserAdmin(state);
+  const currentRole = getCurrentRole(state);
+  
+  const roleSelectOptions = Object.entries(ROLE_LABELS)
+    .map(([value, label]) => `<option value="${value}" ${value === currentRole ? "selected" : ""}>${label}</option>`)
+    .join("");
+
+  const roleSelectHtml = showRoleSwitch ? `
+    <label class="role-switch" style="margin: 0; display: flex; align-items: center; gap: 4px;">
+      <select id="current-role-select" aria-label="Valitse käyttörooli" style="background: rgba(255,255,255,0.1); color: inherit; border: 1px solid rgba(255,255,255,0.2); border-radius: 4px; padding: 4px 8px; font-size: 0.85rem; cursor: pointer;">
+        ${roleSelectOptions}
+      </select>
+    </label>
+  ` : '';
+
   // Hyödynnämme Aircombat UI Engineä joustavan rakenteen luomiseen
   return `
     <div class="ui-chat-wrapper">
-      <div class="ui-chat-header">
-        <div class="ui-chat-header-title">Viestiseinä</div>
+      <div class="ui-chat-header" style="display: flex; align-items: center; gap: 8px; flex-wrap: nowrap; overflow: hidden;">
+        <div class="ui-chat-header-title" style="flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Viestiseinä</div>
+        <button id="theme-toggle-btn" class="button small ui-shrink-0" type="button" data-action="toggle-theme" title="Vaihda valoisuustilaa (Aurinkotila)" style="background: rgba(255,255,255,0.1); color: inherit; border: 1px solid rgba(255,255,255,0.2); font-size: 1.1rem; padding: 0; border-radius: 4px; cursor: pointer; display: flex; align-items: center; justify-content: center; width: 32px; height: 32px;">☀️</button>
+        ${roleSelectHtml}
         ${adminClearBtn}
       </div>
       <div id="chat-messages-container" class="ui-grow ui-scroll-y ui-chat-messages">

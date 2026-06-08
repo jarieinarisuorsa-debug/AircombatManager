@@ -24,14 +24,7 @@
       </aside>
 
       <main class="content">
-        <div class="toolbar-banner">
-          <div class="topbar-actions">
-            <button id="theme-toggle-btn" class="button small" type="button" data-action="toggle-theme" title="Vaihda valoisuustilaa (Aurinkotila)">☀️ Aurinkotila</button>
-            <label class="role-switch">
-              <select id="current-role-select" aria-label="Valitse käyttörooli"></select>
-            </label>
-          </div>
-        </div>
+
 
         <header class="topbar hero-identity">
           <div>
@@ -83,7 +76,7 @@
         } else {
           // Tuotannossa rekisteröidään normaalisti
           window.addEventListener('load', () => {
-            navigator.serviceWorker.register('./sw.js?v=31').then((registration) => {
+            navigator.serviceWorker.register('./sw.js?v=32').then((registration) => {
               console.log('ServiceWorker registration successful with scope: ', registration.scope);
             }, (err) => {
               console.log('ServiceWorker registration failed: ', err);
