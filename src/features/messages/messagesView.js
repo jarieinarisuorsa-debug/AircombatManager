@@ -60,7 +60,7 @@ function renderChatView(state, currentUserId) {
       : `background: rgba(255, 255, 255, 0.06); color: var(--text); padding: 10px 16px; border-radius: 18px 18px 18px 4px; border: 1px solid rgba(255, 255, 255, 0.05); font-size: 0.95rem; line-height: 1.4;`;
 
     return `
-      <div style="display: flex; flex-direction: column; align-items: ${isMe ? 'flex-end' : 'flex-start'}; margin-bottom: 18px; animation: fadeIn 0.3s ease;">
+      <div style="display: flex; flex-direction: column; align-items: ${isMe ? 'flex-end' : 'flex-start'}; margin-bottom: 18px;">
         ${!isMe ? `<div style="font-size: 0.75rem; color: var(--muted); margin-bottom: 4px; margin-left: 8px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;">${escapeHtml(senderName)}</div>` : ''}
         <div style="max-width: 85%; ${bubbleStyle}">
           ${escapeHtml(m.content)}
@@ -85,9 +85,6 @@ function renderChatView(state, currentUserId) {
   `;
 
   return UI.Panel({ kicker: "Viestit", title: "Yhteinen Keskustelu" }, `
-    <style>
-      @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
-    </style>
     <div id="chat-messages-container" style="max-height: 55vh; overflow-y: auto; padding: 10px 5px; display: flex; flex-direction: column; scroll-behavior: smooth;">
       ${msgHtml.length > 0 ? msgHtml : '<div class="muted" style="text-align: center; margin: 60px 0; font-size: 0.9rem;">Viestiseinä on tyhjä.<br><br><span style="font-size: 3rem; opacity: 0.2; display: block; margin-top: 10px;">💬</span></div>'}
     </div>

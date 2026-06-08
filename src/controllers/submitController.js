@@ -104,7 +104,7 @@ export function createSubmitHandler({ renderApp }) {
       submitBtn.innerText = "Tallennetaan...";
     }
 
-    setTimeout(async () => {
+    const executeSubmit = async () => {
       try {
         let result;
         if (handler) {
@@ -132,7 +132,7 @@ export function createSubmitHandler({ renderApp }) {
         if (action === "save-competition-format") {
           closeCompetitionFormatModal();
         }
-        if (action !== "update-pilot-details" && action !== "update-aircraft" && action !== "auth-login") form.reset();
+        if (action !== "update-pilot-details" && action !== "update-aircraft" && action !== "auth-login" && action !== "send-message") form.reset();
         
         form.removeAttribute("data-dirty");
         if (!isConfirmModal) {
@@ -143,7 +143,7 @@ export function createSubmitHandler({ renderApp }) {
         }
 
         renderApp();
-        if (!isConfirmModal) {
+        if (!isConfirmModal && form.dataset.noFeedback !== "true") {
           showToast("Tiedot tallennettu", "success");
         }
       } catch (error) {
@@ -155,7 +155,13 @@ export function createSubmitHandler({ renderApp }) {
           submitBtn.innerText = originalText;
         }
       }
-    }, 400);
+    };
+
+    if (form.dataset.noFeedback === "true") {
+      executeSubmit();
+    } else {
+      setTimeout(executeSubmit, 400);
+    }
   };
 }
 
