@@ -22,6 +22,8 @@ export function sendMessage(senderId, content) {
     if (!draft.messages) draft.messages = [];
     draft.messages.push(newMessage);
   }, "send_message");
+
+  import("../../main.js").then(m => m.updateMessagesDOM());
 }
 
 /**

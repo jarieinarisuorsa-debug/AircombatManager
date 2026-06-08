@@ -227,7 +227,7 @@ async function initApp() {
                     updateState(state => {
                       state.messages = msgs;
                     }, "realtime_messages");
-                    renderApp(); // Päivittää ruudun välittömästi muille
+                    import("./main.js").then(m => m.updateMessagesDOM()); // Päivittää vain chätin listan menettämättä focusta
                   });
                 });
               })
@@ -320,6 +320,34 @@ export function renderApp() {
       chatContainer.scrollTop = chatContainer.scrollHeight;
     }
   }, 10);
+}
+
+export function updateMessagesDOM() {
+  const container = document.getElementById("chat-messages-container");
+  if (!container) {
+    // If we're not on the messages view, we might want to update nav unread count
+    renderApp();
+    return;
+  }
+  
+  import("./features/messages/messagesView.js").then(m => {
+    import("./users/roles.js").then(roles => {
+      const state = getState();
+      let currentUserId = "unknown";
+      if (roles.isUserAdmin(state) && !roles.isAdmin(state)) {
+        currentUserId = state.pilots?.[0]?.id || "admin";
+      } else if (roles.isAdmin(state)) {
+        currentUserId = "admin";
+      } else {
+        const email = state.auth?.user?.email || state.settings?.userEmail || "";
+        const pilot = (state.pilots || []).find(p => p.email && p.email.toLowerCase().trim() === email.toLowerCase().trim());
+        if (pilot) currentUserId = pilot.id;
+      }
+      
+      container.innerHTML = m.renderMessagesContent(state, currentUserId);
+      container.scrollTop = container.scrollHeight;
+    });
+  });
 }
 
 function applyTheme(state) {

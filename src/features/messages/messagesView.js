@@ -36,10 +36,14 @@ export function getMyPilotId(state) {
   return pilot ? pilot.id : null;
 }
 
-function renderChatView(state, currentUserId) {
+export function renderMessagesContent(state, currentUserId) {
   const messages = state.messages || [];
   
-  const msgHtml = messages.map(m => {
+  if (messages.length === 0) {
+    return '<div class="muted" style="text-align: center; margin: 60px 0; font-size: 0.9rem;">Viestiseinä on tyhjä.<br><br><span style="font-size: 3rem; opacity: 0.2; display: block; margin-top: 10px;">💬</span></div>';
+  }
+  
+  return messages.map(m => {
     const isMe = m.senderId === currentUserId;
     const dateObj = new Date(m.createdAt);
     const time = isNaN(dateObj.getTime()) ? "" : dateObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
@@ -63,7 +67,7 @@ function renderChatView(state, currentUserId) {
       <div style="display: flex; flex-direction: column; align-items: ${isMe ? 'flex-end' : 'flex-start'}; margin-bottom: 18px;">
         ${!isMe ? `<div style="font-size: 0.75rem; color: var(--muted); margin-bottom: 4px; margin-left: 8px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;">${escapeHtml(senderName)}</div>` : ''}
         <div style="max-width: 85%; ${bubbleStyle}">
-          ${escapeHtml(m.content)}
+           ${escapeHtml(m.content)}
         </div>
         <div style="font-size: 0.7rem; color: var(--muted); margin-top: 6px; display: flex; align-items: center; gap: 12px;">
           <span>${time}</span>
@@ -72,6 +76,10 @@ function renderChatView(state, currentUserId) {
       </div>
     `;
   }).join("");
+}
+
+function renderChatView(state, currentUserId) {
+  const msgHtml = renderMessagesContent(state, currentUserId);
 
   const formHtml = `
     <form data-action="send-message" data-no-feedback="true" style="display: flex; gap: 10px; margin-top: 10px; padding: 14px 20px 20px 20px; position: sticky; bottom: -20px; margin-left: -20px; margin-right: -20px; margin-bottom: -20px; background: var(--bg); border-top: 1px solid var(--border); z-index: 10; align-items: flex-end; border-radius: 0 0 24px 24px;">
@@ -86,7 +94,7 @@ function renderChatView(state, currentUserId) {
 
   return UI.Panel({ kicker: "Viestit", title: "Yhteinen Keskustelu" }, `
     <div id="chat-messages-container" style="max-height: 55vh; overflow-y: auto; padding: 10px 5px; display: flex; flex-direction: column; scroll-behavior: smooth;">
-      ${msgHtml.length > 0 ? msgHtml : '<div class="muted" style="text-align: center; margin: 60px 0; font-size: 0.9rem;">Viestiseinä on tyhjä.<br><br><span style="font-size: 3rem; opacity: 0.2; display: block; margin-top: 10px;">💬</span></div>'}
+      ${msgHtml}
     </div>
     ${formHtml}
   `);
