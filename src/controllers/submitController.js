@@ -97,13 +97,15 @@ export function createSubmitHandler({ renderApp }) {
     }
 
     const submitBtn = event.submitter || form.querySelector('button[type="submit"]');
-    const originalText = submitBtn ? submitBtn.innerText : "Tallenna";
+    const originalContent = submitBtn ? submitBtn.innerHTML : "Tallenna";
 
     const isConfirmModal = action === "execute-confirm-modal";
 
     if (submitBtn && !isConfirmModal) {
       submitBtn.disabled = true;
-      submitBtn.innerText = "Tallennetaan...";
+      if (submitBtn.dataset.noLoadingText !== "true") {
+        submitBtn.innerHTML = "Tallennetaan...";
+      }
     }
 
     const executeSubmit = async () => {
@@ -157,7 +159,7 @@ export function createSubmitHandler({ renderApp }) {
       } finally {
         if (submitBtn && !isConfirmModal) {
           submitBtn.disabled = false;
-          submitBtn.innerText = originalText;
+          submitBtn.innerHTML = originalContent;
         }
       }
     };
