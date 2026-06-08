@@ -322,6 +322,24 @@ export function initSettingsActions() {
     return true;
   });
 
+  registerAction("save-org-logo", (event, form, { renderApp, data }) => {
+    updateState((state) => {
+      requireAdmin(state);
+      state.settings = state.settings || {};
+      if (data && data.organizationLogoUrl !== undefined) {
+        let url = String(data.organizationLogoUrl).trim();
+        if (url.includes("dropbox.com") && url.includes("dl=0")) {
+          url = url.replace("dl=0", "raw=1");
+        }
+        if (url !== "") {
+          state.settings.organizationLogoData = url;
+        }
+      }
+    }, "save_org_logo");
+    renderApp();
+    return true;
+  });
+
   registerAction("export-json", (event, button, { renderApp }) => {
     requireAdmin(getState());
     downloadTextFile(`aircombat-competition-${new Date().toISOString().slice(0, 10)}.json`, exportState());

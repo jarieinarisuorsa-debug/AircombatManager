@@ -108,7 +108,7 @@ export function renderSettingsView(state) {
 
     content = UI.Panel({ kicker: "Oikeudet", title: "Käyttäjät ja oikeudet" }, addForm + tableHtml + infoText);
   } else if (tab === "ulkoasu") {
-    content = UI.Panel({ kicker: "Brändäys", title: "Ulkoasu ja logo" }, `
+    const formContent = `
       <div style="margin-bottom: 20px; max-width: 400px;">
         <label class="ui-label" style="display: block; margin-bottom: 5px; font-weight: bold; font-size: 0.9rem;">Yhdistyksen logo</label>
         <div class="is-admin-dropzone" style="border: 2px dashed var(--border); padding: 16px; text-align: center; border-radius: 8px; cursor: pointer; transition: all 0.2s;" onclick="this.querySelector('input[type=file]').click()">
@@ -127,7 +127,11 @@ export function renderSettingsView(state) {
         <div style="font-size: 0.8rem; color: var(--muted); margin-top: 4px;">Huom: Dropbox-linkit muutetaan automaattisesti toimivaan muotoon.</div>
         ${state.settings.organizationLogoData ? `<div style="margin-top: 15px; text-align: right;"><button type="button" class="button small danger" data-action="remove-org-logo">Poista logo</button></div>` : ""}
       </div>
-    `);
+      <div style="margin-top: 20px;">
+        ${UI.Button({ label: "Tallenna", type: "submit", variant: "primary" })}
+      </div>
+    `;
+    content = UI.FormPanel({ kicker: "Brändäys", title: "Ulkoasu ja logo", action: "save-org-logo" }, formContent);
   } else if (tab === "ilmoitukset") {
     const receivers = state.settings.whatsappReceivers || [];
     
