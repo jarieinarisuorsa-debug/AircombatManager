@@ -263,10 +263,12 @@ export function renderApp() {
   
   const path = location.hash || "#/";
 
-  if (path === "#messages") {
+  if (routeKey === "messages") {
     document.body.classList.add("chat-mode");
+    document.documentElement.classList.add("chat-mode");
   } else {
     document.body.classList.remove("chat-mode");
+    document.documentElement.classList.remove("chat-mode");
   }
 
   if (routeKey === "login") {
@@ -327,7 +329,7 @@ export function renderApp() {
     if (chatContainer) {
       chatContainer.scrollTop = chatContainer.scrollHeight;
     }
-  }, 10);
+  }, 100);
 }
 
 export function updateMessagesDOM() {
@@ -355,7 +357,7 @@ export function updateMessagesDOM() {
       container.innerHTML = m.renderMessagesContent(state, currentUserId);
       setTimeout(() => {
         container.scrollTop = container.scrollHeight;
-      }, 10);
+      }, 100);
     });
   });
 }

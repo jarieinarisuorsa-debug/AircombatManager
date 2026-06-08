@@ -1,0 +1,44 @@
+/* =========================================
+   Aircombat UI Engine - Design Tokens
+   Määrittelee järjestelmän globaalit muuttujat.
+   Perii värit osittain base.css:stä, mutta 
+   formaloi välistykset ja koot omiin tokeneihin.
+========================================= */
+
+:root {
+  /* Spacing */
+  --ui-space-0: 0px;
+  --ui-space-1: 4px;
+  --ui-space-2: 8px;
+  --ui-space-3: 12px;
+  --ui-space-4: 16px;
+  --ui-space-5: 24px;
+  --ui-space-6: 32px;
+  --ui-space-8: 48px;
+
+  /* Typography */
+  --ui-font-sm: 0.84rem;
+  --ui-font-base: 1rem;
+  --ui-font-lg: 1.15rem;
+  --ui-font-xl: 1.5rem;
+
+  /* Radii */
+  --ui-radius-sm: 8px;
+  --ui-radius-md: 12px;
+  --ui-radius-lg: 18px;
+  --ui-radius-full: 999px;
+
+  /* Semantic Colors (maps from base.css) */
+  --ui-color-surface: var(--panel);
+  --ui-color-surface-hover: var(--panel-strong);
+  --ui-color-border: var(--border);
+  --ui-color-text: var(--text);
+  --ui-color-muted: var(--muted);
+  --ui-color-primary: var(--accent);
+  --ui-color-primary-strong: var(--accent-strong);
+  
+  /* Additional UI Specific Colors */
+  --ui-chat-bg: rgba(5, 12, 24, 0.4);
+  --ui-chat-bubble-me: var(--ui-color-primary);
+  --ui-chat-bubble-other: var(--panel);
+}

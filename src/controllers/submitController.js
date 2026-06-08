@@ -64,10 +64,12 @@ const SUBMIT_ACTIONS = {
     }
 
     const { sendMessage } = await import("../features/messages/messageActions.js");
-    sendMessage(senderId, data.content);
+    const sent = sendMessage(senderId, data.content);
     
-    // Clear the input
-    form.reset();
+    // Clear the input only if message was successfully sent (cooldown didn't block it)
+    if (sent !== false) {
+      form.reset();
+    }
   }
 };
 
@@ -142,7 +144,10 @@ export function createSubmitHandler({ renderApp }) {
           }, "save_feedback");
         }
 
-        renderApp();
+        if (action !== "send-message") {
+          renderApp();
+        }
+        
         if (!isConfirmModal && form.dataset.noFeedback !== "true") {
           showToast("Tiedot tallennettu", "success");
         }

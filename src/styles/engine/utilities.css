@@ -1,0 +1,35 @@
+/* =========================================
+   Aircombat UI Engine - Utilities
+   Hyödyllisyysluokat nopeaan säätöön
+========================================= */
+
+/* Typography */
+.ui-text-sm { font-size: var(--ui-font-sm); }
+.ui-text-base { font-size: var(--ui-font-base); }
+.ui-text-lg { font-size: var(--ui-font-lg); }
+
+.ui-text-muted { color: var(--ui-color-muted); }
+.ui-text-danger { color: var(--danger); }
+.ui-text-ok { color: var(--ok); }
+.ui-text-warning { color: var(--warning); }
+
+.ui-text-center { text-align: center; }
+.ui-text-right { text-align: right; }
+
+.ui-font-bold { font-weight: bold; }
+
+/* Spacing Helpers */
+.ui-m-0 { margin: 0 !important; }
+.ui-mt-0 { margin-top: 0 !important; }
+.ui-mb-0 { margin-bottom: 0 !important; }
+.ui-ml-auto { margin-left: auto !important; }
+.ui-mr-auto { margin-right: auto !important; }
+
+.ui-p-0 { padding: 0 !important; }
+.ui-px-4 { padding-left: var(--ui-space-4); padding-right: var(--ui-space-4); }
+
+/* Cursors */
+.ui-cursor-pointer { cursor: pointer; }
+
+/* Interactive */
+.ui-hover-text-danger:hover { color: var(--danger) !important; }

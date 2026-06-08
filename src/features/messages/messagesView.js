@@ -57,19 +57,15 @@ export function renderMessagesContent(state, currentUserId) {
     }
 
     const canDelete = isMe || isUserAdmin(state);
-    const deleteBtn = canDelete ? `<button type="button" data-action="delete-message-prompt" data-message-id="${escapeHtml(m.id)}" class="button danger small" style="background: none; border: none; color: ${isMe ? 'rgba(255,255,255,0.7)' : 'var(--danger)'}; padding: 0; font-size: 0.75rem; cursor: pointer; text-decoration: underline;">Poista</button>` : '';
+    const deleteBtn = canDelete ? `<button type="button" data-action="delete-message-prompt" data-message-id="${escapeHtml(m.id)}" class="ui-text-danger ui-cursor-pointer" style="background: none; border: none; padding: 0; font-size: 0.7rem; text-decoration: underline;">Poista</button>` : '';
 
-    const bubbleStyle = isMe 
-      ? `background: linear-gradient(135deg, #3b82f6, #1d4ed8); color: #ffffff; padding: 10px 16px; border-radius: 18px 18px 4px 18px; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.25); border: none; font-size: 0.95rem; line-height: 1.4;`
-      : `background: rgba(255, 255, 255, 0.06); color: var(--text); padding: 10px 16px; border-radius: 18px 18px 18px 4px; border: 1px solid rgba(255, 255, 255, 0.05); font-size: 0.95rem; line-height: 1.4;`;
+    const bubbleClass = isMe ? "ui-chat-bubble is-me" : "ui-chat-bubble is-other";
 
     return `
-      <div style="display: flex; flex-direction: column; align-items: ${isMe ? 'flex-end' : 'flex-start'}; margin-bottom: 18px;">
-        ${!isMe ? `<div style="font-size: 0.75rem; color: var(--muted); margin-bottom: 4px; margin-left: 8px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;">${escapeHtml(senderName)}</div>` : ''}
-        <div style="max-width: 85%; ${bubbleStyle}">
-           ${escapeHtml(m.content)}
-        </div>
-        <div style="font-size: 0.7rem; color: var(--muted); margin-top: 6px; display: flex; align-items: center; gap: 12px;">
+      <div class="${bubbleClass}">
+        ${!isMe ? `<div class="ui-chat-bubble-header">${escapeHtml(senderName)}</div>` : ''}
+        <div class="ui-text-base">${escapeHtml(m.content)}</div>
+        <div class="ui-chat-bubble-footer">
           <span>${time}</span>
           ${deleteBtn}
         </div>
@@ -82,20 +78,45 @@ function renderChatView(state, currentUserId) {
   const msgHtml = renderMessagesContent(state, currentUserId);
 
   const formHtml = `
-    <form data-action="send-message" data-no-feedback="true" style="flex-shrink: 0; display: flex; gap: 10px; padding: 12px 16px; background: var(--bg); border-top: 1px solid var(--border); align-items: flex-end; box-sizing: border-box;">
-      <div style="flex: 1; display: flex; align-items: center; background: rgba(0, 0, 0, 0.2); border-radius: 24px; padding: 2px 16px; border: 1px solid var(--border); box-shadow: inset 0 2px 6px rgba(0,0,0,0.2);">
-        <input type="text" name="content" placeholder="Viesti" required style="flex: 1; min-width: 0; background: transparent; border: none; color: var(--text); padding: 12px 0; outline: none; font-size: 1rem;" autocomplete="off" />
+    <form data-action="send-message" data-no-feedback="true" class="ui-row ui-shrink-0 ui-chat-form">
+      <div class="ui-grow ui-row ui-chat-input-wrapper">
+        <input type="text" name="content" placeholder="Viesti" required class="ui-grow ui-chat-input" autocomplete="off" />
       </div>
-      <button type="submit" class="button primary" onmousedown="event.preventDefault()" ontouchstart="event.preventDefault()" style="width: 48px !important; height: 48px !important; min-height: 48px !important; padding: 0 !important; border-radius: 50% !important; flex: 0 0 auto; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #3b82f6, #1d4ed8); border: none; color: white; margin: 0; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);">
+      <button type="submit" class="ui-chat-send-btn" onmousedown="event.preventDefault()" ontouchstart="event.preventDefault()">
         <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-left: -2px; margin-top: 2px;"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
       </button>
     </form>
   `;
 
-  // Emuloimme WhatsAppin 100% Flex-rakennetta
+  const adminClearBtn = isUserAdmin(state) ? `
+    <button type="button" data-action="clear-all-messages-prompt" title="Tyhjennä viestiseinä" class="ui-shrink-0" style="
+      margin-left: auto;
+      background: rgba(255, 59, 48, 0.1);
+      color: #ff3b30;
+      border: 1px solid rgba(255, 59, 48, 0.2);
+      border-radius: 8px;
+      padding: 6px 12px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    " onmouseover="this.style.background='rgba(255, 59, 48, 0.2)'" onmouseout="this.style.background='rgba(255, 59, 48, 0.1)'">
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+      Tyhjennä
+    </button>
+  ` : '';
+
+  // Hyödynnämme Aircombat UI Engineä joustavan rakenteen luomiseen
   return `
-    <div style="display: flex; flex-direction: column; height: 100%; width: 100%;">
-      <div id="chat-messages-container" style="flex: 1; overflow-y: auto; padding: 16px 12px; scroll-behavior: smooth; display: flex; flex-direction: column;">
+    <div class="ui-chat-wrapper">
+      <div class="ui-chat-header">
+        <div class="ui-chat-header-title">Viestiseinä</div>
+        ${adminClearBtn}
+      </div>
+      <div id="chat-messages-container" class="ui-grow ui-scroll-y ui-chat-messages">
         ${msgHtml}
       </div>
       ${formHtml}

@@ -2,6 +2,8 @@ import { updateState, createId } from "../../state/store.js";
 import { showToast } from "../../ui/toast.js";
 import { registerAction } from "../../core/actionRegistry.js";
 
+let lastMessageTime = 0;
+
 /**
  * Lähettää viestin
  * @param {string} senderId - Lähettäjän ID tai sposti ("admin" tai pilotin ID)
@@ -9,6 +11,15 @@ import { registerAction } from "../../core/actionRegistry.js";
  */
 export function sendMessage(senderId, content) {
   if (!content.trim()) return;
+
+  const now = Date.now();
+  // 3 sekunnin rajoitus (admin voi aina lähettää)
+  if (senderId !== "admin" && now - lastMessageTime < 3000) {
+    showToast("Odota hetki ennen seuraavan viestin lähettämistä (3s).", "warning");
+    return false; // palautetaan false jotta kutsuja tietää ettei viestiä lähetetty
+  }
+  
+  lastMessageTime = now;
 
   const newMessage = {
     id: createId("msg"),
@@ -57,9 +68,21 @@ export function deleteMessage(messageId) {
   }, "delete_message");
 }
 
+export function clearAllMessages() {
+  updateState(draft => {
+    draft.messages = [];
+  }, "clear_all_messages");
+}
+
 export function initMessageActions() {
   registerAction("execute-delete-message", (event, button, { renderApp }) => {
     deleteMessage(button.dataset.messageId);
+    renderApp();
+    return true;
+  });
+
+  registerAction("execute-clear-all-messages", (event, button, { renderApp }) => {
+    clearAllMessages();
     renderApp();
     return true;
   });

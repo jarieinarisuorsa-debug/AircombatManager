@@ -153,6 +153,18 @@ function runUiClickAction(action, button, { renderApp }) {
     return true;
   }
 
+  if (action === "clear-all-messages-prompt") {
+    openConfirmModal({
+      title: "Tyhjennä viestiseinä",
+      message: "Haluatko varmasti poistaa kaikki viestit? Tätä toimintoa ei voi perua ja se tyhjentää seinän kaikilta käyttäjiltä.",
+      submitLabel: "Tyhjennä",
+      isDanger: true,
+      action: "execute-clear-all-messages",
+      payload: {}
+    });
+    return true;
+  }
+
   return false;
 }
 function runCrudClickAction(action, button, { renderApp }) {

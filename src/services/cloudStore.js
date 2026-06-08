@@ -637,7 +637,7 @@ function mapMessageToDb(m) {
 
 export async function fetchMessagesFromCloud() {
   if (!isCloudMode() || !supabase) return [];
-  const { data, error } = await supabase.from("messages").select("*");
+  const { data, error } = await supabase.from("messages").select("*").order("created_at", { ascending: true });
   if (error) {
     console.error("Error fetching messages:", error);
     return [];
