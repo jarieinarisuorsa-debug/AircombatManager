@@ -1,7 +1,7 @@
 import { escapeHtml, getActiveEvent } from "../../utils/html.js";
 import { UI } from "../../ui/engine.js";
 import { buildScoreCardRows } from "../../logic/scoreCards.js";
-import { isUserAdmin } from "../../users/roles.js";
+import { isUserAdmin, getCurrentRole, ROLES } from "../../users/roles.js";
 import { renderLogbookPanel } from "./components/LogbookPanel.js";
 
 export function renderMyPilotCardView(state) {
@@ -20,6 +20,21 @@ export function renderMyPilotCardView(state) {
   }
 
   if (!pilot) {
+    if (getCurrentRole(state) === ROLES.PILOT) {
+      const createPanel = UI.Panel({
+        kicker: "Tervetuloa",
+        title: "Luo pilottikorttisi"
+      }, `
+        <p style="margin-bottom: 16px;">Ylläpito on myöntänyt sinulle pilotin oikeudet, mutta sinulta puuttuu vielä oma pilottikortti.</p>
+        <p class="muted" style="margin-bottom: 24px;">Luo pilottikortti napin painalluksella, jotta pääset täydentämään omat tietosi ja lisäämään konekortteja!</p>
+        ${UI.Button({ label: "Luo pilottikorttini nyt", action: "create-own-pilot-card", variant: "primary" })}
+      `);
+      return UI.PageHeader({
+        kicker: "Pilotti",
+        title: "Oma pilottikortti"
+      }) + UI.SplitLayout(createPanel, "");
+    }
+
     const notFoundPanel = UI.Panel({
       kicker: "Tunnistautuminen",
       title: "Pilottia ei löytynyt"

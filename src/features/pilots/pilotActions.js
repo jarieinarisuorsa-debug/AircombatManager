@@ -1,5 +1,5 @@
 import { createId, updateState, getState } from "../../state/store.js";
-import { requireAdmin, requirePilotAccess } from "../../users/roles.js";
+import { requireAdmin, requirePilotAccess, getCurrentRole, ROLES } from "../../users/roles.js";
 import { requireText } from "../../utils/formValues.js";
 import { removeEntriesById } from "../entries/entryActions.js";
 import { registerAction } from "../../core/actionRegistry.js";
@@ -104,6 +104,35 @@ export function initPilotActions() {
 
   registerAction("set-my-pilot-tab", (event, button, { renderApp }) => {
     window.MY_PILOT_CARD_TAB = button.dataset.tab;
+    renderApp();
+    return true;
+  });
+
+  registerAction("create-own-pilot-card", (event, button, { renderApp }) => {
+    updateState((state) => {
+      const email = state.auth?.user?.email || state.settings?.userEmail;
+      if (!email) throw new Error("Ei kirjautunutta käyttäjää.");
+      
+      const role = getCurrentRole(state);
+      if (role !== ROLES.PILOT) throw new Error("Vain pilotit voivat luoda pilottikortin.");
+      
+      if (state.pilots.some(p => p.email && p.email.toLowerCase() === email.toLowerCase())) {
+        return; // Jo olemassa
+      }
+
+      const newPilotId = createId("pilot");
+      state.pilots.push({
+        id: newPilotId,
+        name: "Uusi Pilotti",
+        email: email,
+        country: "FI",
+        club: "",
+        license: "",
+        phone: ""
+      });
+      
+      window.MY_PILOT_CARD_TAB = 'perustiedot';
+    }, "create_own_pilot_card");
     renderApp();
     return true;
   });
