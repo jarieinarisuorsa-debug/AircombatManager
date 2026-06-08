@@ -49,12 +49,12 @@ export function renderMyEventView(state) {
   const headerHtml = isPreview ? `<div style="background: rgba(255,165,0,0.2); border: 1px solid orange; color: orange; padding: 10px; border-radius: 6px; margin-bottom: 20px; text-align: center;"><strong>Admin-esikatselu:</strong> Katsot näkymää toisena pilottina (${escapeHtml(myPilot.name)}).</div>` : '';
 
   // Unread messages
-  const unreadMessagesCount = (state.messages || []).filter(m => m.receiverId === myPilot.id && !m.read).length;
+  const unreadMessagesCount = (state.messages || []).filter(m => !m.readBy?.includes(myPilot.id)).length;
   const unreadMessagesAlert = unreadMessagesCount > 0 ? `
     <div style="margin-bottom: 20px; background: rgba(var(--primary-rgb), 0.15); border: 1px solid var(--primary); border-radius: 8px; padding: 15px; display: flex; justify-content: space-between; align-items: center;">
       <div>
         <strong style="color: var(--primary); font-size: 1.1rem; display: block; margin-bottom: 5px;">💬 Uusia viestejä!</strong>
-        <span style="color: var(--text-muted); font-size: 0.9rem;">Sinulla on ${unreadMessagesCount} lukematonta viestiä järjestäjältä.</span>
+        <span style="color: var(--text-muted); font-size: 0.9rem;">Yhteisellä viestiseinällä on ${unreadMessagesCount} lukematonta viestiä.</span>
       </div>
       <div>
         <a href="#/messages" class="button primary" style="font-weight: bold;">Avaa viestit</a>

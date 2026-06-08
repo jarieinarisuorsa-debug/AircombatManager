@@ -35,6 +35,7 @@ import { initConfirmActions } from "./core/confirmActions.js";
 import { renderConfirmModal } from "./ui/ConfirmModal.js";
 import { initAlertActions, renderAlertModal } from "./core/alertActions.js";
 import { initAuthActions } from "./features/auth/authActions.js";
+import { initMessageActions } from "./features/messages/messageActions.js";
 
 // Initialize feature actions
 initConfirmActions();
@@ -50,6 +51,7 @@ initSettingsActions();
 initEventActions();
 registerRegistrationActions();
 initSignatureActions();
+initMessageActions();
 
 const appEl = document.querySelector("#app");
 const titleEl = document.querySelector("#page-title");

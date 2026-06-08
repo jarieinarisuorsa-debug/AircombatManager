@@ -37,15 +37,37 @@ const SUBMIT_ACTIONS = {
   "save-settings": saveSettings,
   "login-user": loginUser,
   "send-message": async (data, form) => {
-    const receiverId = form.dataset.receiver;
     const { getState } = await import("../state/store.js");
-    const { isAdmin } = await import("../users/roles.js");
-    const { getMyPilotId } = await import("../features/messages/messagesView.js");
+    const { isAdmin, isUserAdmin } = await import("../users/roles.js");
     const state = getState();
-    const senderId = isAdmin(state) ? "admin" : getMyPilotId(state);
-    if (senderId && receiverId && data.content) {
-      sendMessage(senderId, receiverId, data.content);
+    const userIsAdmin = isAdmin(state);
+    const actualAdmin = isUserAdmin(state);
+
+    let senderId = null;
+    
+    // Yritetään ensin löytää aito pilottiprofiili
+    const email = state.auth?.user?.email || state.settings?.userEmail || "";
+    const pilot = (state.pilots || []).find(p => p.email && p.email.toLowerCase().trim() === email.toLowerCase().trim());
+    
+    if (userIsAdmin) {
+      senderId = "admin"; // Admin-tilassa aina Järjestäjä
+    } else if (pilot) {
+      senderId = pilot.id; // Pilotti-tilassa, jos oma profiili löytyy, käytetään sitä
+    } else if (actualAdmin && state.pilots?.length > 0) {
+      senderId = state.pilots[0].id; // Admin-esikatselu, jos omaa profiilia ei ole
     }
+
+    if (!senderId) {
+      const { showToast } = await import("../ui/toast.js");
+      showToast("Virhe: Pilottiprofiilia ei löytynyt.", "error");
+      return;
+    }
+
+    const { sendMessage } = await import("../features/messages/messageActions.js");
+    sendMessage(senderId, data.content);
+    
+    // Clear the input
+    form.reset();
   }
 };
 

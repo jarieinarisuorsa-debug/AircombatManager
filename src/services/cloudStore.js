@@ -612,6 +612,50 @@ export async function saveResultsToCloud(results) {
 }
 
 // ==========================================
+// MESSAGES
+// ==========================================
+
+function mapMessageFromDb(db) {
+  return {
+    id: db.id,
+    senderId: db.sender_id,
+    content: db.content,
+    readBy: db.read_by,
+    createdAt: db.created_at
+  };
+}
+
+function mapMessageToDb(m) {
+  return {
+    id: m.id,
+    sender_id: m.senderId,
+    content: m.content,
+    read_by: m.readBy,
+    created_at: m.createdAt
+  };
+}
+
+export async function fetchMessagesFromCloud() {
+  if (!isCloudMode() || !supabase) return [];
+  const { data, error } = await supabase.from("messages").select("*");
+  if (error) {
+    console.error("Error fetching messages:", error);
+    return [];
+  }
+  return data.map(mapMessageFromDb);
+}
+
+export async function saveMessagesToCloud(messages) {
+  if (!isCloudMode() || !supabase || messages.length === 0) return false;
+  const { error } = await supabase.from("messages").upsert(messages.map(mapMessageToDb));
+  if (error) {
+    console.error("Error saving messages:", error);
+    return false;
+  }
+  return true;
+}
+
+// ==========================================
 // GENERIC CLOUD SYNC FROM STATE
 // ==========================================
 
@@ -660,7 +704,8 @@ export async function syncAllFromCloud() {
       results,
       scoreCards,
       registrations,
-      aircraftSpecs
+      aircraftSpecs,
+      messages
     ] = await Promise.all([
       fetchEventsFromCloud(),
       fetchPilotsFromCloud(),
@@ -670,7 +715,8 @@ export async function syncAllFromCloud() {
       fetchResultsFromCloud(),
       fetchScoreCardsFromCloud(),
       fetchRegistrationRequestsFromCloud(),
-      fetchAircraftSpecsFromCloud()
+      fetchAircraftSpecsFromCloud(),
+      fetchMessagesFromCloud()
     ]);
 
     return {
@@ -682,7 +728,8 @@ export async function syncAllFromCloud() {
       results,
       scoreCards,
       registrations,
-      aircraftSpecs
+      aircraftSpecs,
+      messages
     };
   } catch (err) {
     console.error("Failed to sync all from cloud:", err);
@@ -774,5 +821,12 @@ export async function syncCloudFromState(oldState, newState) {
     const { addedOrUpdated, deleted } = findChangedItems(oldState.results, newState.results);
     if (addedOrUpdated.length > 0) await saveResultsToCloud(addedOrUpdated);
     for (const r of deleted) await deleteFromCloud("results", r.id);
+  }
+
+  // Sync Messages
+  if (oldState.messages !== newState.messages) {
+    const { addedOrUpdated, deleted } = findChangedItems(oldState.messages || [], newState.messages || []);
+    if (addedOrUpdated.length > 0) await saveMessagesToCloud(addedOrUpdated);
+    for (const m of deleted) await deleteFromCloud("messages", m.id);
   }
 }

@@ -34,7 +34,7 @@ export function renderAdminDashboard(state) {
     </div>
   ` : "";
 
-  const unreadMessagesCount = (state.messages || []).filter(m => m.receiverId === "admin" && !m.read).length;
+  const unreadMessagesCount = (state.messages || []).filter(m => !m.readBy?.includes("admin")).length;
   const unreadMessagesAlert = unreadMessagesCount > 0 ? `
     <div style="margin-bottom: 20px; background: rgba(var(--primary-rgb), 0.15); border: 1px solid var(--primary); border-radius: 8px; padding: 15px; display: flex; justify-content: space-between; align-items: center;">
       <div>

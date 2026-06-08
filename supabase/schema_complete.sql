@@ -360,3 +360,32 @@
     CREATE POLICY "Admins voivat hallita tuloksia" 
         ON results FOR ALL 
         USING (public.is_admin());
+
+    -- ==============================================================================
+    -- 12. MESSAGES TABLE
+    -- ==============================================================================
+    CREATE TABLE IF NOT EXISTS messages (
+        id TEXT PRIMARY KEY,
+        sender_id TEXT NOT NULL,
+        content TEXT NOT NULL,
+        read_by JSONB DEFAULT '[]'::jsonb,
+        created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
+    );
+
+    ALTER TABLE messages ENABLE ROW LEVEL SECURITY;
+
+    CREATE POLICY "Kaikki voivat lukea viestejä" 
+        ON messages FOR SELECT 
+        USING (true);
+
+    CREATE POLICY "Kaikki voivat lähettää viestejä" 
+        ON messages FOR INSERT 
+        WITH CHECK (true);
+
+    CREATE POLICY "Kaikki voivat päivittää viestejä (read_by)" 
+        ON messages FOR UPDATE 
+        USING (true);
+
+    CREATE POLICY "Kaikki voivat poistaa viestejä (sovellus hoitaa oikeudet)" 
+        ON messages FOR DELETE 
+        USING (true);

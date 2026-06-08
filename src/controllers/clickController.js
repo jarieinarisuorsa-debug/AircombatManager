@@ -15,7 +15,8 @@ import { exportState, getState, resetState } from "../state/store.js";
 import { requireAdmin } from "../users/roles.js";
 import { downloadTextFile } from "../utils/html.js";
 import { openAlertModal } from "../core/alertActions.js";
-
+import { openConfirmModal } from "../core/confirmActions.js";
+import { deleteMessage } from "../features/messages/messageActions.js";
 import { handleAction } from "../core/actionRegistry.js";
 
 export function createClickHandler({ renderApp }) {
@@ -137,6 +138,18 @@ function runUiClickAction(action, button, { renderApp }) {
 
   if (action === "step-input") {
     stepInput(button);
+    return true;
+  }
+
+  if (action === "delete-message-prompt") {
+    openConfirmModal({
+      title: "Poista viesti",
+      message: "Haluatko varmasti poistaa tämän viestin? Toimintoa ei voi perua.",
+      submitLabel: "Poista",
+      isDanger: true,
+      action: "execute-delete-message",
+      payload: { messageId: button.dataset.messageId }
+    });
     return true;
   }
 
