@@ -86,7 +86,7 @@ function renderChatView(state, currentUserId) {
       <div style="flex: 1; display: flex; align-items: center; background: rgba(0, 0, 0, 0.2); border-radius: 24px; padding: 2px 16px; border: 1px solid var(--border); box-shadow: inset 0 2px 6px rgba(0,0,0,0.2);">
         <input type="text" name="content" placeholder="Viesti" required style="flex: 1; min-width: 0; background: transparent; border: none; color: var(--text); padding: 12px 0; outline: none; font-size: 1rem;" autocomplete="off" />
       </div>
-      <button type="submit" class="button primary" style="width: 48px !important; height: 48px !important; min-height: 48px !important; padding: 0 !important; border-radius: 50% !important; flex: 0 0 auto; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #3b82f6, #1d4ed8); border: none; color: white; margin: 0; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);">
+      <button type="submit" class="button primary" onmousedown="event.preventDefault()" ontouchstart="event.preventDefault()" style="width: 48px !important; height: 48px !important; min-height: 48px !important; padding: 0 !important; border-radius: 50% !important; flex: 0 0 auto; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #3b82f6, #1d4ed8); border: none; color: white; margin: 0; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);">
         <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-left: -2px; margin-top: 2px;"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
       </button>
     </form>
