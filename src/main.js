@@ -317,7 +317,7 @@ export function renderApp() {
   setTimeout(() => {
     const chatContainer = document.getElementById("chat-messages-container");
     if (chatContainer) {
-      chatContainer.scrollTop = chatContainer.scrollHeight;
+      window.scrollTo({ top: document.body.scrollHeight, behavior: 'instant' });
     }
   }, 10);
 }
@@ -345,7 +345,9 @@ export function updateMessagesDOM() {
       }
       
       container.innerHTML = m.renderMessagesContent(state, currentUserId);
-      container.scrollTop = container.scrollHeight;
+      setTimeout(() => {
+        window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+      }, 10);
     });
   });
 }
