@@ -74,11 +74,12 @@ function renderChatView(state, currentUserId) {
   }).join("");
 
   const formHtml = `
-    <form data-action="send-message" style="display: flex; gap: 10px; margin-top: 20px; padding: 8px; border-radius: 30px; background: rgba(0, 0, 0, 0.25); backdrop-filter: blur(10px); position: sticky; bottom: 0; z-index: 10; box-shadow: 0 8px 24px rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.08);">
-      <input type="text" name="content" placeholder="Kirjoita yhteiselle viestiseinälle..." required style="flex: 1; background: transparent; border: none; color: white; padding: 0 16px; outline: none; font-size: 0.95rem; width: 100%;" autocomplete="off" />
-      <button type="submit" class="button primary" style="background: linear-gradient(135deg, #3b82f6, #1d4ed8); border: none; color: white; border-radius: 24px; padding: 10px 24px; margin: 0; white-space: nowrap; font-weight: 600; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);">
-        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px; vertical-align: text-bottom;"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
-        Lähetä
+    <form data-action="send-message" style="display: flex; gap: 8px; margin-top: 15px; padding: 8px 4px; position: sticky; bottom: 0; z-index: 10; align-items: flex-end;">
+      <div style="flex: 1; display: flex; align-items: center; background: var(--surface-2, rgba(255, 255, 255, 0.1)); backdrop-filter: blur(10px); border-radius: 24px; padding: 2px 16px; border: 1px solid rgba(255,255,255,0.08); box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
+        <input type="text" name="content" placeholder="Viesti" required style="flex: 1; min-width: 0; background: transparent; border: none; color: var(--text); padding: 12px 0; outline: none; font-size: 1rem;" autocomplete="off" />
+      </div>
+      <button type="submit" class="button primary" style="width: 48px !important; height: 48px !important; min-height: 48px !important; padding: 0 !important; border-radius: 50% !important; flex: 0 0 auto; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #3b82f6, #1d4ed8); border: none; color: white; margin: 0; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-left: -2px; margin-top: 2px;"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
       </button>
     </form>
   `;
