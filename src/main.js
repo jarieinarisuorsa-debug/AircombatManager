@@ -353,12 +353,29 @@ function renderNavigation(state, routeKey) {
     </a>
   `;
 
+  let currentUserId = "unknown";
+  if (isUserAdmin(state)) {
+    currentUserId = "admin";
+  } else {
+    const pilot = (state.pilots || []).find(p => p.email && p.email.toLowerCase().trim() === activeEmail?.toLowerCase().trim());
+    if (pilot) currentUserId = pilot.id;
+  }
+
+  let unreadCount = 0;
+  if (state.messages && currentUserId !== "unknown") {
+    unreadCount = state.messages.filter(m => !m.readBy || !m.readBy.includes(currentUserId)).length;
+  }
+
   navEl.innerHTML = getNavItems(state)
     .map((item) => {
       const icon = ICONS[item.key] || ICONS.dashboard;
+      let labelHtml = item.label;
+      if (item.key === "messages" && unreadCount > 0) {
+        labelHtml += ` <span style="background: var(--danger, #ef4444); color: white; border-radius: 999px; padding: 2px 7px; font-size: 0.7rem; font-weight: bold; margin-left: 6px; box-shadow: 0 0 8px rgba(239, 68, 68, 0.6);">${unreadCount}</span>`;
+      }
       return `<a href="#/${item.key}" data-route="${item.key}" class="${item.key === routeKey ? "active" : ""}">
         <span class="nav-icon">${icon}</span>
-        ${item.label}
+        <span style="display: flex; align-items: center;">${labelHtml}</span>
       </a>`;
     })
     .join("") + creditsItemHtml + authItemHtml;
