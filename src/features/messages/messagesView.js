@@ -82,7 +82,7 @@ function renderChatView(state, currentUserId) {
   const msgHtml = renderMessagesContent(state, currentUserId);
 
   const formHtml = `
-    <form data-action="send-message" data-no-feedback="true" style="position: fixed; bottom: 0; left: 0; width: 100%; display: flex; gap: 10px; padding: 12px 16px; background: var(--bg); border-top: 1px solid var(--border); z-index: 1000; align-items: flex-end; box-sizing: border-box; box-shadow: 0 -4px 20px rgba(0,0,0,0.5);">
+    <form data-action="send-message" data-no-feedback="true" style="position: sticky; bottom: 0; display: flex; gap: 10px; padding: 12px 16px; margin: 0 -24px -24px -24px; background: var(--bg); border-top: 1px solid var(--border); z-index: 1000; align-items: flex-end; box-sizing: border-box; box-shadow: 0 -4px 20px rgba(0,0,0,0.5);">
       <div style="flex: 1; display: flex; align-items: center; background: rgba(0, 0, 0, 0.2); border-radius: 24px; padding: 2px 16px; border: 1px solid var(--border); box-shadow: inset 0 2px 6px rgba(0,0,0,0.2);">
         <input type="text" name="content" placeholder="Viesti" required style="flex: 1; min-width: 0; background: transparent; border: none; color: var(--text); padding: 12px 0; outline: none; font-size: 1rem;" autocomplete="off" />
       </div>
@@ -92,8 +92,8 @@ function renderChatView(state, currentUserId) {
     </form>
   `;
 
-  return UI.Panel({ kicker: "Viestit", title: "Yhteinen Keskustelu", style: "margin-bottom: 80px; border-bottom: none; box-shadow: none; background: transparent;" }, `
-    <div id="chat-messages-container" style="display: flex; flex-direction: column; padding: 10px 5px; scroll-behavior: smooth;">
+  return UI.Panel({ kicker: "Viestit", title: "Yhteinen Keskustelu", style: "border-bottom: none; box-shadow: none; background: transparent;" }, `
+    <div id="chat-messages-container" style="display: flex; flex-direction: column; padding: 10px 5px 80px 5px; scroll-behavior: smooth;">
       ${msgHtml}
     </div>
     ${formHtml}
