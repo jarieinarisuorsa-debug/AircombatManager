@@ -157,7 +157,7 @@ import {
   fetchResultsFromCloud
 } from "./services/cloudStore.js";
 
-watchDeviceProfile(renderApp);
+watchDeviceProfile();
 
 async function initApp() {
   try {
