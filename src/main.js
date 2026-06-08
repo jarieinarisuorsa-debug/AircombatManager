@@ -313,6 +313,11 @@ export function renderApp() {
 
   updateBulkButtonState();
   applyFormSaveFeedback(state);
+  
+  const chatContainer = document.getElementById("chat-messages-container");
+  if (chatContainer) {
+    chatContainer.scrollTop = chatContainer.scrollHeight;
+  }
 }
 
 function applyTheme(state) {
