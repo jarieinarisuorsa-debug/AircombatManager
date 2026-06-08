@@ -74,8 +74,8 @@ function renderChatView(state, currentUserId) {
   }).join("");
 
   const formHtml = `
-    <form data-action="send-message" style="display: flex; gap: 8px; margin-top: 15px; padding: 8px 4px; position: sticky; bottom: 0; z-index: 10; align-items: flex-end;">
-      <div style="flex: 1; display: flex; align-items: center; background: var(--surface-2, rgba(255, 255, 255, 0.1)); backdrop-filter: blur(10px); border-radius: 24px; padding: 2px 16px; border: 1px solid rgba(255,255,255,0.08); box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
+    <form data-action="send-message" data-no-feedback="true" style="display: flex; gap: 8px; margin-top: 15px; padding: 12px 4px 16px 4px; position: sticky; bottom: -16px; background: var(--surface); z-index: 10; align-items: flex-end;">
+      <div style="flex: 1; display: flex; align-items: center; background: var(--surface-2, rgba(255, 255, 255, 0.1)); border-radius: 24px; padding: 2px 16px; border: 1px solid rgba(255,255,255,0.08); box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
         <input type="text" name="content" placeholder="Viesti" required style="flex: 1; min-width: 0; background: transparent; border: none; color: var(--text); padding: 12px 0; outline: none; font-size: 1rem;" autocomplete="off" />
       </div>
       <button type="submit" class="button primary" style="width: 48px !important; height: 48px !important; min-height: 48px !important; padding: 0 !important; border-radius: 50% !important; flex: 0 0 auto; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #3b82f6, #1d4ed8); border: none; color: white; margin: 0; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);">

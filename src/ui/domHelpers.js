@@ -125,6 +125,7 @@ export function applyFormSaveFeedback(state) {
   const forms = document.querySelectorAll(`form[data-action="${lastSave.action}"]`);
   forms.forEach(form => {
     if (lastSave.id && form.id !== lastSave.id) return; // Vain tietylle lomakkeelle, jos id määritetty
+    if (form.dataset.noFeedback === "true") return; // Ohita lomakkeet, jotka eivät halua palautetta (esim. chat)
 
     const isRecent = Date.now() - lastSave.time < 5000; // 5 sekuntia
     const isDirty = form.dataset.dirty === "true";
