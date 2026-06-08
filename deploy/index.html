@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="fi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#0f2747" />
+    <title>Aircombat Competition Manager</title>
+    <link rel="manifest" href="./manifest.webmanifest" />
+    <link rel="stylesheet" href="./src/styles.css?v=4" />
+  </head>
+  <body>
+    <div id="app-shell" class="app-shell">
+      <aside class="sidebar">
+        <div class="brand">
+          <div class="brand-mark">AC</div>
+          <div>
+            <h1>Aircombat</h1>
+            <p>Competition Manager</p>
+          </div>
+        </div>
+
+        <nav id="main-nav" class="nav" aria-label="Päävalikko"></nav>
+
+      </aside>
+
+      <main class="content">
+        <header class="topbar">
+          <div>
+            <p class="kicker">RC Aircombat</p>
+            <h2 id="page-title">Kilpailujärjestelmä</h2>
+          </div>
+          <div class="topbar-actions">
+            <div id="auth-status" style="display: flex; align-items: center; gap: 10px;"></div>
+            <button id="theme-toggle-btn" class="button small" type="button" data-action="toggle-theme" title="Vaihda valoisuustilaa (Aurinkotila)">☀️ Aurinkotila</button>
+            <label class="role-switch">
+              Rooli
+              <select id="current-role-select" aria-label="Valitse käyttörooli"></select>
+            </label>
+            <div id="active-event-pill" class="active-pill">Ei aktiivista kisaa</div>
+          </div>
+        </header>
+
+        <section id="app" class="view" aria-live="polite"></section>
+      </main>
+
+      <div id="signature-modal" class="modal hidden" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="signature-modal-title">
+        <div class="modal-dialog">
+          <header class="modal-header">
+            <h2 id="signature-modal-title" class="modal-title">Allekirjoita</h2>
+            <button type="button" class="close-btn" data-action="close-signature" aria-label="Sulje">&times;</button>
+          </header>
+          <div class="modal-body" style="padding: 10px; display: flex; flex-direction: column; align-items: center;">
+            <p style="margin: 0 0 10px 0; font-size: 0.9rem; color: var(--text-muted);">Piirrä allekirjoituksesi alla olevaan laatikkoon.</p>
+            <div class="signature-pad-container" style="border: 2px dashed var(--border-color); background: #ffffff; border-radius: 8px; overflow: hidden; touch-action: none;">
+              <canvas id="signature-pad" width="400" height="200" style="display: block; width: 100%; max-width: 400px; height: 200px; cursor: crosshair; touch-action: none;"></canvas>
+            </div>
+            <!-- Hidden inputs to store which element to update -->
+            <input type="hidden" id="signature-target-input" value="">
+            <input type="hidden" id="signature-target-image" value="">
+          </div>
+          <footer class="modal-footer" style="display: flex; justify-content: space-between; gap: 10px;">
+            <button type="button" class="app-btn" data-action="clear-signature" style="background: var(--surface); color: var(--text);">Tyhjennä</button>
+            <div style="display: flex; gap: 10px;">
+              <button type="button" class="app-btn" data-action="close-signature" style="background: var(--surface); color: var(--text);">Peruuta</button>
+              <button type="button" class="app-btn primary" data-action="save-signature">Tallenna</button>
+            </div>
+          </footer>
+        </div>
+      </div>
+    </div>
+
+    <script type="module" src="./src/main.js?v=3"></script>
+  </body>
+</html>

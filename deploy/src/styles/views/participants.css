@@ -1,0 +1,218 @@
+/* ==============================
+   Kilpailukohtaiset osallistujat
+   Päivitetty: 2026-06-04
+   ============================== */
+
+.section-title {
+  margin: 0;
+  color: var(--accent-strong);
+  font-weight: 900;
+}
+
+.participant-stat-grid {
+  margin-top: 14px;
+}
+
+.participant-class-results {
+  margin-top: 18px;
+}
+
+.compact-list {
+  display: grid;
+  gap: 8px;
+  margin: 10px 0 0;
+  padding-left: 1.1rem;
+  color: var(--text);
+}
+
+.compact-list span {
+  display: block;
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
+.public-participant-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 12px;
+}
+
+@media (max-width: 640px) {
+  .form-grid-two {
+    grid-template-columns: 1fr;
+  }
+}
+
+.mini-label-row {
+  grid-template-columns: repeat(3, 1fr);
+  color: var(--muted);
+  font-size: 0.75rem;
+}
+
+.yes-no-row label {
+  display: grid;
+  place-items: center;
+}
+
+.yes-no-row input {
+  width: 18px;
+  min-height: 18px;
+}
+
+.small-formula {
+  display: inline-flex;
+  justify-content: center;
+  padding: 6px 8px;
+  border-radius: 10px;
+  background: rgba(255, 255, 120, 0.13);
+  color: #fffad1;
+  font-weight: 900;
+}
+
+.sum-label,
+.sum-cell,
+.final-sum {
+  min-height: 54px;
+}
+
+.final-sum {
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+}
+
+.footer-label {
+  color: var(--text);
+}
+
+.footer-check {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.footer-check input {
+  width: 18px;
+  min-height: 18px;
+}
+
+.footer-line-input {
+  border-width: 0 0 2px 0;
+  background: transparent;
+}
+
+.footer-reminder {
+  grid-column: 7;
+  grid-row: 1 / span 7;
+  color: #ff4747;
+  font-weight: 900;
+  line-height: 1.55;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.footer-reminder span {
+  display: block;
+  margin-top: 6px;
+  font-size: 0.88rem;
+}
+
+.table-actions {
+  flex-wrap: nowrap;
+}
+
+.compact-field {
+  display: grid;
+  gap: 4px;
+  min-width: 220px;
+  color: var(--muted);
+  font-size: 0.78rem;
+}
+
+.compact-field select {
+  min-height: 34px;
+  padding: 6px 10px;
+}
+
+.point-box {
+  display: grid;
+  place-items: center;
+  min-height: 34px;
+  border: 1px solid rgba(255, 240, 90, 0.75);
+  background: rgba(255, 255, 120, 0.15);
+  color: #fffad1;
+  font-weight: 900;
+  text-align: center;
+}
+
+.two-labels {
+  grid-template-columns: 1fr 1fr;
+}
+
+.wwi-side-summary {
+  display: grid;
+  gap: 16px;
+}
+
+.wwi-reminder {
+  padding: 18px 12px;
+  text-align: right;
+  color: #ff4747;
+  font-weight: 900;
+  font-size: 1.15rem;
+  line-height: 1.35;
+}
+
+.wwi-reminder strong {
+  display: inline-block;
+  margin-top: 8px;
+  font-size: 1.45rem;
+}
+
+.wwi-reminder span {
+  display: block;
+  margin-top: 12px;
+  font-size: 0.82rem;
+}
+
+.wwi-results-box {
+  display: grid;
+  gap: 0;
+  border: 2px solid rgba(255, 255, 255, 0.75);
+}
+
+.wwi-results-box h4,
+.wwi-results-box div {
+  margin: 0;
+  min-height: 34px;
+  padding: 6px 8px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+.wwi-results-box h4 {
+  font-weight: 900;
+}
+
+.wwi-results-box div {
+  display: grid;
+  grid-template-columns: 1fr 70px;
+  gap: 8px;
+  align-items: center;
+}
+
+.wwi-results-box strong {
+  display: grid;
+  place-items: center;
+  min-height: 28px;
+  border-left: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+.wwi-total {
+  margin-top: 14px !important;
+  background: rgba(255, 195, 120, 0.25);
+  font-weight: 900;
+}
+
+@media (max-width: 1300px) {
+  .wwi-side-summary {
+    grid-template-columns: 1fr 1fr;
+  }
+}

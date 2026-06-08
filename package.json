@@ -1,0 +1,23 @@
+{
+  "name": "aircombat-competition-manager",
+  "version": "1.0.0",
+  "description": "Kevyt vanilla HTML/CSS/JS -pohja RC Aircombat -kilpailukäyttöön. Tämä on tarkoituksella tehty ilman raskasta frameworkia, jotta projektin saa nopeasti auki VSCodeen ja kehitystä voidaan jatkaa moduuli kerrallaan.",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "build": "if exist www rmdir /s /q www && mkdir www && xcopy index.html www\\* && xcopy manifest.webmanifest www\\* && xcopy sw.js www\\* && xcopy RcAircombatManager.png www\\* && xcopy src www\\src\\ /E /I",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "@capacitor/android": "^8.4.0",
+    "@capacitor/cli": "^8.4.0",
+    "@capacitor/core": "^8.4.0"
+  },
+  "devDependencies": {}
+}

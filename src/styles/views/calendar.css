@@ -1,0 +1,47 @@
+/* ==============================
+   Calendar competition management panel
+   ============================== */
+
+.calendar-management-grid {
+  display: grid;
+  grid-template-columns: minmax(280px, 1.3fr) repeat(3, minmax(180px, 1fr));
+  gap: 14px;
+}
+
+.calendar-management-card {
+  display: grid;
+  gap: 10px;
+  align-content: start;
+  min-height: 180px;
+  padding: 18px;
+  border: 1px solid rgba(130, 180, 255, 0.14);
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.calendar-management-card.featured {
+  border-color: rgba(124, 225, 255, 0.32);
+  background: linear-gradient(135deg, rgba(88, 183, 255, 0.12), rgba(255, 255, 255, 0.035));
+}
+
+.calendar-management-card h4,
+.calendar-management-card p {
+  margin: 0;
+}
+
+.calendar-management-card .button {
+  margin-top: auto;
+  width: fit-content;
+}
+
+/* Clickable event cards in calendar view */
+.event-card[data-action] {
+  transition: all 0.2s ease;
+}
+
+.event-card[data-action]:hover {
+  border-color: rgba(124, 225, 255, 0.4) !important;
+  background: rgba(88, 183, 255, 0.05) !important;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+}

@@ -1,0 +1,217 @@
+
+.app-shell {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  min-height: 100vh;
+}
+
+.sidebar {
+  padding: 24px;
+  border-right: 1px solid var(--border);
+  background: rgba(5, 12, 24, 0.7);
+  backdrop-filter: blur(16px);
+  display: flex;
+  flex-direction: column;
+}
+
+.brand {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  margin-bottom: 28px;
+}
+
+.brand-mark {
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  background: linear-gradient(135deg, rgba(88, 183, 255, 0.22), rgba(124, 225, 255, 0.08));
+  box-shadow: var(--shadow);
+  font-weight: 900;
+  letter-spacing: 0.06em;
+}
+
+.brand h1,
+.brand p,
+.topbar h2,
+.topbar p { margin: 0; }
+.topbar h2 { font-size: clamp(1.7rem, 3vw, 2.3rem); }
+.brand h1 { font-size: 1.1rem; }
+.brand p { color: var(--muted); font-size: 0.85rem; }
+
+.nav {
+  display: grid;
+  gap: 8px;
+}
+
+.nav a {
+  padding: 12px 14px;
+  border: 1px solid transparent;
+  border-radius: 14px;
+  color: var(--muted);
+  text-decoration: none;
+  transition: 0.16s ease;
+}
+
+.nav a:hover,
+.nav a.active {
+  color: var(--text);
+  border-color: var(--border);
+  background: rgba(88, 183, 255, 0.12);
+}
+
+.content {
+  min-width: 0;
+  padding: 24px;
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 20px;
+  padding: 24px 28px;
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  background: linear-gradient(135deg, rgba(16, 45, 77, 0.78), rgba(8, 20, 37, 0.74));
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(12px);
+  position: relative;
+  overflow: hidden;
+}
+
+.topbar::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, rgba(124, 225, 255, 0.08), transparent 45%);
+  pointer-events: none;
+}
+
+.topbar::after {
+  content: "";
+  position: absolute;
+  left: 28px;
+  right: 28px;
+  bottom: 0;
+  height: 2px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--accent), transparent 82%);
+}
+
+.topbar > * {
+  position: relative;
+  z-index: 1;
+}
+
+.kicker {
+  margin: 0 0 6px;
+  color: var(--accent-strong);
+  font-size: 0.74rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-weight: 800;
+}
+
+.active-pill,
+.status,
+.score-chip {
+  display: inline-flex;
+  align-items: center;
+  min-height: 32px;
+  padding: 6px 12px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: rgba(88, 183, 255, 0.11);
+  color: var(--text);
+  font-size: 0.86rem;
+}
+
+.view {
+  display: grid;
+  gap: 18px;
+}
+.ui-grid {
+  display: grid;
+  grid-template-columns: var(--ui-grid-columns, repeat(auto-fit, minmax(180px, 1fr)));
+  gap: var(--ui-grid-gap, 10px);
+  min-width: 0;
+}
+
+.ui-flex {
+  display: flex;
+  flex-direction: var(--ui-flex-direction, row);
+  flex-wrap: var(--ui-flex-wrap, nowrap);
+  gap: var(--ui-flex-gap, 8px);
+  justify-content: var(--ui-flex-justify, flex-start);
+  align-items: var(--ui-flex-align, center);
+  min-width: 0;
+}
+
+.ui-stack {
+  display: grid;
+  gap: 18px;
+}
+
+.status.approved,
+.status.planned { color: var(--ok); }
+.status.rejected { color: var(--danger); }
+.status.pending { color: var(--warning); }
+
+@media (max-width: 1100px) {
+  .app-shell { grid-template-columns: 1fr; }
+  .sidebar {
+    display: grid;
+    gap: 12px;
+    padding: 14px;
+  }
+  .brand { margin-bottom: 0; }
+  .nav {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    padding-bottom: 4px;
+  }
+  .nav a { white-space: nowrap; }
+  .dashboard-grid,
+  .split-layout,
+  .split-layout.wide-left { grid-template-columns: 1fr; }
+  .form-panel { position: static; }
+  .result-form { grid-template-columns: 1fr 1fr; }
+}
+
+.topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.status.results_published,
+.status.completed { color: var(--ok); }
+.status.results_draft,
+.status.active { color: var(--warning); }
+
+.status.paid,
+.status.exempt,
+.status.checked_in,
+.status.approved { color: var(--ok); }
+
+.status.unpaid,
+.status.not_arrived,
+.status.pending,
+.status.repair_required { color: var(--warning); }
+
+.status.rejected { color: var(--danger); }
+
+.content {
+  padding: var(--adaptive-content-padding, 24px);
+}
+.topbar {
+  border-radius: var(--adaptive-panel-radius, 24px);
+}

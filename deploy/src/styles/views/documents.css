@@ -1,0 +1,34 @@
+.panel,
+.metric-card,
+.small-card,
+.event-card,
+.page-header,
+.hero-banner,
+.event-info-grid,
+.event-info-summary,
+.event-document-list {
+  display: grid;
+  gap: 14px;
+}
+
+.event-document-card {
+  display: grid;
+  gap: 4px;
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.035);
+  color: inherit;
+  text-decoration: none;
+}
+
+.event-document-card:hover {
+  border-color: rgba(124, 225, 255, 0.5);
+  background: rgba(88, 183, 255, 0.09);
+}
+
+.event-document-card span {
+  color: var(--muted);
+  font-size: 0.82rem;
+  overflow-wrap: anywhere;
+}

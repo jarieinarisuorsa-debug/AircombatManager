@@ -1,0 +1,552 @@
+:root {
+  color-scheme: dark;
+  --bg: #07111f;
+  --panel: rgba(13, 30, 52, 0.88);
+  --panel-strong: rgba(19, 46, 78, 0.95);
+  --border: rgba(130, 180, 255, 0.18);
+  --text: #ecf5ff;
+  --muted: #9fb4cc;
+  --accent: #58b7ff;
+  --accent-strong: #7ce1ff;
+  --danger: #ff6b7a;
+  --ok: #54d68a;
+  --warning: #ffd166;
+  --shadow: 0 18px 60px rgba(0, 0, 0, 0.35);
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at 20% 0%, rgba(71, 151, 255, 0.18), transparent 36rem),
+    linear-gradient(135deg, #050913, #07111f 52%, #091a2d);
+  color: var(--text);
+  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+a { color: inherit; }
+
+body.theme-sunlight select {
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="%231f2937" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>');
+}
+
+body.theme-sunlight select option {
+  background: #ffffff;
+  color: #1f2937;
+}
+
+body.theme-sunlight {
+  color-scheme: light !important;
+  background: #f0f4f8 !important; /* Valoisampi ja pehmeämpi pohjaväri */
+  --bg: #ffffff !important;
+  --panel: #ffffff !important;
+  --panel-strong: #e6ebf3 !important;
+  --border: #b8c9d9 !important;
+  --text: #08111e !important;
+  --muted: #4e5e73 !important;
+  --accent: #0056b3 !important;
+  --accent-strong: #003d80 !important;
+  --danger: #b3001e !important;
+  --ok: #00802b !important;
+  --warning: #b37400 !important;
+  background: #ffffff !important;
+}
+
+body.theme-sunlight input,
+body.theme-sunlight select,
+body.theme-sunlight textarea {
+  background: #ffffff !important;
+  color: #08111e !important;
+  border-color: #8096b0 !important;
+}
+
+body.theme-sunlight .sidebar {
+  background: #eaeff5 !important;
+  border-right-color: #8096b0 !important;
+}
+
+body.theme-sunlight .topbar {
+  background: linear-gradient(135deg, rgba(230, 235, 243, 0.9), rgba(244, 246, 250, 0.95)) !important;
+  border-color: #8096b0 !important;
+}
+
+body.theme-sunlight .nav a:hover,
+body.theme-sunlight .nav a.active {
+  background: rgba(0, 86, 179, 0.12) !important;
+  border-color: #8096b0 !important;
+  color: #08111e !important;
+}
+
+body.theme-sunlight .brand-mark {
+  background: linear-gradient(135deg, rgba(0, 86, 179, 0.22), rgba(0, 61, 128, 0.08)) !important;
+  border-color: #8096b0 !important;
+}
+
+body.theme-sunlight .score-input-row output,
+body.theme-sunlight .sum-cell,
+body.theme-sunlight .final-sum strong:last-child,
+body.theme-sunlight .point-box,
+body.theme-sunlight .wwi-total,
+body.theme-sunlight .small-formula {
+  background: #fff8b3 !important;
+  color: #594400 !important;
+  border-color: #b37400 !important;
+}
+
+body.theme-sunlight .score-section-title,
+body.theme-sunlight .score-heading,
+body.theme-sunlight .score-round-title,
+body.theme-sunlight .score-results-title {
+  background: #e2e8f0 !important;
+}
+
+body.theme-sunlight .score-sheet-print {
+  border-color: #8096b0 !important;
+  background: #fdfdfd !important;
+}
+
+body.theme-sunlight .score-sheet-grid,
+body.theme-sunlight .score-sheet-footer-grid,
+body.theme-sunlight .score-sheet-grid > *,
+body.theme-sunlight .score-sheet-footer-grid > * {
+  border-color: #4a5c70 !important;
+}
+body.theme-sunlight .yes-no-btn {
+  background: #ffffff !important;
+  border-color: #8096b0 !important;
+}
+
+body.theme-sunlight .yes-no-btn:has(input[type="radio"]:checked) {
+  background: rgba(0, 86, 179, 0.15) !important;
+  border-color: #0056b3 !important;
+}
+
+body.theme-sunlight .stepper-input {
+  background: #ffffff !important;
+  border-color: #8096b0 !important;
+}
+
+body.theme-sunlight .stepper-btn {
+  background: rgba(0, 0, 0, 0.05) !important;
+  color: #08111e !important;
+}
+
+body.theme-sunlight .stepper-btn:hover {
+  background: rgba(0, 0, 0, 0.1) !important;
+}
+body.theme-sunlight .pilot-card {
+  background: #ffffff !important;
+  border-color: #8096b0 !important;
+  box-shadow: 0 4px 12px rgba(8, 17, 30, 0.08) !important;
+}
+
+body.theme-sunlight .pilot-card:hover {
+  border-color: #0056b3 !important;
+  box-shadow: 0 8px 24px rgba(8, 17, 30, 0.15) !important;
+}
+
+body.theme-sunlight .country-badge {
+  background: rgba(0, 86, 179, 0.08) !important;
+  border-color: #8096b0 !important;
+  color: #0056b3 !important;
+}
+
+body.theme-sunlight .pilot-aircraft-item {
+  background: #f1f5f9 !important;
+  border-color: #cbd5e1 !important;
+}
+
+body.theme-sunlight .aircraft-mini-badge {
+  border-color: #cbd5e1 !important;
+}
+
+/* Button overrides for Sunlight Mode */
+body.theme-sunlight .button,
+body.theme-sunlight button.app-btn {
+  --surface: #f1f5f9;
+  background: linear-gradient(180deg, #ffffff 0%, #f1f5f9 100%) !important;
+  color: #0f172a !important;
+  border-color: #cbd5e1 !important;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05) !important;
+}
+
+body.theme-sunlight .button:hover:not(:disabled),
+body.theme-sunlight button.app-btn:hover:not(:disabled) {
+  background: linear-gradient(180deg, #f8fafc 0%, #e2e8f0 100%) !important;
+  border-color: #94a3b8 !important;
+}
+
+body.theme-sunlight .button.danger {
+  background: linear-gradient(180deg, #fef2f2 0%, #fee2e2 100%) !important;
+  color: #991b1b !important;
+  border-color: #fca5a5 !important;
+}
+
+body.theme-sunlight .button.danger:hover:not(:disabled) {
+  background: linear-gradient(180deg, #fee2e2 0%, #fecaca 100%) !important;
+  border-color: #f87171 !important;
+}
+
+body.theme-sunlight .button.success {
+  background: linear-gradient(180deg, #f0fdf4 0%, #dcfce7 100%) !important;
+  color: #166534 !important;
+  border-color: #86efac !important;
+}
+
+body.theme-sunlight .button.success:hover:not(:disabled) {
+  background: linear-gradient(180deg, #dcfce7 0%, #bbf7d0 100%) !important;
+  border-color: #4ade80 !important;
+}
+
+body.theme-sunlight .button.primary {
+  background: linear-gradient(135deg, #0ea5e9, #2563eb) !important;
+  color: #ffffff !important;
+  border-color: #0284c7 !important;
+}
+
+body.theme-sunlight .button.primary:hover:not(:disabled) {
+  background: linear-gradient(135deg, #38bdf8, #3b82f6) !important;
+  border-color: #38bdf8 !important;
+}
+
+body.theme-sunlight .aircraft-mini-badge.approved {
+  color: #1e7e34 !important;
+  background: rgba(40, 167, 69, 0.12) !important;
+  border-color: rgba(40, 167, 69, 0.25) !important;
+}
+
+body.theme-sunlight .aircraft-mini-badge.pending {
+  color: #a05a00 !important;
+  background: rgba(224, 150, 0, 0.12) !important;
+  border-color: rgba(224, 150, 0, 0.25) !important;
+}
+
+body.theme-sunlight .pilot-card-registration {
+  background: rgba(0, 86, 179, 0.05) !important;
+  border-color: rgba(0, 86, 179, 0.15) !important;
+}
+
+body.theme-sunlight .pilot-card-registration.registered {
+  background: rgba(40, 167, 69, 0.05) !important;
+  border-color: rgba(40, 167, 69, 0.18) !important;
+}
+
+body.theme-sunlight .registration-status-text {
+  color: #1e7e34 !important;
+}
+
+body.theme-sunlight .inline-aircraft-form {
+  background: #f8fafc !important;
+  border-color: #cbd5e1 !important;
+}
+
+body.theme-sunlight .pilot-bulk-actions {
+  background: #f8fafc !important;
+  border-color: #cbd5e1 !important;
+}
+
+body.device-desktop {
+  --adaptive-content-padding: 24px;
+  --adaptive-panel-radius: 24px;
+  --adaptive-card-min: 300px;
+  --adaptive-button-min-height: 42px;
+}
+
+body.device-tablet {
+  --adaptive-content-padding: 18px;
+  --adaptive-panel-radius: 22px;
+  --adaptive-card-min: 260px;
+  --adaptive-button-min-height: 44px;
+}
+
+body.device-phone {
+  --adaptive-content-padding: 12px;
+  --adaptive-panel-radius: 18px;
+  --adaptive-card-min: 100%;
+  --adaptive-button-min-height: 46px;
+}
+
+body.input-touch .button,
+body.input-touch input,
+body.input-touch select,
+body.input-touch textarea,
+body.input-touch .file-import {
+  min-height: var(--adaptive-button-min-height, 44px);
+}
+
+body.input-touch .nav a {
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+}
+
+body.device-tablet .app-shell,
+body.device-phone .app-shell {
+  grid-template-columns: 1fr;
+  grid-template-rows: auto 1fr;
+}
+
+body.device-tablet .sidebar,
+body.device-phone .sidebar {
+  display: grid;
+  gap: 12px;
+  padding: 12px;
+  border-right: none;
+  border-bottom: 1px solid var(--border);
+}
+
+body.device-tablet .brand,
+body.device-phone .brand {
+  margin-bottom: 0;
+}
+
+body.device-tablet .nav,
+body.device-phone .nav {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 3px;
+  scrollbar-width: thin;
+  align-items: center;
+}
+
+body.device-tablet .nav a,
+body.device-phone .nav a {
+  white-space: nowrap;
+  flex: 0 0 auto;
+}
+
+body.device-phone .brand {
+  gap: 10px;
+}
+
+body.device-phone .brand-mark {
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+}
+
+body.device-phone .brand h1 {
+  font-size: 1rem;
+}
+
+body.device-phone .brand p {
+  font-size: 0.76rem;
+}
+
+body.device-tablet .topbar,
+body.device-phone .topbar {
+  align-items: flex-start;
+  flex-direction: column;
+}
+
+body.device-tablet .topbar-actions,
+body.device-phone .topbar-actions {
+  width: 100%;
+  justify-content: flex-start;
+  flex-direction: column;
+}
+
+body.device-phone .topbar-actions > *,
+body.device-phone .active-pill,
+body.device-phone .role-switch {
+  width: 100%;
+}
+
+body.device-phone .role-switch select {
+  flex: 1;
+  width: auto;
+  min-width: 0;
+}
+
+body.device-phone .page-header,
+body.device-phone .hero-banner {
+  align-items: stretch;
+  flex-direction: column;
+  padding: 18px;
+}
+
+body.device-phone .page-header__actions,
+body.device-phone .hero-banner__actions {
+  justify-content: flex-start;
+  flex-wrap: wrap;
+}
+
+body.device-phone .page-header__actions .button,
+body.device-phone .hero-banner__actions .button {
+  width: 100%;
+}
+
+body.device-phone .dashboard-grid,
+body.device-phone .public-dashboard-grid,
+body.device-phone .result-stat-grid,
+body.device-phone .podium-grid,
+body.device-phone .workspace-step-grid,
+body.device-phone .workspace-class-grid,
+body.device-phone .workspace-status-grid,
+body.device-phone .competition-format-summary,
+body.device-phone .public-event-info-grid,
+body.device-phone .public-class-summary-grid {
+  grid-template-columns: 1fr !important;
+}
+
+body.device-tablet .workspace-class-grid {
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+}
+
+body.device-phone .event-card,
+body.device-phone .panel-header,
+body.device-phone .row-actions,
+body.device-phone .hero-actions,
+body.device-phone .workspace-class-card__header,
+body.device-phone .workspace-class-header-actions,
+body.device-phone .workspace-class-actions,
+body.device-phone .ui-form-actions,
+body.device-phone .score-card-toolbar,
+body.device-phone .score-card-list-row,
+body.device-phone .score-card-list-heading {
+  flex-direction: column;
+  align-items: stretch;
+}
+
+body.device-phone .button,
+body.device-phone .file-import {
+  width: 100%;
+}
+
+body.device-phone .ui-grid {
+  grid-template-columns: 1fr !important;
+}
+
+body.device-phone .ui-flex {
+  flex-direction: column;
+  align-items: stretch;
+}
+
+body.device-phone table {
+  font-size: 0.82rem;
+}
+
+body.device-phone .ui-table-container {
+  margin-inline: -2px;
+}
+
+body.device-phone .app-modal-backdrop {
+  align-items: stretch;
+  padding: 10px;
+}
+
+body.device-phone .app-modal-shell {
+  width: 100%;
+  max-height: 94vh;
+  border-radius: 18px;
+  padding: 14px;
+}
+
+body.device-tablet .score-card-editor-modal {
+  width: min(100%, 980px);
+}
+
+body.device-phone .score-card-editor-modal {
+  width: 100%;
+}
+
+body.device-phone .mobile-score-grid,
+body.device-phone .mobile-field-pair,
+body.device-phone .mobile-yes-no {
+  grid-template-columns: 1fr;
+}
+
+body.device-phone .mobile-round-card summary {
+  align-items: stretch;
+  flex-direction: column;
+}
+
+body.device-phone .score-card-list-status {
+  justify-items: start;
+}
+
+body.device-phone.orientation-landscape .sidebar {
+  position: relative;
+}
+
+body.device-phone.orientation-landscape .topbar {
+  flex-direction: row;
+  align-items: center;
+}
+
+body.device-phone.orientation-landscape .topbar-actions {
+  width: auto;
+  margin-left: auto;
+}
+
+body.device-phone.orientation-landscape .topbar-actions > *,
+body.device-phone.orientation-landscape .active-pill,
+body.device-phone.orientation-landscape .role-switch,
+body.device-phone.orientation-landscape .role-switch select {
+  width: auto;
+}
+
+body.device-desktop .desktop-only {
+  display: initial;
+}
+
+body.device-tablet .phone-only,
+body.device-desktop .phone-only {
+  display: none !important;
+}
+
+body.device-phone .event-info-summary,
+body.device-phone .event-info-grid {
+  grid-template-columns: 1fr !important;
+}
+
+body.device-phone .event-contact-line {
+  flex-direction: column;
+  align-items: stretch;
+}
+
+body.device-phone .event-contact-line span,
+body.device-phone .event-contact-line .button {
+  width: 100%;
+}
+
+body.device-tablet .calendar-management-grid {
+  grid-template-columns: repeat(2, minmax(240px, 1fr));
+}
+
+body.device-phone .calendar-management-grid {
+  grid-template-columns: 1fr;
+}
+
+body.device-phone .calendar-management-card .button {
+  width: 100%;
+}
+
+body.device-phone .score-card-class-buttons {
+  display: grid;
+  grid-template-columns: 1fr;
+  width: 100%;
+}
+
+body.device-phone .score-card-class-buttons .button {
+  width: 100%;
+}
+
+body.device-phone .score-card-list-intro {
+  flex-direction: column;
+  align-items: stretch;
+}
+
+body.device-phone .pilot-entry-cell {
+  min-width: 0;
+}
+
+body.device-phone .pilot-entry-status-row {
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+body.device-phone .waiting-result-row {
+  flex-direction: column;
+}

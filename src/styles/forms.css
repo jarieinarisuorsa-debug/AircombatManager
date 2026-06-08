@@ -1,0 +1,122 @@
+
+.form-panel {
+  position: sticky;
+  top: 24px;
+}
+
+label {
+  display: grid;
+  gap: 6px;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+input,
+select {
+  width: 100%;
+  min-height: 42px;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: rgba(3, 10, 20, 0.55);
+  color: var(--text);
+  font: inherit;
+}
+
+input[type="radio"],
+input[type="checkbox"] {
+  width: 22px;
+  min-height: 22px;
+  margin: 0;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+
+select {
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="%239fb4cc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>');
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 36px;
+  cursor: pointer;
+}
+
+select option {
+  background: var(--bg);
+  color: var(--text);
+}
+
+textarea {
+  width: 100%;
+  min-height: 88px;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: rgba(3, 10, 20, 0.55);
+  color: var(--text);
+  font: inherit;
+  resize: vertical;
+}
+
+.form-section {
+  display: grid;
+  gap: 10px;
+  padding: 12px;
+  border: 1px solid rgba(130, 180, 255, 0.12);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.form-grid-two {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.editor-input.no-spin::-webkit-outer-spin-button,
+.editor-input.no-spin::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.editor-input.no-spin {
+  -moz-appearance: textfield;
+}
+.radio-boolean-label {
+  display: inline-block;
+  cursor: pointer;
+}
+
+.radio-boolean-label input[type="radio"] {
+  display: none;
+}
+
+.radio-boolean-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 45px;
+  height: 35px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text);
+  font-weight: bold;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.radio-boolean-label:hover .radio-boolean-btn {
+  background: var(--panel-strong);
+}
+
+.radio-boolean-label input[type="radio"][value="yes"]:checked + .radio-boolean-btn {
+  background: rgba(84, 214, 138, 0.2) !important;
+  color: #54d68a;
+  border-color: rgba(84, 214, 138, 0.5);
+}
+
+.radio-boolean-label input[type="radio"][value="no"]:checked + .radio-boolean-btn {
+  background: rgba(255, 107, 122, 0.2) !important;
+  color: #ff6b7a;
+  border-color: rgba(255, 107, 122, 0.5);
+}

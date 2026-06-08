@@ -1,0 +1,9 @@
+{
+  "name": "Aircombat Competition Manager",
+  "short_name": "Aircombat CM",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#07111f",
+  "theme_color": "#0f2747",
+  "description": "RC Aircombat competition calendar, heat and scoring manager."
+}

@@ -1,0 +1,631 @@
+.grid,
+.card-grid,
+.heat-grid {
+  display: grid;
+  gap: 16px;
+}
+
+.card-grid,
+.heat-grid {
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+}
+
+/* ==============================
+   Pilot score card / tuloskortti
+   Päivitetty: 2026-06-04
+   ============================== */
+
+.score-card-stack {
+  display: grid;
+  gap: 18px;
+}
+
+.score-card-form {
+  display: grid;
+  gap: 16px;
+  overflow-x: auto;
+}
+
+.score-card-toolbar {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: center;
+}
+
+.score-sheet-print {
+  min-width: 1120px;
+  padding: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.score-sheet-header {
+  display: grid;
+  grid-template-columns: 0.9fr 1fr 1fr 1.3fr 1.4fr;
+  gap: 8px;
+  align-items: end;
+  margin-bottom: 8px;
+}
+
+.score-sheet-header label {
+  color: var(--text);
+  font-size: 0.92rem;
+}
+
+.score-sheet-header strong {
+  font-size: 1rem;
+}
+
+.score-sheet-header input,
+.score-sheet-grid input,
+.footer-line-input {
+  min-height: 34px;
+  border-radius: 0;
+  border-color: rgba(255, 255, 255, 0.58);
+  background: rgba(255, 255, 255, 0.07);
+}
+
+.score-sheet-subheader {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 0 0 12px;
+  color: var(--muted);
+  font-size: 0.86rem;
+}
+
+.score-sheet-grid {
+  display: grid;
+  grid-template-columns: 120px repeat(5, minmax(150px, 1fr)) 170px;
+  border-top: 2px solid rgba(255, 255, 255, 0.75);
+  border-left: 2px solid rgba(255, 255, 255, 0.75);
+}
+
+.score-sheet-grid > * {
+  border-right: 2px solid rgba(255, 255, 255, 0.75);
+  border-bottom: 2px solid rgba(255, 255, 255, 0.75);
+  padding: 7px;
+  min-height: 72px;
+}
+
+.score-heading,
+.score-round-title,
+.score-results-title {
+  min-height: 44px;
+  display: grid;
+  place-items: center;
+  font-weight: 900;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.score-label {
+  display: grid;
+  align-content: center;
+  color: var(--text);
+}
+
+.score-cell {
+  display: grid;
+  gap: 5px;
+  align-content: center;
+}
+
+.score-result-cell {
+  display: grid;
+  align-content: center;
+  gap: 6px;
+}
+
+.mini-label-row,
+.score-input-row {
+  display: grid;
+  gap: 4px;
+  align-items: center;
+}
+
+.score-input-row.two,
+.mini-label-row:has(+ .score-input-row.two) {
+  grid-template-columns: 1fr 1fr;
+}
+
+.score-input-row.three {
+  grid-template-columns: 1fr 1fr 1.25fr;
+}
+
+.score-input-row input[type="number"] {
+  text-align: center;
+}
+
+.score-input-row output,
+.sum-cell,
+.final-sum strong:last-child {
+  display: grid;
+  place-items: center;
+  min-height: 34px;
+  border: 1px solid rgba(255, 240, 90, 0.75);
+  background: rgba(255, 255, 120, 0.15);
+  color: #fffad1;
+  font-weight: 900;
+}
+
+.score-sheet-footer-grid {
+  display: grid;
+  grid-template-columns: 120px repeat(5, minmax(150px, 1fr)) 170px;
+  gap: 0;
+  border-left: 2px solid rgba(255, 255, 255, 0.75);
+}
+
+.score-sheet-footer-grid > * {
+  min-height: 38px;
+  padding: 6px;
+  border-right: 2px solid rgba(255, 255, 255, 0.75);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.38);
+}
+
+@media (max-width: 1100px) {
+  .score-card-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+/* ==============================
+   WWI score card -lisäykset
+   Päivitetty: 2026-06-04
+   ============================== */
+
+.score-toolbar-actions {
+  align-items: end;
+}
+
+.score-sheet-header-wwi {
+  grid-template-columns: 1fr 1.15fr 1.35fr 1.3fr 1.25fr;
+}
+
+.score-sheet-layout-wwi {
+  display: grid;
+  grid-template-columns: minmax(900px, 1fr) 230px;
+  gap: 16px;
+  align-items: start;
+}
+
+.score-sheet-grid-wwi {
+  grid-template-columns: 170px repeat(4, minmax(150px, 1fr)) 140px;
+}
+
+.score-sheet-grid-wwi > * {
+  min-height: 58px;
+}
+
+.score-section-title {
+  display: grid;
+  align-content: center;
+  min-height: 40px !important;
+  font-weight: 900;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.score-section-title.small {
+  justify-content: start;
+  color: var(--muted);
+  font-size: 0.78rem;
+}
+
+.score-sub-label {
+  display: block;
+  margin-top: 3px;
+  color: var(--muted);
+  font-size: 0.72rem;
+  line-height: 1.2;
+}
+
+.score-sheet-footer-wwi {
+  grid-template-columns: 170px repeat(4, minmax(150px, 1fr));
+  margin-top: 8px;
+}
+
+.score-sheet-footer-wwi .footer-line-input {
+  min-height: 34px;
+}
+
+@media (max-width: 1300px) {
+  .score-sheet-layout-wwi {
+    grid-template-columns: 1fr;
+  }
+}
+
+.heat-section-title,
+.heat-phase-title {
+  grid-column: 1 / -1;
+}
+
+.heat-section-title {
+  margin-top: 15px;
+}
+
+.heat-section-title h4 {
+  margin: 0 0 10px 0;
+  padding-bottom: 5px;
+  border-bottom: 1px solid var(--border);
+}
+
+.heat-phase-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 6px;
+  padding: 8px 12px;
+  border: 1px solid rgba(130, 180, 255, 0.12);
+  border-radius: 14px;
+  background: rgba(88, 183, 255, 0.08);
+  color: var(--accent-strong);
+  font-weight: 900;
+}
+
+.heat-phase-title strong {
+  color: var(--muted);
+  font-size: 0.86rem;
+}
+
+@media (max-width: 760px) {
+  .stage-progress-row,
+  .heat-phase-title {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+/* ==============================
+   Score card compact list view
+   ============================== */
+
+.score-card-form {
+  overflow-x: visible;
+}
+
+.score-card-details {
+  border: 1px solid rgba(130, 180, 255, 0.16);
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.025);
+  overflow: hidden;
+}
+
+.score-card-summary {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 18px;
+  padding: 16px 18px;
+  cursor: default;
+  list-style: none;
+}
+
+.score-card-summary::-webkit-details-marker {
+  display: none;
+}
+
+.score-card-summary__main {
+  min-width: 0;
+}
+
+.score-card-summary__main h3,
+.score-card-summary__main p {
+  margin: 0;
+}
+
+.score-card-summary__main h3 {
+  margin-bottom: 4px;
+  font-size: 1.2rem;
+}
+
+.score-card-summary__stats {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.score-card-summary__stats strong {
+  font-size: 1.4rem;
+}
+
+.score-card-editor {
+  display: grid;
+  gap: 14px;
+  padding: 16px 18px 18px;
+  border-top: 1px solid rgba(130, 180, 255, 0.12);
+}
+
+.score-card-screen-helper {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+  align-items: center;
+  padding: 10px 12px;
+  border: 1px dashed rgba(130, 180, 255, 0.22);
+  border-radius: 14px;
+  background: rgba(88, 183, 255, 0.06);
+  color: var(--muted);
+}
+
+.score-card-screen-helper strong {
+  color: var(--text);
+}
+
+.score-sheet-scroll {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border-radius: 18px;
+}
+
+@media (max-width: 760px) {
+  .score-card-summary,
+  .score-card-toolbar,
+  .score-card-summary__stats {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .score-card-summary::after {
+    width: 100%;
+  }
+
+  .score-card-summary__stats strong {
+    font-size: 1.8rem;
+  }
+}
+
+/* ==============================
+   Mobile score card editor
+   ============================== */
+
+.score-card-mobile-editor {
+  display: none;
+}
+
+@media (max-width: 760px) {
+  .score-sheet-desktop,
+  .score-card-screen-helper {
+    display: none;
+  }
+
+  .score-card-mobile-editor {
+    display: grid;
+    gap: 14px;
+  }
+}
+
+/* ==============================
+   Lazy score card list trial
+   ============================== */
+
+.score-card-list {
+  display: grid;
+  gap: 18px;
+}
+
+.score-card-list-group {
+  display: grid;
+  gap: 10px;
+}
+
+.score-card-list-heading {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: end;
+  padding: 0 4px;
+}
+
+.score-card-list-heading h3 {
+  margin: 0;
+}
+
+.score-card-list-rows {
+  display: grid;
+  gap: 10px;
+}
+
+.score-card-list-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  gap: 14px;
+  align-items: center;
+  padding: 14px 16px;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.score-card-list-main {
+  min-width: 0;
+}
+
+.score-card-list-main h4,
+.score-card-list-main p {
+  margin: 0;
+}
+
+.score-card-list-status {
+  display: grid;
+  gap: 6px;
+  justify-items: end;
+}
+
+.score-card-list-status strong {
+  font-size: 1.35rem;
+}
+
+.score-card-editor-backdrop {
+  align-items: stretch;
+}
+
+.score-card-editor-modal {
+  width: min(100%, 1220px);
+  max-height: 92vh;
+}
+
+.score-card-editor-modal .score-card-form {
+  padding: 0;
+  border: none;
+  box-shadow: none;
+  background: transparent;
+}
+
+.score-card-editor-modal .score-card-details {
+  border: none;
+  background: transparent;
+}
+
+.score-card-editor-modal .score-card-summary {
+  display: none;
+}
+
+.score-card-editor-modal .score-card-editor {
+  padding: 0;
+  border: none;
+}
+
+@media (max-width: 760px) {
+  .score-card-list-heading,
+  .score-card-list-row {
+    grid-template-columns: 1fr;
+    align-items: stretch;
+  }
+
+  .score-card-list-status {
+    justify-items: start;
+  }
+
+  .score-card-list-actions .button {
+    width: 100%;
+  }
+
+  .score-card-editor-modal {
+    max-height: 94vh;
+  }
+}
+
+/* ==============================
+   Scalable score card screen editor
+   ============================== */
+
+.score-card-editor-modal {
+  width: min(100%, 980px);
+}
+
+.score-sheet-desktop {
+  display: none;
+}
+
+.score-card-mobile-editor {
+  display: grid;
+  gap: 16px;
+}
+
+.score-card-screen-helper {
+  margin-bottom: 0;
+}
+
+@media (max-width: 760px) {
+  .score-card-editor-modal {
+    width: 100%;
+    max-height: 94vh;
+  }
+}
+
+.heat-preflight-warning {
+  border-color: rgba(255, 209, 102, 0.28);
+  background: rgba(255, 209, 102, 0.06);
+}
+
+.heat-preflight-warning p {
+  margin-top: 0;
+}
+
+/* ==============================
+   Score card class shortcut buttons
+   ============================== */
+
+.score-card-class-buttons {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.score-card-class-buttons .button {
+  white-space: nowrap;
+}
+
+@media (max-width: 760px) {
+  .score-card-class-buttons {
+    display: grid;
+    grid-template-columns: 1fr;
+    width: 100%;
+  }
+
+  .score-card-class-buttons .button {
+    width: 100%;
+  }
+}
+
+.score-card-list-intro {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  align-items: end;
+  padding: 0 4px;
+}
+
+.score-card-list-intro h3,
+.score-card-list-intro p {
+  margin: 0;
+}
+
+.source-chip.scorecard {
+  border-color: rgba(255, 214, 102, 0.35);
+  color: #fff2bf;
+}
+
+.scorecard-tabs {
+  display: flex;
+  overflow-x: auto;
+  gap: 8px;
+  padding: 10px 0;
+  border-bottom: 2px solid var(--border);
+  margin-bottom: 20px;
+}
+
+.scorecard-tabs::-webkit-scrollbar {
+  height: 6px;
+}
+
+.scorecard-tabs::-webkit-scrollbar-thumb {
+  background-color: var(--border);
+  border-radius: 4px;
+}
+
+/* Score Card Sticky Footer */
+
+.score-card-sticky-footer {
+  position: sticky;
+  bottom: 0;
+  background: var(--surface);
+  padding: 12px 18px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 100;
+  margin: 20px -18px -18px;
+}
+
+.score-card-editor-modal .score-card-sticky-footer {
+  margin: 0;
+  padding: 15px 20px;
+}

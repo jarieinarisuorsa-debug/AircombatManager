@@ -1,0 +1,8 @@
+﻿{
+  "appId": "com.braherc.aircombatmanager",
+  "appName": "Aircombat Competition Manager",
+  "webDir": "www",
+  "server": {
+    "androidScheme": "https"
+  }
+}

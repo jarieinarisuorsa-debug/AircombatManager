@@ -1,0 +1,152 @@
+/* ==============================
+   Competition workspace cleanup
+   ============================== */
+
+.workspace-step-grid,
+.workspace-class-grid,
+.workspace-status-grid {
+  display: grid;
+  gap: 14px;
+}
+
+.workspace-step-grid {
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
+.workspace-step-card {
+  display: grid;
+  gap: 8px;
+  min-height: 150px;
+  padding: 18px;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.035);
+  color: inherit;
+  text-decoration: none;
+  transition: 0.16s ease;
+}
+
+.workspace-step-card:hover {
+  border-color: rgba(124, 225, 255, 0.5);
+  background: rgba(88, 183, 255, 0.1);
+  transform: translateY(-1px);
+}
+
+.workspace-step-card strong {
+  font-size: clamp(1.8rem, 4vw, 2.6rem);
+  line-height: 1;
+}
+
+.workspace-step-card p {
+  margin: 0;
+}
+
+.workspace-class-grid {
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+}
+
+.workspace-class-card {
+  display: grid;
+  gap: 16px;
+  padding: 18px;
+  border: 1px solid var(--border);
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.workspace-class-card__header {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.workspace-class-card__header h3 {
+  margin: 0;
+  font-size: 1.45rem;
+}
+
+.workspace-class-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 10px;
+}
+
+.workspace-class-stats div,
+.workspace-status-grid div {
+  display: grid;
+  gap: 4px;
+  padding: 12px;
+  border: 1px solid rgba(130, 180, 255, 0.12);
+  border-radius: 16px;
+  background: rgba(3, 10, 20, 0.25);
+}
+
+.workspace-class-stats strong,
+.workspace-status-grid strong {
+  font-size: 1.8rem;
+  line-height: 1;
+}
+
+.workspace-class-stats span {
+  color: var(--muted);
+  font-size: 0.86rem;
+}
+
+.workspace-class-note {
+  margin: 0;
+  padding-top: 12px;
+  border-top: 1px dashed rgba(130, 180, 255, 0.18);
+}
+
+.workspace-class-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.workspace-class-actions .button {
+  flex: 1;
+  min-width: 140px;
+}
+
+.workspace-warning {
+  margin: 0;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: rgba(255, 107, 122, 0.1);
+  color: #ffd7dc;
+  font-size: 0.86rem;
+  text-align: center;
+}
+
+.workspace-status-grid {
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+}
+
+.workspace-status-grid .status {
+  width: fit-content;
+}
+
+@media (max-width: 760px) {
+  .workspace-class-card__header {
+    flex-direction: column;
+  }
+
+  .workspace-class-stats {
+    grid-template-columns: 1fr;
+  }
+}
+
+.workspace-class-header-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: flex-end;
+}
+
+@media (max-width: 760px) {
+  .workspace-class-header-actions {
+    align-items: flex-start;
+  }
+}

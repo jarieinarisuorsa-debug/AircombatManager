@@ -1,0 +1,577 @@
+
+@media print {
+  :root {
+    color-scheme: light;
+  }
+
+  body {
+    background: #fff !important;
+    color: #000 !important;
+  }
+
+  .sidebar,
+  .topbar,
+  .no-print,
+  .score-card-toolbar,
+  .nav,
+  .button,
+  .active-pill {
+    display: none !important;
+  }
+
+  .app-shell,
+  .content,
+  .view {
+    display: block !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  .panel,
+  .score-card-form,
+  .score-sheet-print {
+    box-shadow: none !important;
+    border: none !important;
+    background: #fff !important;
+    color: #000 !important;
+    border-radius: 0 !important;
+    padding: 0 !important;
+  }
+
+  .score-card-form {
+    page-break-after: always;
+    overflow: visible !important;
+  }
+
+  .score-sheet-print {
+    min-width: 0 !important;
+    width: 100% !important;
+  }
+
+  input,
+  select,
+  textarea,
+  output {
+    color: #000 !important;
+    background: #fff !important;
+    border-color: #000 !important;
+  }
+
+  .score-input-row output,
+  .sum-cell,
+  .final-sum strong:last-child,
+  .small-formula {
+    background: #ffff99 !important;
+    color: #000 !important;
+    border-color: #000 !important;
+  }
+
+  .score-sheet-grid,
+  .score-sheet-footer-grid,
+  .score-sheet-grid > *,
+  .score-sheet-footer-grid > * {
+    border-color: #000 !important;
+  }
+
+  .muted,
+  .score-sheet-subheader,
+  .mini-label-row {
+    color: #000 !important;
+  }
+}
+
+@media print {
+  .score-sheet-layout-wwi {
+    grid-template-columns: 1fr 210px !important;
+    gap: 8px !important;
+  }
+
+  .wwi-reminder {
+    color: #f00 !important;
+  }
+
+  .point-box,
+  .wwi-total {
+    background: #ffff99 !important;
+    color: #000 !important;
+    border-color: #000 !important;
+  }
+
+  .wwi-results-box,
+  .wwi-results-box h4,
+  .wwi-results-box div,
+  .wwi-results-box strong {
+    border-color: #000 !important;
+  }
+}
+
+@media print {
+  .score-card-details {
+    border: none !important;
+    background: transparent !important;
+    overflow: visible !important;
+  }
+
+  .score-card-details:not([open]) {
+    display: block !important;
+  }
+
+  .score-card-editor {
+    display: block !important;
+    padding: 0 !important;
+    border: none !important;
+  }
+
+  .score-sheet-scroll {
+    overflow: visible !important;
+  }
+}
+
+@media print {
+  .score-card-mobile-editor {
+    display: none !important;
+  }
+
+  .score-sheet-desktop {
+    display: block !important;
+  }
+}
+
+@media print {
+  .score-card-mobile-editor,
+  .score-card-screen-helper {
+    display: none !important;
+  }
+
+  .score-sheet-desktop {
+    display: block !important;
+  }
+}
+
+@media print {
+  @page {
+    size: A4 landscape;
+    margin: 6mm;
+  }
+
+  body {
+    background: white;
+    color: black;
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+  }
+
+  .no-print,
+  #app > *:not(.print-only-fullscreen-overlay) {
+    display: none !important;
+  }
+
+  .print-only-fullscreen-overlay {
+    display: block !important;
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: white;
+    z-index: 999999;
+  }
+
+  /* Matrix ScoreCard Layout */
+  .scorecard-print-view.matrix-layout {
+    width: 100%;
+    max-width: 100%;
+    page-break-after: always;
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  .matrix-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 6px;
+    font-weight: bold;
+    font-size: 1rem;
+  }
+
+  .matrix-header .header-field {
+    display: flex;
+    align-items: flex-end;
+  }
+
+  .matrix-header .header-field.wide {
+    flex-grow: 1;
+    margin: 0 20px;
+  }
+
+  .matrix-header .label {
+    margin-right: 10px;
+  }
+
+  .matrix-header .value-line {
+    border-bottom: 1px solid black;
+    min-width: 100px;
+    display: inline-block;
+    padding-bottom: 2px;
+  }
+
+  .matrix-header .header-field.wide .value-line {
+    width: 100%;
+  }
+
+  .matrix-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.8rem;
+  }
+
+  .matrix-table th,
+  .matrix-table td {
+    border: 1px solid black;
+    padding: 2px 4px;
+    vertical-align: middle;
+  }
+
+  .col-round {
+    width: 16%;
+    padding: 0 !important;
+  }
+
+  .round-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 2px 4px;
+    background: #f0f0f0 !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+    border-bottom: 1px solid black;
+  }
+
+  .round-header .grey-box {
+    width: 40px;
+    height: 20px;
+    background: #ddd !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  /* Input Groups inside matrix */
+  .print-input-group {
+    display: flex;
+    flex-direction: column;
+    padding: 2px 0;
+  }
+
+  .print-labels {
+    display: flex;
+    justify-content: flex-start;
+    gap: 20px;
+    font-size: 0.7rem;
+    padding-left: 2px;
+  }
+
+  .print-labels span {
+    width: 35px;
+  }
+
+  .print-labels .yellow-label {
+    flex-grow: 1;
+    text-align: right;
+  }
+
+  .print-boxes {
+    display: flex;
+    gap: 5px;
+    margin-top: 2px;
+  }
+
+  .print-box {
+    border: 1px solid black;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+  }
+
+  .white-box {
+    width: 35px;
+    background: white;
+  }
+
+  .white-box.wide {
+    width: 75px;
+  }
+
+  .yellow-box {
+    width: 40px;
+    background: #ffffcc !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+    margin-left: auto;
+  }
+
+  .yellow-box.wide-yellow {
+    width: 60px;
+  }
+
+  .boolean-group .print-labels {
+    gap: 5px;
+  }
+
+  .boolean-group .print-labels span {
+    width: 35px;
+    text-align: center;
+  }
+
+  /* Bottom Bar (Warnings & Totals) */
+  .print-bottom-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 2px solid black;
+  }
+
+  .horizontal-warnings {
+    font-size: 0.9rem;
+  }
+
+  .horizontal-warnings .red-text {
+    color: red !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+    font-weight: bold;
+  }
+
+  .final-totals-box {
+    display: flex;
+    gap: 30px;
+  }
+
+  .total-field {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .total-field .label {
+    font-weight: bold;
+    font-size: 1rem;
+    margin-bottom: 3px;
+  }
+
+  .huge-yellow, .huge-white {
+    width: 60px;
+    height: 30px;
+    font-size: 1.2rem;
+  }
+
+  /* Bottom rows inside matrix */
+  .row-summe td {
+    border-top: 2px solid black;
+    border-bottom: 2px solid black;
+    vertical-align: middle;
+  }
+
+  .sum-box-container {
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .matrix-text-row td {
+    border-bottom: 1px solid #ccc;
+    padding: 6px 4px;
+  }
+
+  .write-line-cell {
+    border-bottom: 1px solid black;
+    min-height: 16px;
+    width: 90%;
+    margin: 0 auto;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+  }
+
+  .write-line-cell .line-content {
+    font-weight: bold;
+    padding-bottom: 2px;
+  }
+}
+
+@media print {
+  .wwi-matrix-layout {
+    width: 100%;
+    page-break-after: always;
+    page-break-inside: avoid;
+    break-inside: avoid;
+    font-family: Arial, sans-serif;
+    color: black;
+    font-size: 11px;
+  }
+
+  .wwi-header {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 5px;
+    align-items: flex-end;
+  }
+
+  .wwi-header-item {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  
+  .wwi-header-item.right-align {
+    margin-left: auto;
+    flex-direction: row;
+    align-items: flex-end;
+  }
+
+  .header-line {
+    border-bottom: 1px solid black;
+    min-width: 130px;
+    font-size: 13px;
+    font-weight: bold;
+    padding-bottom: 0px;
+  }
+
+  .wwi-main-layout {
+    display: flex;
+    gap: 10px;
+  }
+
+  .wwi-matrix-table {
+    flex: 1;
+    border-collapse: collapse;
+  }
+
+  .wwi-matrix-table td, .wwi-matrix-table th {
+    padding: 1px 4px;
+  }
+
+  .wwi-matrix-table .section-title {
+    font-size: 12px;
+    padding-bottom: 2px;
+    padding-top: 4px;
+  }
+
+  .wwi-matrix-table .row-label {
+    vertical-align: bottom;
+    font-size: 11px;
+    line-height: 1.1;
+  }
+
+  .wwi-matrix-table .check-col {
+    padding: 1px 4px;
+  }
+
+  .wwi-matrix-table .points-col {
+    padding-left: 4px;
+  }
+
+  .wwi-ja-nein, .wwi-min-sek, .wwi-cuts {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .jn-header, .ms-header, .cuts-header {
+    display: flex;
+    font-size: 8px;
+    line-height: 1;
+  }
+
+  .jn-header span, .ms-header span {
+    flex: 1;
+  }
+
+  .jn-boxes, .ms-boxes, .cuts-boxes {
+    display: flex;
+    height: 14px;
+  }
+
+  .jn-box, .ms-box, .cuts-box {
+    flex: 1;
+    border: 1px solid black;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 11px;
+  }
+  
+  .jn-box.checked {
+    font-size: 13px;
+  }
+
+  .jn-boxes .jn-box:first-child, .ms-boxes .ms-box:first-child, .cuts-boxes .cuts-box:first-child {
+    border-right: none;
+  }
+
+  .empty {
+    background: transparent !important;
+  }
+
+  .wwi-points-box {
+    border: 1px solid black;
+    height: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    padding: 0 4px;
+    white-space: nowrap;
+    background: #ffffcc !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+    font-size: 10px;
+  }
+
+  .yellow-box {
+    background: #ffffcc !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .highlight-yellow {
+    background: #ffffcc !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+    padding: 0 2px;
+  }
+
+  .wwi-print-box {
+    border: 1px solid black;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+  }
+
+  .large-box {
+    width: 60px;
+    height: 20px;
+    background: white !important;
+  }
+
+  .wwi-sum-row td {
+    padding-top: 4px;
+  }
+  
+  .wwi-line {
+    border-bottom: 1px solid black;
+    height: 14px;
+    width: 100%;
+    font-family: monospace;
+    font-size: 11px;
+  }
+
+  .wwi-print-sig {
+    max-height: 18px;
+    max-width: 100%;
+    display: block;
+    margin: 0 auto;
+  }
+}
