@@ -97,6 +97,10 @@
         ON pilots FOR UPDATE 
         USING (LOWER(auth.jwt()->>'email') = LOWER(email));
 
+    CREATE POLICY "Pilotit voivat luoda oman kortin" 
+        ON pilots FOR INSERT 
+        WITH CHECK (LOWER(auth.jwt()->>'email') = LOWER(email));
+
 
     -- ==============================================================================
     -- 4. EVENTS TABLE
