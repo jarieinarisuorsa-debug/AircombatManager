@@ -383,3 +383,47 @@
     color: #fff;
   }
 }
+
+/* ----------------------------------
+   CHAT MODE (WhatsApp-tyylinen layout)
+   Käytetään vain Viestit-näkymässä!
+------------------------------------- */
+body.chat-mode {
+  height: 100dvh;
+  overflow: hidden;
+}
+
+body.chat-mode .app-shell {
+  height: 100dvh;
+  overflow: hidden;
+}
+
+body.chat-mode .content {
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  min-height: 0; /* Pakottaa sisällön joustamaan Grid/Flex-paineessa */
+  overflow: hidden;
+}
+
+body.chat-mode .view {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  padding: 0;
+  margin: 0;
+  animation: none; /* Poistetaan fade-in animaatio, joka estää kosketuksen Safarilla fixed/sticky elementeissä */
+  transform: none !important;
+}
+
+/* Piilotetaan kaikki ylimääräinen jotta saadaan puhdas WhatsApp-kokemus */
+body.chat-mode .toolbar-banner,
+body.chat-mode .topbar.hero-identity {
+  display: none !important;
+}
+
+body.chat-mode .sidebar {
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0; /* Estetään kutistuminen */
+}

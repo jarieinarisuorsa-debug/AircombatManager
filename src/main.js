@@ -261,6 +261,14 @@ export function renderApp() {
     return;
   }
   
+  const path = location.hash || "#/";
+
+  if (path === "#messages") {
+    document.body.classList.add("chat-mode");
+  } else {
+    document.body.classList.remove("chat-mode");
+  }
+
   if (routeKey === "login") {
     if (navEl) navEl.innerHTML = "";
     if (activeEventPillEl) activeEventPillEl.textContent = "";
@@ -317,7 +325,7 @@ export function renderApp() {
   setTimeout(() => {
     const chatContainer = document.getElementById("chat-messages-container");
     if (chatContainer) {
-      window.scrollTo({ top: document.body.scrollHeight, behavior: 'instant' });
+      chatContainer.scrollTop = chatContainer.scrollHeight;
     }
   }, 10);
 }
@@ -346,7 +354,7 @@ export function updateMessagesDOM() {
       
       container.innerHTML = m.renderMessagesContent(state, currentUserId);
       setTimeout(() => {
-        window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+        container.scrollTop = container.scrollHeight;
       }, 10);
     });
   });
