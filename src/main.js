@@ -214,6 +214,27 @@ async function initApp() {
         if (permissions) {
           updateState(state => { state.permissions = permissions; }, "init_permissions");
         }
+        
+        // Kytketään WhatsApp-tyylinen reaaliaikainen viestien kuuntelu
+        import("./services/supabaseClient.js").then(m => {
+          if (m.supabase) {
+            m.supabase
+              .channel('public:messages')
+              .on('postgres_changes', { event: '*', schema: 'public', table: 'messages' }, () => {
+                // Kun viestitaulussa tapahtuu muutos (uusi viesti / luettu), haetaan tuoreet viestit
+                import("./services/cloudStore.js").then(cloud => {
+                  cloud.fetchMessagesFromCloud().then(msgs => {
+                    updateState(state => {
+                      state.messages = msgs;
+                    }, "realtime_messages");
+                    renderApp(); // Päivittää ruudun välittömästi muille
+                  });
+                });
+              })
+              .subscribe();
+          }
+        }).catch(err => console.error("Realtime init failed:", err));
+        
       }
     } catch (err) {
       console.error("Failed to fetch cloud data:", err);
