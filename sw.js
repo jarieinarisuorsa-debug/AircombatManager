@@ -1,4 +1,4 @@
-const CACHE_NAME = 'aircombat-manager-v34';
+const CACHE_NAME = 'aircombat-manager-v35';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
