@@ -101,19 +101,6 @@ export function renderMyPilotCardView(state) {
     </div>
   `);
 
-  const dangerZonePanel = UI.Panel({
-    title: t(state, "my_pilot.danger_zone"),
-    className: "pilot-card-danger-zone",
-    style: "border: 1px solid var(--danger); background: rgba(255,0,0,0.05); margin-top: 20px;"
-  }, `
-    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
-      <div>
-        <h4 style="margin: 0 0 5px 0; color: var(--danger);">${t(state, "my_pilot.del_acc_title")}</h4>
-        <p class="muted" style="margin: 0; font-size: 0.9rem;">${t(state, "my_pilot.del_acc_msg")}</p>
-      </div>
-      ${UI.Button({ label: t(state, "my_pilot.del_acc_btn"), action: "execute-confirm-modal", title: t(state, "my_pilot.del_acc_title"), message: t(state, "my_pilot.del_acc_confirm"), confirmText: t(state, "my_pilot.del_acc_word"), confirmAction: "delete-own-account", variant: "danger" })}
-    </div>
-  `);
 
   // --- VÄLILEHTI 2: ILMOITTAUTUMINEN ---
   let registrationPanelContent = "";
@@ -335,6 +322,25 @@ export function renderMyPilotCardView(state) {
     logbookContent = renderLogbookPanel(state, pilot);
   }
 
+  // --- VÄLILEHTI 6: POISTA TILI ---
+  let deleteAccountContent = "";
+  if (tab === 'poista') {
+    deleteAccountContent = UI.FormPanel({
+      title: t(state, "my_pilot.del_acc_title"),
+      action: "delete-account-with-password",
+      className: "pilot-card-danger-zone",
+      style: "border: 1px solid var(--danger); background: rgba(255,0,0,0.05);"
+    }, `
+      <p style="margin-bottom: 20px;">${t(state, "my_pilot.del_acc_msg")}</p>
+      <div style="margin-bottom: 20px; max-width: 300px;">
+        ${UI.Input({ label: t(state, "auth.password") || "Salasana", name: "password", type: "password", required: true, autocomplete: "current-password" })}
+      </div>
+      <div style="display: flex; gap: 10px;">
+        ${UI.Button({ label: t(state, "my_pilot.del_acc_btn"), type: "submit", variant: "danger" })}
+      </div>
+    `);
+  }
+
   // --- RAKENNA VÄLILEHDET ---
   const tabNavigation = `
     <div class="ui-tabs" style="display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 1px solid var(--border); padding-bottom: 10px; overflow-x: auto;">
@@ -343,12 +349,13 @@ export function renderMyPilotCardView(state) {
       <button type="button" class="button ${tab === 'konekortit' ? 'primary' : 'dashed'}" data-action="set-my-pilot-tab" data-tab="konekortit">${t(state, "my_pilot.tab_ac").replace("{count}", pilotPlanes.length)}</button>
       <button type="button" class="button ${tab === 'kilpailu' ? 'primary' : 'dashed'}" data-action="set-my-pilot-tab" data-tab="kilpailu">${t(state, "my_pilot.tab_comp")}</button>
       <button type="button" class="button ${tab === 'logbook' ? 'primary' : 'dashed'}" data-action="set-my-pilot-tab" data-tab="logbook">${t(state, "my_pilot.tab_logbook")}</button>
+      <button type="button" class="button ${tab === 'poista' ? 'danger' : 'dashed danger'}" data-action="set-my-pilot-tab" data-tab="poista">${t(state, "my_pilot.del_acc_btn") || "Poista tili"}</button>
     </div>
   `;
 
   let tabContent = "";
   if (tab === 'perustiedot') {
-    tabContent = `<div class="stack">${avatarPanel}${detailedInfoForm}${dangerZonePanel}</div>`;
+    tabContent = `<div class="stack">${avatarPanel}${detailedInfoForm}</div>`;
   } else if (tab === 'ilmoittautuminen') {
     tabContent = `<div class="stack">${registrationPanel}</div>`;
   } else if (tab === 'konekortit') {
@@ -357,6 +364,8 @@ export function renderMyPilotCardView(state) {
     tabContent = `<div class="stack">${eventPanel}</div>`;
   } else if (tab === 'logbook') {
     tabContent = logbookContent;
+  } else if (tab === 'poista') {
+    tabContent = deleteAccountContent;
   }
 
   return `

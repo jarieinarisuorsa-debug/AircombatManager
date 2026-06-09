@@ -331,7 +331,12 @@ export function renderApp() {
     langBtn.textContent = `🌐 ${state.settings?.language === 'en' ? 'FI' : 'EN'}`;
   }
 
-  appEl.innerHTML = route.render(state) + renderConfirmModal(state) + renderAlertModal(state);
+  appEl.innerHTML = route.render(state);
+  
+  const modalContainer = document.getElementById("modal-container");
+  if (modalContainer) {
+    modalContainer.innerHTML = renderConfirmModal(state) + renderAlertModal(state);
+  }
 
   const entryForm = appEl.querySelector("form[data-action='add-entry']");
   if (entryForm) updateEntryFormVisibility(entryForm);

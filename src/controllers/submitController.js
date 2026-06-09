@@ -53,8 +53,8 @@ const SUBMIT_ACTIONS = {
       senderId = "admin"; // Admin-tilassa aina Järjestäjä
     } else if (pilot) {
       senderId = pilot.id; // Pilotti-tilassa, jos oma profiili löytyy, käytetään sitä
-    } else if (actualAdmin && state.pilots?.length > 0) {
-      senderId = state.pilots[0].id; // Admin-esikatselu, jos omaa profiilia ei ole
+    } else if (actualAdmin) {
+      senderId = state.pilots?.[0]?.id || "admin"; // Admin-esikatselu
     }
 
     if (!senderId) {

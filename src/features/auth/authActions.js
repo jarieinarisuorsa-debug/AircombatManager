@@ -216,15 +216,29 @@ export function initAuthActions() {
     }
   });
 
-  registerAction("delete-own-account", async () => {
+  registerAction("delete-account-with-password", async (event, form, { renderApp }) => {
+    event.preventDefault();
+    const formData = new FormData(form);
+    const password = formData.get("password");
+    if (!password) return;
+    
     try {
+      const { showToast } = await import("../../core/alertActions.js");
+      showToast("Varmistetaan salasanaa...", "info");
+      
+      const { signInWithPassword, deleteOwnAccount } = await import("../../services/authService.js");
+      const state = getState();
+      const email = state.auth?.user?.email || state.settings?.userEmail;
+      
+      // Varmistetaan ensin salasana kirjautumalla sisään
+      await signInWithPassword(email, password);
+      
       showToast("Poistetaan tiliä...", "info");
-      const { deleteOwnAccount } = await import("../../services/authService.js");
       await deleteOwnAccount();
       
-      updateState((state) => {
-        state.auth.user = null;
-        if (state.settings) state.settings.userEmail = "";
+      updateState((s) => {
+        s.auth.user = null;
+        if (s.settings) s.settings.userEmail = "";
       }, "delete_own_account");
 
       showToast("Tilisi on poistettu onnistuneesti.", "success");
@@ -232,7 +246,8 @@ export function initAuthActions() {
       window.location.reload();
     } catch (err) {
       console.error("Account deletion failed:", err);
-      showToast(t(getState(), "auth_actions.del_failed") + err.message, "error");
+      const { showToast } = await import("../../core/alertActions.js");
+      showToast("Salasana on virheellinen tai poisto epäonnistui: " + err.message, "error");
     }
   });
 }
