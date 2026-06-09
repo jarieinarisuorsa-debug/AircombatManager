@@ -92,7 +92,7 @@ export function addPermission(data) {
     }
     
     state.permissions.push({
-      id: `perm-${Date.now()}-${Math.random().toString(36).substr(2, 5)}`,
+      id: crypto.randomUUID(),
       email,
       role
     });
@@ -109,7 +109,7 @@ export function updatePermissionRole(id, role) {
     } else if (id.startsWith('mig-')) {
       // Legacy email needs to be moved to state.permissions
       const email = id.replace('mig-', '');
-      state.permissions.push({ id: `perm-${Date.now()}`, email, role });
+      state.permissions.push({ id: crypto.randomUUID(), email, role });
       if (state.settings.adminEmails) state.settings.adminEmails = state.settings.adminEmails.filter(e => e.toLowerCase() !== email.toLowerCase());
       if (state.settings.publicEmails) state.settings.publicEmails = state.settings.publicEmails.filter(e => e.toLowerCase() !== email.toLowerCase());
     }
