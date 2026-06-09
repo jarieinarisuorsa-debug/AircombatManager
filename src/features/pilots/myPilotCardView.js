@@ -295,7 +295,7 @@ export function renderMyPilotCardView(state) {
           <h3 style="margin: 0; font-size: 1.1rem; color: var(--primary);">${escapeHtml(row.className)}</h3>
           <span class="badge ${row.card?.updatedAt ? "badge-saved" : "badge-empty"}">${row.card?.updatedAt ? t(state, "my_pilot.saved") : t(state, "my_pilot.no_results")}</span>
         </div>
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px;">
           <div style="background: rgba(0,0,0,0.1); padding: 10px; border-radius: 6px; text-align: center;">
             <div style="font-size: 0.7rem; text-transform: uppercase; color: var(--text-muted); margin-bottom: 5px;">${t(state, "my_pilot.total_points")}</div>
             <div style="font-size: 1.2rem; font-weight: bold; color: var(--success);">${row.totals.totalPoints}</div>
@@ -304,6 +304,10 @@ export function renderMyPilotCardView(state) {
             <div style="font-size: 0.7rem; text-transform: uppercase; color: var(--text-muted); margin-bottom: 5px;">${t(state, "my_pilot.cuts")}</div>
             <div style="font-size: 1.2rem; font-weight: bold; color: var(--danger);">${row.totals.totalCuts}</div>
           </div>
+        </div>
+        <div style="display: flex; gap: 10px;">
+          <a href="#/scorecard/${escapeHtml(row.entry.id)}" class="button dashed" style="flex: 1; text-align: center;">Avaa tuloskortti</a>
+          <button type="button" class="button primary" data-action="show-qr-code" data-entry-id="${escapeHtml(row.entry.id)}" style="flex: 1;">📱 Näytä QR-koodi</button>
         </div>
       </div>
     `).join('') + `</div>`;

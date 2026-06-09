@@ -109,6 +109,9 @@ export async function signUpWithPassword(email, password) {
 
     if (error) throw error;
 
+    // Try to ensure permission row exists immediately so Admin sees it as pending
+    await ensurePermissionRequestExists(cleanEmail);
+
     return data;
   }
 

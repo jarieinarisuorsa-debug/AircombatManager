@@ -14,6 +14,7 @@ import { formatDuration } from "./ScoreCardUtils.js";
 import { renderScoreCardPrintView } from "./ScoreCardPrintView.js";
 import { renderScoreCardTabbedEditor } from "./ScoreCardTabbedEditor.js";
 import { t } from "../../../utils/i18n.js";
+import { getState } from "../../../state/store.js";
 
 export function renderScoreCardEditorView(state) {
   const activeEvent = getActiveEvent(state);
@@ -54,6 +55,7 @@ export function renderScoreCardsView(state) {
 }
 
 export function renderScoreCardForm(activeEvent, row, options = {}) {
+  const state = getState();
   const { entry, card } = row;
   const template = getScoreCardTemplate({ card, event: activeEvent, entry, aircraft: row.aircraft });
   const stages = getScoreCardStructureStages({ card, event: activeEvent, entry, aircraft: row.aircraft });
@@ -106,8 +108,9 @@ export function renderScoreCardForm(activeEvent, row, options = {}) {
   }
 
   const rightActionsHtml = isPilotMode ? `
-    <button type="submit" class="button primary" style="flex: 1; padding: 14px 20px; font-size: 1.1rem; font-weight: bold;">${t(state, "scorecard_editor.save_submit")}</button>
-    <a class="button dashed" style="flex: 1; padding: 14px 20px; font-size: 1.1rem; display: flex; justify-content: center; align-items: center;" href="${backUrl}">${t(state, "common.close")}</a>
+    <button type="button" class="button outline" style="flex: 1; padding: 14px 10px; font-size: 1.1rem;" data-action="show-qr-code" data-entry-id="${escapeHtml(entry.id)}" title="Näytä QR-koodi tuomarille">QR-koodi</button>
+    <button type="submit" class="button primary" style="flex: 1; padding: 14px 10px; font-size: 1.1rem; font-weight: bold;">${t(state, "scorecard_editor.save_submit")}</button>
+    <a class="button dashed" style="flex: 1; padding: 14px 10px; font-size: 1.1rem; display: flex; justify-content: center; align-items: center;" href="${backUrl}">${t(state, "common.close")}</a>
   ` : `
     <button type="submit" class="button primary" style="flex: 1; padding: 14px 20px; font-size: 1.1rem; font-weight: bold;">${t(state, "common.save")}</button>
     <button type="button" class="button outline" style="flex: 1; padding: 14px 20px; font-size: 1.1rem;" data-action="print-page" title="${t(state, "scorecard_editor.print_tooltip")}">${t(state, "common.print")}</button>

@@ -56,6 +56,40 @@ function runUiClickAction(action, button, { renderApp }) {
     window.print();
     return true;
   }
+  if (action === "show-qr-code") {
+    const entryId = button.dataset.entryId;
+    Promise.all([
+      import("../features/scorecards/components/ScoreCardQR.js"),
+      import("../logic/scoreCards.js"),
+      import("../utils/html.js"),
+      import("../state/store.js")
+    ]).then(([ScoreCardQR, logic, htmlUtils, store]) => {
+      const state = store.getState();
+      const event = htmlUtils.getActiveEvent(state);
+      const rows = logic.buildScoreCardRows(state, event);
+      const row = rows.find(r => r.entry.id === entryId);
+      if (row) {
+        document.getElementById("modal-container").innerHTML = ScoreCardQR.renderQRGeneratorModal(row.card, row.pilotName);
+      }
+    });
+    return true;
+  }
+  
+  if (action === "open-qr-scanner") {
+    import("../features/scorecards/components/ScoreCardQR.js").then((ScoreCardQR) => {
+      document.getElementById("modal-container").innerHTML = ScoreCardQR.renderQRScannerModal();
+    });
+    return true;
+  }
+
+  if (action === "close-qr-scanner") {
+    if (window._currentQrScanner) {
+      window._currentQrScanner.stop().catch(e => console.error(e));
+      window._currentQrScanner = null;
+    }
+    document.getElementById("modal-container").innerHTML = "";
+    return true;
+  }
 
   if (action === "print-page" || action === "print-empty-pilot" || action === "print-empty-blank") {
     const executePrint = (mode) => {

@@ -67,6 +67,7 @@ if (window.__appListenersAdded) {
   document.removeEventListener("change", window.__appChangeHandler);
   document.removeEventListener("input", window.__appInputHandler);
   document.removeEventListener("keydown", window.__appKeydownHandler);
+  document.removeEventListener("qr-scanned", window.__appQrScannedHandler);
 }
 
 window.__appHashHandler = renderApp;
@@ -82,6 +83,37 @@ document.addEventListener("click", window.__appClickHandler);
 document.addEventListener("change", window.__appChangeHandler);
 document.addEventListener("input", window.__appInputHandler);
 document.addEventListener("keydown", window.__appKeydownHandler);
+
+window.__appQrScannedHandler = (e) => {
+  const payload = e.detail;
+  import("./features/scorecards/components/ScoreCardQR.js").then(qr => {
+    import("./logic/scoreCards.js").then(logic => {
+      const state = getState();
+      try {
+          const data = JSON.parse(payload);
+          const entryId = data.e;
+          const event = getActiveEvent(state);
+          const entry = state.entries.find(en => en.id === entryId);
+          if (!entry) throw new Error("Osallistujaa ei löytynyt");
+          
+          const existingCard = logic.getScoreCardForEntry(state, event, entry);
+          const updatedCard = qr.decompressScoreCard(payload, existingCard);
+          if (updatedCard) {
+              updatedCard.updatedAt = new Date().toISOString();
+              updateState(s => {
+                  const idx = s.scoreCards.findIndex(c => c.id === updatedCard.id);
+                  if (idx >= 0) s.scoreCards[idx] = updatedCard;
+                  else s.scoreCards.push(updatedCard);
+              }, "qr_scan_save");
+              renderApp();
+          }
+      } catch (err) {
+          alert("Virheellinen QR-koodi: " + err.message);
+      }
+    });
+  });
+};
+document.addEventListener("qr-scanned", window.__appQrScannedHandler);
 
 window.__appListenersAdded = true;
 
