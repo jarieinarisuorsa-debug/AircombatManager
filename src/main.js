@@ -428,7 +428,7 @@ function renderNavigation(state, routeKey) {
        </a>`;
 
   const creditsItemHtml = `
-    <a href="#/about" style="cursor: pointer; margin-top: 10px;" class="${routeKey === "about" ? "active" : ""}">
+    <a href="#/about" style="cursor: pointer;" class="nav-item-about ${routeKey === "about" ? "active" : ""}">
       <span class="nav-icon">
         <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
       </span>

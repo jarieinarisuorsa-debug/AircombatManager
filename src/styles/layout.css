@@ -392,6 +392,7 @@
 html.chat-mode,
 body.chat-mode {
   height: 100dvh;
+  min-height: 100dvh;
   max-height: 100dvh;
   overflow: hidden;
   margin: 0;
@@ -400,6 +401,7 @@ body.chat-mode {
 
 body.chat-mode .app-shell {
   height: 100dvh;
+  min-height: 100dvh;
   max-height: 100dvh;
   overflow: hidden;
   grid-template-rows: minmax(0, 1fr); /* Pakottaa yhden rivin tietokoneella (280px 1fr) */
