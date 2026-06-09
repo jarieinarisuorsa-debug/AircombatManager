@@ -106,6 +106,12 @@ export function updatePermissionRole(id, role) {
     const perm = state.permissions.find(p => p.id === id);
     if (perm) {
       perm.role = role;
+    } else if (id.startsWith('mig-')) {
+      // Legacy email needs to be moved to state.permissions
+      const email = id.replace('mig-', '');
+      state.permissions.push({ id: `perm-${Date.now()}`, email, role });
+      if (state.settings.adminEmails) state.settings.adminEmails = state.settings.adminEmails.filter(e => e.toLowerCase() !== email.toLowerCase());
+      if (state.settings.publicEmails) state.settings.publicEmails = state.settings.publicEmails.filter(e => e.toLowerCase() !== email.toLowerCase());
     }
   }, "update_permission_role");
 }
@@ -113,7 +119,18 @@ export function updatePermissionRole(id, role) {
 export function removePermission(id) {
   updateState((state) => {
     requireAdmin(state);
-    state.permissions = (state.permissions || []).filter(p => p.id !== id);
+    if (state.permissions) {
+      state.permissions = state.permissions.filter(p => p.id !== id);
+    }
+    if (id.startsWith('mig-')) {
+      const email = id.replace('mig-', '');
+      if (state.settings.adminEmails) {
+        state.settings.adminEmails = state.settings.adminEmails.filter(e => e.toLowerCase() !== email.toLowerCase());
+      }
+      if (state.settings.publicEmails) {
+        state.settings.publicEmails = state.settings.publicEmails.filter(e => e.toLowerCase() !== email.toLowerCase());
+      }
+    }
   }, "remove_permission");
 }
 

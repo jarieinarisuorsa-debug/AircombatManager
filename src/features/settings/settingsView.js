@@ -51,7 +51,7 @@ export function renderSettingsView(state) {
     const permissionRows = sortedPermissions.map(perm => `
       <tr style="border-bottom: 1px solid var(--border); ${perm.role === 'pending' ? 'background: rgba(255, 193, 7, 0.1);' : ''}">
         <td style="padding: 10px;">
-          ${escapeHtml(perm.email)}
+          <span style="filter: blur(4px); user-select: none; transition: filter 0.3s;" onmouseover="this.style.filter='none'" onmouseout="this.style.filter='blur(4px)'" title="Näytä sähköposti">${escapeHtml(perm.email)}</span>
           ${perm.role === 'pending' ? `<br><span style="font-size: 0.8rem; color: #ffc107; font-weight: bold;">${t(state, "settings.new_request")}</span>` : ''}
         </td>
         <td style="padding: 10px;">
@@ -70,11 +70,11 @@ export function renderSettingsView(state) {
     const tableHtml = permissions.length > 0 ? `
       <div style="max-height: 400px; overflow-y: auto; border: 1px solid var(--border); border-radius: 8px; margin-bottom: 20px;">
         <table style="width: 100%; border-collapse: collapse; margin: 0;">
-          <thead style="position: sticky; top: 0; background: var(--surface); z-index: 1;">
+          <thead style="position: sticky; top: 0; z-index: 10;">
             <tr style="border-bottom: 2px solid var(--border); text-align: left;">
-              <th style="padding: 10px;">${t(state, "settings.email")}</th>
-              <th style="padding: 10px;">${t(state, "settings.role")}</th>
-              <th style="padding: 10px;"></th>
+              <th style="padding: 10px; background: var(--bg);">${t(state, "settings.email")}</th>
+              <th style="padding: 10px; background: var(--bg);">${t(state, "settings.role")}</th>
+              <th style="padding: 10px; background: var(--bg);"></th>
             </tr>
           </thead>
           <tbody>
