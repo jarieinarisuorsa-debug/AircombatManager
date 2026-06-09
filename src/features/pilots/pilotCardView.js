@@ -29,7 +29,6 @@ export function renderPilotCardView(state) {
   const pageHeader = UI.PageHeader({
     kicker: "Pilottikortti",
     title: pilot.name,
-    subtitle: activeEvent ? `Aktiivinen kilpailu: ${activeEvent.name}` : "Ei aktiivista kilpailua",
     headerActions: backButton
   });
 

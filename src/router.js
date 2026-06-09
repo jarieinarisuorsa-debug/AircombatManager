@@ -25,6 +25,7 @@ import { renderSeasonStandingsView } from "./features/results/seasonStandingsVie
 import { renderMessagesView } from "./features/messages/messagesView.js";
 
 import { renderAuthView } from "./features/auth/authView.js";
+import { renderAboutView } from "./features/about/aboutView.js";
 
 export const ROUTES = {
   login: { title: "Kirjaudu sisään", render: renderAuthView },
@@ -49,6 +50,7 @@ export const ROUTES = {
   scorecards: { title: "Tuloskortit", render: renderScoreCardsView },
   scorecard: { title: "Tuloskortin syöttö", render: renderScoreCardEditorView },
   documents: { title: "Asiakirjat", render: renderDocumentsView },
+  about: { title: "Tietoja ohjelmasta", render: renderAboutView },
   results: { title: "Kilpailutulokset", render: renderResultsView },
   standings: { title: "Sarjataulukko", render: renderSeasonStandingsView },
   settings: { title: "Asetukset", render: renderSettingsView },

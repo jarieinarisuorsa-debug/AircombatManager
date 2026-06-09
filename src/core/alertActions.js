@@ -37,19 +37,6 @@ export function initAlertActions() {
     return true;
   });
 
-  registerAction("show-credits", (event, button, { renderApp }) => {
-    event.preventDefault(); // Prevent navigating to # and triggering router hashchange!
-    import("./confirmActions.js").then(({ openConfirmModal }) => {
-      openConfirmModal({
-        title: "Aircombat Competition Manager",
-        htmlMessage: "<p style='text-align: center; font-size: 1.1rem; margin-bottom: 20px;'>Tämä on demo!</p><p style='text-align: center;'>Ohjelman suunnitellut:<br/><strong style='color: var(--primary);'>Jari Suorsa &copy; 2026</strong></p>",
-        isDanger: false,
-        submitLabel: "Sulje",
-        hideCancel: true
-      });
-    });
-    return true;
-  });
 }
 
 export function renderAlertModal(state) {

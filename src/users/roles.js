@@ -34,7 +34,8 @@ export const ADMIN_ROUTE_KEYS = [
   "myevent",
   "mypilotcard",
   "standings",
-  "messages"
+  "messages",
+  "about"
 ];
 
 export const PILOT_ROUTE_KEYS = [
@@ -49,7 +50,8 @@ export const PILOT_ROUTE_KEYS = [
   "documents",
   "results",
   "standings",
-  "messages"
+  "messages",
+  "about"
 ];
 
 export const GUEST_ROUTE_KEYS = [
@@ -59,7 +61,8 @@ export const GUEST_ROUTE_KEYS = [
   "documents",
   "results",
   "standings",
-  "login"
+  "login",
+  "about"
 ];
 
 export const ADMIN_NAV_ROUTE_KEYS = [
