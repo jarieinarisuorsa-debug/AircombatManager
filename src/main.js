@@ -274,7 +274,8 @@ export function renderApp() {
   if (routeKey === "login") {
     if (navEl) navEl.innerHTML = "";
     if (activeEventPillEl) activeEventPillEl.textContent = "";
-    titleEl.textContent = typeof ROUTES.login.title === 'function' ? ROUTES.login.title(state) : ROUTES.login.title;
+    const loginTitle = typeof ROUTES.login.title === "function" ? ROUTES.login.title(state) : ROUTES.login.title;
+    titleEl.textContent = typeof loginTitle === "function" ? loginTitle(state) : loginTitle;
     appEl.innerHTML = ROUTES.login.render(state);
     const topbarRoleSelect = document.querySelector("#current-role-select");
     if (topbarRoleSelect) topbarRoleSelect.style.display = "none";
@@ -323,6 +324,11 @@ export function renderApp() {
     const isDark = state.settings?.theme === "dark" || (!state.settings?.theme && window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches);
     themeBtn.textContent = isDark ? t(state, "theme.sunlight") : t(state, "theme.dark");
     themeBtn.title = isDark ? t(state, "theme.switch_light") : t(state, "theme.switch_dark");
+  }
+
+  const langBtn = document.querySelector("#language-toggle-btn");
+  if (langBtn) {
+    langBtn.textContent = `🌐 ${state.settings?.language === 'en' ? 'FI' : 'EN'}`;
   }
 
   appEl.innerHTML = route.render(state) + renderConfirmModal(state) + renderAlertModal(state);

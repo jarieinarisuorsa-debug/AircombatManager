@@ -50,14 +50,9 @@ export function renderAuthView() {
 
   return `
     ${termsModal}
-    <div style="position: absolute; top: 15px; right: 20px;">
-      <button type="button" class="app-btn icon-btn" data-action="toggle-language" title="Vaihda kieli / Change language" style="background: rgba(255,255,255,0.1); border-radius: 6px; padding: 6px 12px; font-weight: bold;">
-        🌐 ${state.settings?.language === 'en' ? 'FI' : 'EN'}
-      </button>
-    </div>
     <div class="auth-container" style="max-width: 400px; margin: 40px auto; padding: 20px;">
       <div style="text-align: center; margin-bottom: 30px;">
-        <h2 style="margin-bottom: 10px;">Aircombat Manager</h2>
+        <h2 style="margin-bottom: 10px; margin-top: 20px;">Aircombat Manager</h2>
         <p style="color: var(--text-muted); font-size: 0.95rem;">
           ${titleText}
         </p>
@@ -66,8 +61,14 @@ export function renderAuthView() {
       ${UI.FormPanel({
         action: formAction,
         className: "auth-form",
-        autocomplete: "on"
+        autocomplete: "on",
+        style: "position: relative; padding-top: 40px;"
       }, `
+        <div style="position: absolute; top: 15px; right: 15px;">
+          <button type="button" class="app-btn icon-btn" data-action="toggle-language" title="Vaihda kieli / Change language" style="background: rgba(255,255,255,0.1); border-radius: 6px; padding: 4px 10px; font-weight: bold; border: 1px solid var(--border); font-size: 0.85rem;">
+            🌐 ${state.settings?.language === 'en' ? 'FI' : 'EN'}
+          </button>
+        </div>
         ${!isUpdate ? `
         <div style="margin-bottom: 20px;">
           ${UI.Input({

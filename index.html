@@ -32,9 +32,9 @@
             <h2 id="page-title"></h2>
           </div>
           <div id="topbar-actions" class="topbar-actions" style="display: flex; gap: 10px; align-items: center;">
-            <select id="current-role-select" class="role-select" style="display: none; width: auto;" title="Vaihda roolia testattavaksi"></select>
-            <button type="button" id="language-toggle-btn" class="button dashed small" data-action="toggle-language" title="Vaihda kieltä / Change language">FI / EN</button>
-            <button type="button" id="theme-toggle-btn" class="button dashed small" data-action="toggle-theme" title="Vaihda valoisaan aurinkotilaan">☀️ Aurinkotila</button>
+            <select id="current-role-select" class="role-select" style="display: none; width: auto; min-height: 36px; height: 36px; padding: 0 36px 0 12px; border-radius: 8px;" title="Vaihda roolia testattavaksi"></select>
+            <button type="button" id="language-toggle-btn" class="app-btn" data-action="toggle-language" title="Vaihda kieltä / Change language" style="background: rgba(255,255,255,0.05); border-radius: 8px; padding: 0 12px; min-height: 36px; height: 36px; font-weight: 500; border: 1px solid var(--border); font-size: 0.9rem;">🌐 FI</button>
+            <button type="button" id="theme-toggle-btn" class="app-btn" data-action="toggle-theme" title="Vaihda valoisaan aurinkotilaan" style="background: rgba(255,255,255,0.05); border-radius: 8px; padding: 0 12px; min-height: 36px; height: 36px; font-weight: 500; border: 1px solid var(--border); font-size: 0.9rem;">☀️ Aurinkotila</button>
           </div>
         </header>
 
@@ -67,7 +67,7 @@
       </div>
     </div>
 
-    <script type="module" src="./src/main.js?v=4"></script>
+    <script type="module" src="./src/main.js?v=5"></script>
     <script>
       if ('serviceWorker' in navigator) {
         if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
