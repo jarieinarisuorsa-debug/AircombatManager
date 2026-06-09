@@ -749,7 +749,8 @@ export async function syncAllFromCloud() {
       scoreCards,
       registrations,
       aircraftSpecs,
-      messages
+      messages,
+      settingsRows
     ] = await Promise.all([
       fetchEventsFromCloud(),
       fetchPilotsFromCloud(),
@@ -760,8 +761,14 @@ export async function syncAllFromCloud() {
       fetchScoreCardsFromCloud(),
       fetchRegistrationRequestsFromCloud(),
       fetchAircraftSpecsFromCloud(),
-      fetchMessagesFromCloud()
+      fetchMessagesFromCloud(),
+      supabase.from("settings").select("*")
     ]);
+
+    let settings = null;
+    if (settingsRows && settingsRows.data && settingsRows.data.length > 0) {
+      settings = settingsRows.data.find(r => r.id === 'global')?.data;
+    }
 
     return {
       events,
@@ -773,7 +780,8 @@ export async function syncAllFromCloud() {
       scoreCards,
       registrations,
       aircraftSpecs,
-      messages
+      messages,
+      settings
     };
   } catch (err) {
     console.error("Failed to sync all from cloud:", err);
@@ -872,5 +880,29 @@ export async function syncCloudFromState(oldState, newState) {
     const { addedOrUpdated, deleted } = findChangedItems(oldState.messages || [], newState.messages || []);
     if (addedOrUpdated.length > 0) await saveMessagesToCloud(addedOrUpdated);
     for (const m of deleted) await deleteFromCloud("messages", m.id);
+  }
+
+  // Sync Settings
+  if (oldState.settings !== newState.settings) {
+    // Only pick settings that we want to be global and synced
+    const globalSettings = {
+      organizerName: newState.settings.organizerName,
+      publicDisplayMode: newState.settings.publicDisplayMode,
+      organizationLogoData: newState.settings.organizationLogoData,
+      whatsappReceivers: newState.settings.whatsappReceivers
+    };
+    
+    // We stringify and parse to remove undefined values, ensuring clean JSONB
+    const cleanSettings = JSON.parse(JSON.stringify(globalSettings));
+    
+    const { error } = await supabase.from("settings").upsert({
+      id: "global",
+      data: cleanSettings,
+      updated_at: new Date().toISOString()
+    });
+    
+    if (error) {
+      console.error("Error saving settings to cloud:", error);
+    }
   }
 }
