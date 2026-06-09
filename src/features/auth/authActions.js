@@ -47,6 +47,9 @@ export function initAuthActions() {
     try {
       await signOut();
 
+      // Clear local storage for privacy, especially on shared devices
+      localStorage.clear();
+
       updateState((state) => {
         state.auth.user = null;
         if (state.settings) state.settings.userEmail = "";
