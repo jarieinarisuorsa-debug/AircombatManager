@@ -50,7 +50,7 @@ export function renderSettingsView(state) {
     const permissionRows = sortedPermissions.map(perm => `
       <tr style="border-bottom: 1px solid var(--border); ${perm.role === 'pending' ? 'background: rgba(255, 193, 7, 0.1);' : ''}">
         <td style="padding: 10px;">
-          <span style="filter: blur(4px); user-select: none; transition: filter 0.3s;" onmouseover="this.style.filter='none'" onmouseout="this.style.filter='blur(4px)'" title="Näytä sähköposti">${escapeHtml(perm.email)}</span>
+          <span class="blur-sensitive" title="Näytä sähköposti">${escapeHtml(perm.email)}</span>
           ${perm.role === 'pending' ? `<br><span style="font-size: 0.8rem; color: #ffc107; font-weight: bold;">${t(state, "settings.new_request")}</span>` : ''}
         </td>
         <td style="padding: 10px;">
@@ -148,8 +148,8 @@ export function renderSettingsView(state) {
     const receiverRows = receivers.map(r => `
       <tr style="border-bottom: 1px solid var(--border);">
         <td style="padding: 10px;"><strong>${escapeHtml(r.name)}</strong></td>
-        <td style="padding: 10px;">${escapeHtml(r.phone)}</td>
-        <td style="padding: 10px;"><span style="filter: blur(4px); user-select: none;">${escapeHtml(r.apikey)}</span></td>
+        <td style="padding: 10px;"><span class="blur-sensitive">${escapeHtml(r.phone)}</span></td>
+        <td style="padding: 10px;"><span class="blur-sensitive">${escapeHtml(r.apikey)}</span></td>
         <td style="padding: 10px; text-align: right; white-space: nowrap;">
           <button type="button" class="button small" data-action="test-whatsapp-receiver" data-id="${escapeHtml(r.id)}">${t(state, "settings.test")}</button>
           <button type="button" class="button small danger" data-action="remove-whatsapp-receiver" data-id="${escapeHtml(r.id)}" style="margin-left: 5px;">${t(state, "settings.remove")}</button>

@@ -152,8 +152,8 @@ export function renderPilotCardView(state) {
       ${UI.Input({ label: t(state, "pilot.name"), name: "name", value: pilot.name || "", required: true })}
       ${UI.Input({ label: t(state, "pilot.country"), name: "country", value: pilot.country || "", placeholder: "FI" })}
       ${UI.Input({ label: t(state, "pilot.club"), name: "club", value: pilot.club || "" })}
-      ${UI.Input({ label: t(state, "pilot.email"), name: "email", type: "email", value: pilot.email || "", placeholder: "nimi@esimerkki.com" })}
-      ${UI.Input({ label: t(state, "pilot.phone"), name: "phone", value: pilot.phone || "", placeholder: "+358..." })}
+      ${UI.Input({ label: t(state, "pilot.email"), name: "email", type: "email", value: pilot.email || "", placeholder: "nimi@esimerkki.com", className: "blur-sensitive" })}
+      ${UI.Input({ label: t(state, "pilot.phone"), name: "phone", value: pilot.phone || "", placeholder: "+358...", className: "blur-sensitive" })}
       ${UI.Input({ label: t(state, "pilot.license"), name: "license", value: pilot.license || "", placeholder: "esim. FIN-1234" })}
       ${UI.Input({ label: t(state, "pilot.address"), name: "address", value: pilot.address || "", placeholder: "Katuosoite, Postinumero, Kaupunki" })}
     `)}

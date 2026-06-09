@@ -749,3 +749,17 @@ th {
 .event-info-editor textarea {
   min-height: 110px;
 }
+
+/* Sensitive Data Blur */
+.blur-sensitive {
+  filter: blur(4px);
+  transition: filter 0.3s ease;
+  user-select: none;
+}
+
+.blur-sensitive:hover,
+.blur-sensitive:focus,
+.blur-sensitive:focus-within {
+  filter: none;
+  user-select: auto;
+}
