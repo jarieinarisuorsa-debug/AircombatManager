@@ -391,25 +391,6 @@ export function initSettingsActions() {
     return true;
   });
 
-  registerAction("reset-data", (event, button) => {
-    requireAdmin(getState());
-    openConfirmModal({
-      title: "Palauta demodata",
-      message: "Palautetaanko demodata? Nykyinen selaimen localStorage-data korvataan kokonaan.",
-      action: "execute-reset-data",
-      requireText: "PALAUTA DEMODATA"
-    });
-    return true;
-  });
-
-  registerAction("execute-reset-data", (event, button, { renderApp }) => {
-    requireAdmin(getState());
-    resetState();
-    renderApp();
-    showToast("Demodata palautettu", "success");
-    return true;
-  });
-
   registerAction("open-event-form", (event, button, { renderApp }) => {
     openEventForm();
     renderApp();

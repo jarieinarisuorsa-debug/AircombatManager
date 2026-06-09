@@ -15,7 +15,6 @@ export function renderSettingsView(state) {
       <button type="button" class="button ${tab === 'ulkoasu' ? 'primary' : 'dashed'}" data-action="set-settings-tab" data-tab="ulkoasu">${t(state, "settings.tab_branding")}</button>
       <button type="button" class="button ${tab === 'ilmoitukset' ? 'primary' : 'dashed'}" data-action="set-settings-tab" data-tab="ilmoitukset">${t(state, "settings.tab_notifications")}</button>
       <button type="button" class="button ${tab === 'varmuuskopiot' ? 'primary' : 'dashed'}" data-action="set-settings-tab" data-tab="varmuuskopiot">${t(state, "settings.tab_backups")}</button>
-      <button type="button" class="button ${tab === 'debug' ? 'primary' : 'dashed'}" data-action="set-settings-tab" data-tab="debug">${t(state, "settings.tab_debug")}</button>
     </nav>
   `;
 
@@ -217,16 +216,6 @@ export function renderSettingsView(state) {
           <input type="file" id="import-json-input" accept="application/json" />
         </label>
       </div>
-    `);
-  } else if (tab === "debug") {
-    content = UI.Panel({ kicker: t(state, "settings.system_kicker"), title: t(state, "settings.debug_title") }, `
-      <div style="border: 1px solid var(--danger); border-radius: 8px; padding: 16px; background: rgba(255,0,0,0.05); margin-bottom: 20px; max-width: 500px;">
-        <h4 style="color: var(--danger); margin-top: 0; margin-bottom: 8px;">${t(state, "settings.danger_zone")}</h4>
-        <p class="muted" style="margin-bottom: 16px;">${t(state, "settings.danger_desc")}</p>
-        ${UI.Button({ label: t(state, "settings.reset_data"), action: "reset-data", variant: "danger" })}
-      </div>
-      
-      <p class="muted">${t(state, "settings.debug_desc")}</p>
     `);
   }
 
