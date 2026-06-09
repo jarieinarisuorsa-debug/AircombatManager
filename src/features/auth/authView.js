@@ -79,6 +79,15 @@ export function renderAuthView() {
         </div>
         ` : ''}
 
+        ${isRegister ? `
+        <div style="margin-bottom: 20px;">
+          <label style="display: flex; align-items: flex-start; gap: 10px; cursor: pointer; font-size: 0.85rem; line-height: 1.4; color: var(--text-muted);">
+            <input type="checkbox" name="acceptTerms" required style="margin-top: 3px;" />
+            <span>${t(state, "auth.accept_terms_html")}</span>
+          </label>
+        </div>
+        ` : ''}
+
         <div style="margin-top: 25px;">
           <button type="submit" class="button primary" style="width: 100%; justify-content: center;">
             ${buttonText}
