@@ -62,7 +62,7 @@ export function renderSettingsView(state) {
           </select>
         </td>
         <td style="padding: 10px; text-align: right;">
-          <button type="button" class="button small danger" data-action="remove-permission" data-id="${escapeHtml(perm.id)}">${t(state, "settings.remove")}</button>
+          <button type="button" class="button small danger" data-action="remove-permission" data-id="${escapeHtml(perm.id)}" data-email="${escapeHtml(perm.email)}">${t(state, "settings.remove")}</button>
         </td>
       </tr>
     `).join("");

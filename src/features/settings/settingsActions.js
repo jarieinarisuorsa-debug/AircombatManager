@@ -220,9 +220,12 @@ export function initSettingsActions() {
 
   registerAction("remove-permission", (event, button) => {
     requireAdmin(getState());
+    const email = button.dataset.email;
     openConfirmModal({
       title: t(getState(), "settings_actions.del_right_title"),
-      message: t(getState(), "settings_actions.del_right_msg"),
+      message: email 
+        ? `Olet poistamassa käyttäjän ${email} oikeudet. Oletko varma?`
+        : t(getState(), "settings_actions.del_right_msg"),
       action: "execute-remove-permission",
       payload: { id: button.dataset.id }
     });
