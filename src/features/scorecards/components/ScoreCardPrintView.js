@@ -50,14 +50,19 @@ export function renderScoreCardPrintView(activeEvent, viewRow) {
             <th class="col-label" style="font-size: 0.7rem; font-weight: normal; text-align: left; vertical-align: top;">
               Kirjaa starttipaikka /<br>tuomari
             </th>
-            ${stages.map(stage => `
+            ${stages.map(stage => {
+              const heat = (viewRow.pilotHeats || []).find(h => h.phase === stage.heatPhase && h.round === stage.heatRound);
+              const heatInfo = heat ? `<div style="font-size: 0.7rem; font-weight: bold; margin-top: 2px;">Heat ${escapeHtml(heat.groupName)}</div>` : '';
+              return `
               <th class="col-round">
-                <div class="round-header">
+                <div class="round-header" style="line-height: 1.1;">
                   <span>${escapeHtml(stage.label)}</span>
-                  <div class="print-box grey-box"></div>
+                  ${heatInfo}
+                  <div class="print-box grey-box" style="margin-top: 5px;"></div>
                 </div>
               </th>
-            `).join("")}
+              `;
+            }).join("")}
           </tr>
         </thead>
         <tbody>
@@ -305,9 +310,16 @@ function renderWWIScoreCardPrintView(card, viewRow, activeEvent) {
           <thead>
             <tr>
               <th style="width: 25%;"></th>
-              ${stages.map(stage => `
-                <th style="width: 18%; text-align: left;"><strong>${escapeHtml(stage.label)}</strong></th>
-              `).join("")}
+              ${stages.map(stage => {
+                const heat = (viewRow.pilotHeats || []).find(h => h.phase === stage.heatPhase && h.round === stage.heatRound);
+                const heatInfo = heat ? `<div style="font-size: 0.75rem; font-weight: bold; margin-top: 2px; color: #333;">Heat ${escapeHtml(heat.groupName)}</div>` : '';
+                return `
+                <th style="width: 18%; text-align: left; line-height: 1.1; vertical-align: bottom; padding-bottom: 5px;">
+                  <strong>${escapeHtml(stage.label)}</strong>
+                  ${heatInfo}
+                </th>
+                `;
+              }).join("")}
             </tr>
           </thead>
           <tbody>

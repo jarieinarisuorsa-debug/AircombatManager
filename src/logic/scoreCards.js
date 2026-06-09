@@ -109,20 +109,30 @@ export function getScoreCardStructureStages({ card = null, event = null, entry =
   const className = entry?.className || aircraft?.className || card?.className || "Yleinen";
   const format = getCompetitionFormatForClass(event, className);
   const labels = [];
+  const heatMappings = [];
 
   for (let round = 1; round <= Number(format.qualifyingRounds || 0); round++) {
     labels.push(`Alkuerä ${round}`);
+    heatMappings.push({ phase: "qualifying", round: round });
   }
 
-  if (format.semiFinalEnabled) labels.push("Semifinaali");
-  if (format.finalEnabled) labels.push("Finaali");
+  if (format.semiFinalEnabled) {
+    labels.push("Semifinaali");
+    heatMappings.push({ phase: "semifinal", round: 1 });
+  }
+  if (format.finalEnabled) {
+    labels.push("Finaali");
+    heatMappings.push({ phase: "final", round: 1 });
+  }
 
   const fallbackLabels = template.rounds.map((roundNumber) => `Kierros ${roundNumber}`);
   const visibleLabels = labels.length ? labels : fallbackLabels;
 
   return visibleLabels.map((label, index) => ({
     roundNumber: Number(template.rounds[index] || index + 1),
-    label
+    label,
+    heatPhase: heatMappings[index]?.phase || null,
+    heatRound: heatMappings[index]?.round || null
   }));
 }
 
@@ -358,7 +368,8 @@ export function buildScoreCardRows(state, event) {
         pilotName: getPilotName(state, entry.pilotId),
         aircraftName: getAircraftName(state, entry.aircraftId),
         className,
-        calculatedFlyingRound
+        calculatedFlyingRound,
+        pilotHeats
       };
     })
     .sort((a, b) => String(a.entry.raceNumber || "").localeCompare(String(b.entry.raceNumber || ""), "fi", { numeric: true }) || a.pilotName.localeCompare(b.pilotName, "fi"));

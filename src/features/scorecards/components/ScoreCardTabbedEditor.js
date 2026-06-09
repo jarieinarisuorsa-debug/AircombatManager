@@ -14,11 +14,16 @@ export function renderScoreCardTabbedEditor(activeEvent, viewRow) {
     <div class="scorecard-tab-container">
       
       <div class="scorecard-tabs">
-        ${stages.map((stage, i) => `
-          <button type="button" class="tab-btn ${i === 0 ? 'active' : ''}" data-action="switch-scorecard-tab" data-tab-target="tab-${stage.roundNumber}-${pilotId}">
-            ${escapeHtml(stage.label)}
+        ${stages.map((stage, i) => {
+          const heat = (viewRow.pilotHeats || []).find(h => h.phase === stage.heatPhase && h.round === stage.heatRound);
+          const heatInfo = heat ? `<div style="font-size: 0.8rem; color: var(--primary); font-weight: bold; margin-top: 2px; letter-spacing: 0.05em;">Heat ${escapeHtml(heat.groupName)}</div>` : '';
+          return `
+          <button type="button" class="tab-btn ${i === 0 ? 'active' : ''}" data-action="switch-scorecard-tab" data-tab-target="tab-${stage.roundNumber}-${pilotId}" style="display: flex; flex-direction: column; align-items: center; justify-content: center; line-height: 1.2; padding-top: 8px; padding-bottom: 8px;">
+            <div>${escapeHtml(stage.label)}</div>
+            ${heatInfo}
           </button>
-        `).join("")}
+          `;
+        }).join("")}
       </div>
 
       ${stages.map((stage, i) => renderSingleRoundTable(stage, i === 0, viewRow, isWWI)).join("")}
