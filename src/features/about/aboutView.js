@@ -86,6 +86,18 @@ export function renderAboutView(state) {
     </div>
   `);
 
+  const qrCodePanel = UI.Panel({ title: t(state, "about.qr_title") }, `
+    <div style="padding: 10px;">
+      <p style="margin-bottom: 15px; line-height: 1.6;">
+        ${t(state, "about.qr_desc")}
+      </p>
+      <ul style="padding-left: 20px; margin-bottom: 0; line-height: 1.6;">
+        <li style="margin-bottom: 10px;">${t(state, "about.qr_1")}</li>
+        <li style="margin-bottom: 10px;">${t(state, "about.qr_2")}</li>
+      </ul>
+    </div>
+  `);
+
   return `
     ${pageHeader}
     <div class="stack" style="max-width: 900px; margin: 0 auto; padding-bottom: 40px;">
@@ -93,6 +105,7 @@ export function renderAboutView(state) {
       ${howToUsePanel}
       ${howToManageCompetitionsPanel}
       ${howToBuildCompetitionPanel}
+      ${qrCodePanel}
       ${securityPanel}
       ${creditsPanel}
     </div>
