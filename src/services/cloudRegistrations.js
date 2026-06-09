@@ -15,11 +15,30 @@ export async function fetchRegistrationRequestsFromCloud(eventId = null) {
 
 export async function submitRegistrationRequestToCloud(request) {
   if (!isCloudMode() || !supabase) return false;
-  const { error } = await supabase.from("registration_requests").upsert(mapRegistrationToDb(request));
-  if (error) {
-    console.error("Error submitting registration request:", error);
+  
+  const dbData = mapRegistrationToDb(request);
+  
+  // Try update first to avoid INSERT permission requirements for admins updating status
+  const { data, error: updateError } = await supabase
+    .from("registration_requests")
+    .update(dbData)
+    .eq('id', dbData.id)
+    .select();
+    
+  if (!updateError && data && data.length > 0) {
+    return true; // Update successful
+  }
+  
+  // If update failed (likely because it doesn't exist), try insert
+  const { error: insertError } = await supabase
+    .from("registration_requests")
+    .insert(dbData);
+    
+  if (insertError) {
+    console.error("Error submitting registration request:", insertError);
     return false;
   }
+  
   return true;
 }
 
