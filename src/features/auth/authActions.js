@@ -139,6 +139,34 @@ export function initAuthActions() {
     import("../../main.js").then(m => m.renderApp());
   });
 
+  registerAction("auth-open-terms", (event) => {
+    event.preventDefault();
+    updateState((state) => {
+      if (!state.settings) state.settings = {};
+      state.settings.termsModalOpen = true;
+    }, "auth_terms_modal");
+    import("../../main.js").then(m => m.renderApp());
+  });
+  
+  registerAction("auth-close-terms", () => {
+    updateState((state) => {
+      if (!state.settings) state.settings = {};
+      state.settings.termsModalOpen = false;
+    }, "auth_terms_modal");
+    import("../../main.js").then(m => m.renderApp());
+  });
+  
+  registerAction("auth-accept-terms", () => {
+    updateState((state) => {
+      if (!state.settings) state.settings = {};
+      state.settings.termsModalOpen = false;
+    }, "auth_terms_modal");
+    // Check the hidden checkbox so form validation passes
+    const cb = document.querySelector('input[name="acceptTerms"]');
+    if (cb) cb.checked = true;
+    import("../../main.js").then(m => m.renderApp());
+  });
+
   registerAction("auth-set-mode", (event, button) => {
     const mode = button.dataset.mode || "login";
     updateState((state) => {
