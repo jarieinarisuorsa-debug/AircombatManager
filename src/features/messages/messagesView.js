@@ -81,7 +81,7 @@ function renderChatView(state, currentUserId) {
   const formHtml = `
     <form data-action="send-message" data-no-feedback="true" class="ui-row ui-shrink-0 ui-chat-form">
       <div class="ui-grow ui-row ui-chat-input-wrapper">
-        <input type="text" name="content" placeholder="${t(state, "messages.message_placeholder")}" required class="ui-grow ui-chat-input" autocomplete="off" />
+        <input type="text" name="content" placeholder="${t(state, "messages.message_placeholder")}" required class="ui-grow ui-chat-input" autocomplete="off" enterkeyhint="send" />
       </div>
       <button type="submit" class="ui-chat-send-btn" data-no-loading-text="true">
         <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-left: -2px; margin-top: 2px;"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
