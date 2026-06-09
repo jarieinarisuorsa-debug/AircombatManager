@@ -34,11 +34,18 @@ export function registerRegistrationActions() {
         state.registrations[existingIndex].paymentIntent = paymentIntent;
         state.registrations[existingIndex].status = "pending";
         state.registrations[existingIndex].updatedAt = new Date().toISOString();
+        // Varmista että sähköposti on myös päivityksessä
+        const pilot = state.pilots.find(p => p.id === pilotId);
+        if (pilot && pilot.email) state.registrations[existingIndex].email = pilot.email;
       } else {
+        const pilot = state.pilots.find(p => p.id === pilotId);
+        const email = pilot?.email || state.auth?.user?.email || "";
+        
         state.registrations.push({
           id: createId("reg"),
           eventId,
           pilotId,
+          email, // TÄRKEÄ: Supabase vaatii sähköpostin
           classes: selectedClasses,
           paymentIntent,
           status: "pending",
