@@ -79,6 +79,16 @@ export function renderDocumentsView(state) {
         ${renderJudgesList(state, activeEvent)}
       </div>
     `;
+  } else if (window.PRINT_ALL_FILLED_SCORECARDS) {
+    const allRows = buildScoreCardRows(state, activeEvent);
+    window.PRINT_EMPTY_CARD_MODE = "filled";
+    const overlayContent = allRows.map(row => renderScoreCardForm(activeEvent, row, { forceOpen: true })).join("<div style='page-break-after: always;'></div>");
+    printOverlay = `
+      <div class="print-only-fullscreen-overlay" style="display: flex; flex-direction: column; gap: 20px;">
+        ${overlayContent}
+      </div>
+    `;
+    window.PRINT_EMPTY_CARD_MODE = null;
   }
 
   return `
@@ -91,19 +101,16 @@ export function renderDocumentsView(state) {
   `;
 }
 
-import { getScoreCardTemplateId, getScoreCardTemplate } from "../../logic/scoreCards.js";
+import { getScoreCardTemplateId, getScoreCardTemplate, buildScoreCardRows } from "../../logic/scoreCards.js";
 import { getCompetitionFormatForClass } from "../../logic/competitionFormat.js";
 
 function getAvailableClasses(state, activeEvent) {
+  const baseClasses = ["WWII", "WWI", "EPA"];
   const formats = Object.keys(activeEvent.classFormats || {});
   const entryClasses = (state.entries || [])
     .filter(e => e.eventId === activeEvent.id)
-    .map(e => e.className)
-    .filter(Boolean);
-  
-  const unique = [...new Set([...formats, ...entryClasses])];
-  if (unique.length === 0) return ["WWII", "WWI", "EPA"];
-  return unique.sort();
+    .map(e => e.className);
+  return [...new Set([...baseClasses, ...formats, ...entryClasses])].filter(Boolean).sort();
 }
 
 function renderScoreCardPrintOptions(state, activeEvent) {
@@ -143,8 +150,8 @@ function renderScoreCardPrintOptions(state, activeEvent) {
       </div>
 
       <div style="margin-top: 10px; padding-top: 15px; border-top: 1px solid var(--border);">
-        <p class="muted" style="margin: 0 0 10px 0; font-size: 0.9rem;">${t(state, "documents.filled_papers_desc")}</p>
-        <a href="#/scorecards" class="button" style="width: 100%; justify-content: center;">${t(state, "documents.open_filled")}</a>
+        <p class="muted" style="margin: 0 0 10px 0; font-size: 0.9rem;">Voit myös tulostaa kaikki ohjelmaan luodut sähköiset tuloskortit yhdellä kertaa, valmiiksi esitäytettyinä!</p>
+        <button type="button" class="button primary" data-action="print-all-filled-scorecards" style="width: 100%; justify-content: center;">Tulosta esitäytetyt kortit (Kaikki luokat)</button>
       </div>
     </div>
   `);

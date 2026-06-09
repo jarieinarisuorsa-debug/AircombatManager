@@ -43,17 +43,6 @@ export function renderScoreCardEditorView(state) {
   `;
 }
 
-export function renderScoreCardsView(state) {
-  const { activeEvent, scoreCardRows } = state;
-  if (!activeEvent || !scoreCardRows) return "";
-
-  return `
-    <div class="score-card-stack">
-      ${scoreCardRows.map(row => renderScoreCardForm(activeEvent, row, { forceOpen: false })).join("")}
-    </div>
-  `;
-}
-
 export function renderScoreCardForm(activeEvent, row, options = {}) {
   const state = getState();
   const { entry, card } = row;

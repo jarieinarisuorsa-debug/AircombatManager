@@ -153,19 +153,43 @@ function runUiClickAction(action, button, { renderApp }) {
     window.PRINT_GENERIC_EMPTY_CARD_TEMPLATE = button.dataset.templateId;
     window.PRINT_GENERIC_EMPTY_CARD_CLASS = button.dataset.raceClass;
     renderApp();
-    window.print();
-    window.PRINT_GENERIC_EMPTY_CARD_TEMPLATE = null;
-    window.PRINT_GENERIC_EMPTY_CARD_CLASS = null;
-    renderApp();
+    setTimeout(() => {
+      window.print();
+      window.PRINT_GENERIC_EMPTY_CARD_TEMPLATE = null;
+      window.PRINT_GENERIC_EMPTY_CARD_CLASS = null;
+      renderApp();
+    }, 100);
+    return true;
+  }
+
+  if (action === "print-all-filled-scorecards") {
+    try {
+      window.PRINT_ALL_FILLED_SCORECARDS = true;
+      renderApp();
+      setTimeout(() => {
+        try {
+          window.print();
+        } finally {
+          window.PRINT_ALL_FILLED_SCORECARDS = false;
+          renderApp();
+        }
+      }, 100);
+    } catch (err) {
+      alert("ERROR: " + err.message);
+      window.PRINT_ALL_FILLED_SCORECARDS = false;
+      renderApp();
+    }
     return true;
   }
 
   if (action === "print-inspection-list") {
     window.PRINT_DOCUMENT_TYPE = "inspection";
     renderApp();
-    window.print();
-    window.PRINT_DOCUMENT_TYPE = null;
-    renderApp();
+    setTimeout(() => {
+      window.print();
+      window.PRINT_DOCUMENT_TYPE = null;
+      renderApp();
+    }, 100);
     return true;
   }
 

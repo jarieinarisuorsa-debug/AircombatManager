@@ -69,11 +69,11 @@ export const GUEST_ROUTE_KEYS = [
 
 export const ADMIN_NAV_ROUTE_KEYS = [
   "calendar",
+  "results",
   "entries",
   "pilots",
   "aircraft",
   "documents",
-  "results",
   "messages",
   "settings"
 ];
@@ -82,6 +82,7 @@ export const PILOT_NAV_ROUTE_KEYS = [
   "myevent",
   "mypilotcard",
   "eventinfo",
+  "heats",
   "calendar",
   "results",
   "messages"

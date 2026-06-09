@@ -976,7 +976,7 @@ export const fi = {
     "documents.no_active_event": "Ei aktiivista kisaa",
     "documents.no_active_event_desc": "Avaa kilpailu kisakalenterista, jotta voit tulostaa asiakirjoja.",
     "documents.print_intro": "Tulosta kilpailupaikan paperidokumentit kisaan:",
-    "documents.tab_scorecards": "Tuloskortit",
+    "documents.tab_scorecards": "Paperipohjat",
     "documents.tab_lists": "Listaukset",
     "documents.tab_inspections": "Tarkastukset",
     "documents.tab_schedules": "Aikataulut",

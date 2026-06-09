@@ -977,7 +977,7 @@ export const en = {
     "documents.no_active_event": "No active event",
     "documents.no_active_event_desc": "Open a competition from the calendar to print documents.",
     "documents.print_intro": "Print paper documents for the competition:",
-    "documents.tab_scorecards": "Scorecards",
+    "documents.tab_scorecards": "Blank Templates",
     "documents.tab_lists": "Lists",
     "documents.tab_inspections": "Inspections",
     "documents.tab_schedules": "Schedules",
