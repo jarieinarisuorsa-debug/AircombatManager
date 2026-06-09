@@ -3,7 +3,7 @@ import { t } from "../../utils/i18n.js";
 import { UI } from "../../ui/engine.js";
 import { buildScoreCardRows } from "../../logic/scoreCards.js";
 import { renderScoreCardList } from "../scorecards/components/ScoreCardList.js";
-import { renderStopwatchPanel } from "../pilots/components/StopwatchPanel.js";
+import { renderStopwatchPanel } from "../pilots/components/StopwatchPanel.js?v=2";
 import { isUserAdmin } from "../../users/roles.js";
 import { renderHeatCard } from "../heats/heatsView.js";
 import { buildCompetitionResults } from "../../logic/competitionResults.js";
