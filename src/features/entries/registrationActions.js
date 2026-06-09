@@ -157,4 +157,15 @@ export function registerRegistrationActions() {
     renderApp();
     return true;
   });
+
+  registerAction("delete-registration", (event, button, { renderApp }) => {
+    updateState((state) => {
+      requireAdmin(state);
+      const regId = button.dataset.regId;
+      if (!state.registrations) return;
+      state.registrations = state.registrations.filter(r => r.id !== regId);
+    }, "delete_registration");
+    renderApp();
+    return true;
+  });
 }

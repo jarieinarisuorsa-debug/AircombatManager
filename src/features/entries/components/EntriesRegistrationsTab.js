@@ -48,6 +48,9 @@ export function renderWorkspaceRegistrationsTab(state, activeEvent) {
               <button type="button" class="button success small" data-action="approve-registration" data-reg-id="${escapeHtml(reg.id)}">${t(state, "event_workspace.approve")}</button>
               <button type="button" class="button danger small" data-action="reject-registration" data-reg-id="${escapeHtml(reg.id)}">${t(state, "event_workspace.reject")}</button>
             ` : ""}
+            ${reg.status === 'rejected' ? `
+              <button type="button" class="button danger small" data-action="delete-registration" data-reg-id="${escapeHtml(reg.id)}">${t(state, "common.delete") || "Poista"}</button>
+            ` : ""}
             <button type="button" class="button dashed small" data-action="open-pilot-card" data-pilot-id="${escapeHtml(pilot.id)}">${t(state, "event_workspace.open_pilot_card")}</button>
           </div>
         </div>
