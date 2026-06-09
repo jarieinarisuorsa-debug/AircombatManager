@@ -73,17 +73,16 @@ export function getNextRound(heats, eventId, className, phase = HEAT_PHASES.QUAL
 
 function buildGroupName(className, round, phase, groupIndex) {
   const suffix = GROUP_LETTERS[groupIndex] || groupIndex + 1;
-  const prefix = className ? `${className} ` : "";
 
   if (phase === HEAT_PHASES.SEMIFINAL) {
-    return `${prefix}SF-${suffix}`;
+    return `SF-${suffix}`;
   }
 
   if (phase === HEAT_PHASES.FINAL) {
-    return `${prefix}F-${suffix}`;
+    return `F-${suffix}`;
   }
 
-  return `${prefix}${round}-${suffix}`;
+  return `${round}-${suffix}`;
 }
 
 export function detectFrequencyConflicts(state, entryIds) {

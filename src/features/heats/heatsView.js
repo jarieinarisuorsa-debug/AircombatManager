@@ -4,6 +4,7 @@ import { detectFrequencyConflicts } from "../../logic/heatBuilder.js";
 import { getHeatPhase, getPhaseLabel } from "../../logic/competitionFormat.js";
 import { UI } from "../../ui/engine.js";
 import { getRouteParam } from "../../router.js";
+import { formatHeatTitle } from "../../logic/competitionFormat.js";
 import { calculateScoreCardRound, roundHasData } from "../../logic/scoreCards.js";
 import { t } from "../../utils/i18n.js";
 
@@ -118,7 +119,7 @@ export function renderHeatCard(state, activeEvent, entries, heat, admin, highlig
     <div class="panel-header compact">
       <div>
         <p class="kicker">${escapeHtml(getPhaseLabel(getHeatPhase(heat), state))} · ${t(state, "heats.round")} ${heat.round}</p>
-        <h3>${t(state, "heats.heat")} ${escapeHtml(heat.groupName)}</h3>
+        <h3>${escapeHtml(formatHeatTitle(heat, state))}</h3>
       </div>
       ${UI.Badge({ label: heat.status, variant: heat.status })}
     </div>

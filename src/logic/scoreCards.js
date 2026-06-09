@@ -12,7 +12,7 @@
 // ==============================
 
 import { getAircraftName, getPilotName } from "../utils/html.js";
-import { getCompetitionFormatForClass } from "./competitionFormat.js";
+import { getCompetitionFormatForClass, formatHeatTitle } from "./competitionFormat.js";
 
 export const SCORE_CARD_TEMPLATE_STANDARD = "standard";
 export const SCORE_CARD_TEMPLATE_WWI = "wwi";
@@ -344,7 +344,7 @@ export function buildScoreCardRows(state, event) {
       const pilotHeats = eventHeats.filter(h => h.className === className && h.entryIds.includes(entry.id));
       const calculatedFlyingRound = pilotHeats.map(h => {
         const phaseLabel = h.phase === "semifinal" ? "Semi " : (h.phase === "final" ? "Finaali " : `K${h.round} `);
-        return `${phaseLabel}Heat ${h.groupName}`;
+        return `${phaseLabel}${formatHeatTitle(h, null)}`;
       }).join(", ");
       const pilotAircraft = state.aircraft.filter(a => a.pilotId === entry.pilotId && a.className === className);
 

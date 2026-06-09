@@ -1,6 +1,7 @@
 import { calculateScoreCardRound, hasRoundData } from "./scoreCards.js";
 import { getAircraftName } from "../utils/html.js";
 import { buildCompetitionResults } from "./competitionResults.js";
+import { formatHeatTitle } from "./competitionFormat.js";
 
 export function buildPilotLogbook(state, pilotId) {
   const pilot = state.pilots.find((p) => p.id === pilotId);
@@ -92,7 +93,7 @@ export function buildPilotLogbook(state, pilotId) {
       const heat = state.heats.find(h => h.id === res.heatId);
       if (!heat) continue;
       
-      const roundLabel = heat.groupName || `Heat ${heat.id}`;
+      const roundLabel = formatHeatTitle(heat, null) || `Heat ${res.heatId}`;
       // Vältetään duplikaatit jos molemmat on tallennettu
       const isDuplicate = evHistory.flights.some(f => f.roundLabel.includes(roundLabel.split(" ").pop()));
       if (isDuplicate && hasScoreCardData) continue;

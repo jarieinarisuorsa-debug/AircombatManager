@@ -1,6 +1,7 @@
 import { escapeHtml, getActiveEvent } from "../../utils/html.js";
 import { UI } from "../../ui/engine.js";
 import { buildScoreCardRows } from "../../logic/scoreCards.js";
+import { formatHeatTitle } from "../../logic/competitionFormat.js";
 import { isUserAdmin, getCurrentRole, ROLES } from "../../users/roles.js";
 import { renderLogbookPanel } from "./components/LogbookPanel.js";
 import { t } from "../../utils/i18n.js";
@@ -277,7 +278,7 @@ export function renderMyPilotCardView(state) {
     if (myHeats.length > 0) {
       myHeatsContent = `<ul style="list-style: none; padding: 0; margin: 0;">` + myHeats.map(h => `
         <li style="padding: 8px 0; border-bottom: 1px solid var(--border-color);">
-          <strong>${escapeHtml(h.className)} · Heat ${h.number}</strong>
+          <strong>${escapeHtml(formatHeatTitle(h, state))}</strong>
         </li>
       `).join('') + `</ul>`;
     }

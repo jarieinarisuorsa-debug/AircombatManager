@@ -73,6 +73,19 @@ export function getPhaseLabel(phase, state) {
   return HEAT_PHASE_LABELS[phase] || "Alkuerä";
 }
 
+export function formatHeatTitle(heat, state) {
+  if (!heat) return "";
+  const className = (heat.className || "").trim();
+  let groupName = (heat.groupName || "").trim();
+  
+  if (className && groupName.startsWith(className)) {
+    groupName = groupName.substring(className.length).trim();
+  }
+  
+  const heatWord = state ? t(state, "heats.heat") : "Heat";
+  return `${className} ${heatWord} ${groupName}`.trim();
+}
+
 export function getHeatPhase(heat) {
   return heat.phase || HEAT_PHASES.QUALIFYING;
 }

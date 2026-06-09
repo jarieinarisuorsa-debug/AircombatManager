@@ -3,6 +3,7 @@ import { UI } from "../../../ui/engine.js";
 import { calculateScoreCardTotals, SCORE_CARD_TEMPLATE_WWI } from "../../../logic/scoreCards.js";
 import { formatDuration } from "./ScoreCardUtils.js";
 import { t } from "../../../utils/i18n.js";
+import { formatHeatTitle } from "../../../logic/competitionFormat.js";
 
 export function renderScoreCardList(state, activeEvent, rows, targetClass = "") {
   const grouped = groupScoreCardsByHeat(state, activeEvent, rows, targetClass);
@@ -84,7 +85,7 @@ function groupScoreCardsByHeat(state, activeEvent, rows, targetClass) {
         const phaseLabel = heat.phase === 'semifinal' ? t(state, "scorecards_list.semifinal") : (heat.phase === 'final' ? t(state, "scorecards_list.final") : t(state, "scorecards_list.qualifying_round").replace("{round}", heat.round));
         groups.push({
           isHeat: true,
-          title: `Heat ${heat.className || ''} ${heat.round || ''}-${heat.groupName || ''}`.trim(),
+          title: formatHeatTitle(heat, state),
           subtitle: phaseLabel,
           rows: heatRows
         });
