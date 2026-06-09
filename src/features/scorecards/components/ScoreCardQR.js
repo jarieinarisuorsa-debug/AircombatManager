@@ -89,7 +89,7 @@ export function decompressScoreCard(jsonString, existingCard) {
 // ---------------------------------------------------------
 // QR Modal Generator (Pilot's phone)
 // ---------------------------------------------------------
-export function renderQRGeneratorModal(card, pilotName) {
+export function renderQRGeneratorModal(card, pilotName, activeHeatTitle = "") {
   const payload = compressScoreCard(card);
   
   const content = `
@@ -126,8 +126,9 @@ export function renderQRGeneratorModal(card, pilotName) {
   return `
     <div class="app-modal-backdrop" style="z-index: 2000;" data-action="close-qr-scanner">
       <div class="app-modal-shell" role="dialog" aria-modal="true" style="max-width: 450px;" data-action="none">
-        <div class="app-modal-topbar">
+        <div class="app-modal-topbar" style="display: flex; flex-direction: column; align-items: flex-start;">
           <h3 style="margin: 0;">QR Tuloskortti - ${escapeHtml(pilotName)}</h3>
+          ${activeHeatTitle ? `<span style="color: var(--primary); font-weight: bold; font-size: 0.85rem; margin-top: 5px; text-transform: uppercase; letter-spacing: 0.05em;">${escapeHtml(activeHeatTitle)}</span>` : ''}
         </div>
         <div class="app-modal-content">
           ${content}

@@ -62,14 +62,31 @@ function runUiClickAction(action, button, { renderApp }) {
       import("../features/scorecards/components/ScoreCardQR.js"),
       import("../logic/scoreCards.js"),
       import("../utils/html.js"),
-      import("../state/store.js")
-    ]).then(([ScoreCardQR, logic, htmlUtils, store]) => {
+      import("../state/store.js"),
+      import("../logic/competitionFormat.js")
+    ]).then(([ScoreCardQR, logic, htmlUtils, store, compFormat]) => {
       const state = store.getState();
       const event = htmlUtils.getActiveEvent(state);
       const rows = logic.buildScoreCardRows(state, event);
       const row = rows.find(r => r.entry.id === entryId);
       if (row) {
-        document.getElementById("modal-container").innerHTML = ScoreCardQR.renderQRGeneratorModal(row.card, row.pilotName);
+        let activeHeatTitle = "";
+        const activeTabBtn = document.querySelector('.scorecard-tabs .tab-btn.active');
+        if (activeTabBtn && activeTabBtn.dataset.tabTarget) {
+           const parts = activeTabBtn.dataset.tabTarget.split('-');
+           if (parts.length >= 2) {
+             const roundNumber = Number(parts[1]);
+             const stages = logic.getScoreCardStructureStages({ card: row.card, event, entry: row.entry, aircraft: row.aircraft });
+             const stage = stages.find(s => s.roundNumber === roundNumber);
+             if (stage) {
+                 const heat = (row.pilotHeats || []).find(h => h.phase === stage.heatPhase && h.round === stage.heatRound);
+                 if (heat) {
+                     activeHeatTitle = compFormat.formatHeatTitle(heat, state);
+                 }
+             }
+           }
+        }
+        document.getElementById("modal-container").innerHTML = ScoreCardQR.renderQRGeneratorModal(row.card, row.pilotName, activeHeatTitle);
       }
     });
     return true;
