@@ -26,13 +26,26 @@ export async function fetchPilotsFromCloud() {
     return [];
   }
   
-  const { data, error } = await supabase.from("pilots").select("*");
-  if (error) {
+  try {
+    // Haetaan julkiset tiedot kaikista piloteista (näkymän kautta)
+    const { data: publicData, error: publicError } = await supabase.from("public_pilots").select("*");
+    if (publicError) throw publicError;
+
+    // Haetaan omat yksityiset tiedot (RLS rajaa tämän vain käyttäjän omaan profiiliin tai admineille)
+    const { data: privateData, error: privateError } = await supabase.from("pilots").select("*");
+    if (privateError) throw privateError;
+
+    // Yhdistetään tiedot: julkinen data on pohjana, johon liitetään yksityiset kentät jos ne on saatu
+    const mergedData = publicData.map(pubPilot => {
+      const privPilot = (privateData || []).find(p => p.id === pubPilot.id);
+      return privPilot ? { ...pubPilot, ...privPilot } : pubPilot;
+    });
+
+    return mergedData;
+  } catch (error) {
     console.error("Error fetching pilots from cloud:", error);
     return [];
   }
-  
-  return data;
 }
 
 // Etsii tietyn pilotin sähköpostilla

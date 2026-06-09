@@ -91,7 +91,13 @@
 
     CREATE POLICY "Kaikki voivat lukea pilotteja" 
         ON pilots FOR SELECT 
-        USING (true);
+        USING (LOWER(email) = LOWER(auth.jwt()->>'email') OR public.is_admin());
+
+    CREATE OR REPLACE VIEW public_pilots AS
+    SELECT id, name, country, club, license, "avatarData", created_at
+    FROM pilots;
+
+    GRANT SELECT ON public_pilots TO anon, authenticated;
 
     CREATE POLICY "Pilotit voivat päivittää omaa korttiaan" 
         ON pilots FOR UPDATE 
