@@ -18,11 +18,15 @@ BEGIN
   DELETE FROM public.pilots 
   WHERE LOWER(email) = LOWER(auth.jwt()->>'email');
 
-  -- 2. Poista käyttäjän profiili (jos olemassa)
+  -- 2. Poista käyttöoikeudet
+  DELETE FROM public.permissions
+  WHERE LOWER(email) = LOWER(auth.jwt()->>'email');
+
+  -- 3. Poista käyttäjän profiili (jos olemassa)
   DELETE FROM public.profiles
   WHERE id = auth.uid();
 
-  -- 3. Poista itse käyttäjätili auth-järjestelmästä
+  -- 4. Poista itse käyttäjätili auth-järjestelmästä
   DELETE FROM auth.users 
   WHERE id = auth.uid();
 END;
