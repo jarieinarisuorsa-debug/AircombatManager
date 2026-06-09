@@ -59,7 +59,7 @@ export function renderWorkspaceParticipantsTab(state, activeEvent, className) {
         actionBtn = `<button class="button small primary" data-action="quick-add-class-entry" data-pilot-id="${pilot.id}" data-class-name="${escapeHtml(className)}" data-aircraft-id="${matchingPlanes[0].id}">${t(state, "event_workspace.enroll")}</button>`;
       } else {
         aircraftCell = `
-          <select class="ui-input quick-aircraft-select-class" style="padding: 2px; max-width: 150px; font-size: 0.9em; height: 32px;">
+          <select class="ui-input quick-aircraft-select-class" style="padding: 2px 30px 2px 6px; max-width: 150px; font-size: 0.9em; height: 32px;">
             ${matchingPlanes.map(p => `<option value="${p.id}">${escapeHtml(p.name)}</option>`).join("")}
           </select>
         `;

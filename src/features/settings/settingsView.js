@@ -54,7 +54,7 @@ export function renderSettingsView(state) {
           ${perm.role === 'pending' ? `<br><span style="font-size: 0.8rem; color: #ffc107; font-weight: bold;">${t(state, "settings.new_request")}</span>` : ''}
         </td>
         <td style="padding: 10px;">
-          <select class="ui-input" style="padding: 4px 8px; width: auto; ${perm.role === 'pending' ? 'border-color: #ffc107;' : ''}" data-action="update-permission-role" data-id="${perm.id}">
+          <select class="ui-input" style="padding: 4px 30px 4px 8px; width: auto; ${perm.role === 'pending' ? 'border-color: #ffc107;' : ''}" data-action="update-permission-role" data-id="${perm.id}">
             ${perm.role === 'pending' ? `<option value="pending" selected>${t(state, "settings.role_pending")}</option>` : ''}
             <option value="admin" ${perm.role === 'admin' ? 'selected' : ''}>${t(state, "settings.role_admin")}</option>
             <option value="pilot" ${perm.role === 'pilot' ? 'selected' : ''}>${t(state, "settings.role_pilot")}</option>
