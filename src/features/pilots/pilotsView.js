@@ -38,7 +38,7 @@ export function renderPilotsView(state) {
           }
           <strong>${escapeHtml(pilot.name)}</strong>
         `),
-        `${pilot.country ? UI.Badge({ label: pilot.country, variant: "country" }) : ""}
+        `${pilot.country ? UI.CountryFlag(pilot.country) : ""}
          ${pilot.club ? `<span class="muted" style="margin-left: 6px;">${escapeHtml(pilot.club)}</span>` : ""}`,
         `${pilotPlanes.length} kpl`,
         `${UI.Flex({ gap: "6px", align: "center" }, `

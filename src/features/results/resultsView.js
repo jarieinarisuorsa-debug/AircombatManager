@@ -305,7 +305,7 @@ export function renderResultsTable(state, rows, showDetails = false, classPositi
           ${row.club ? `<div class="muted" style="font-size: 0.85em; margin-top: 2px;">${escapeHtml(row.club)}</div>` : ""}
         </div>
       `),
-      row.country ? `<span style="background: rgba(255,255,255,0.1); padding: 3px 6px; border-radius: 4px; font-size: 0.85em; font-weight: bold; border: 1px solid rgba(255,255,255,0.2);">${escapeHtml(row.country)}</span>` : '<span class="muted">-</span>',
+      row.country ? UI.CountryFlag(row.country) : '<span class="muted">-</span>',
       escapeHtml(row.className),
       `<strong>${row.totalScore}</strong>`,
       ...roundColumns.map((label) => {

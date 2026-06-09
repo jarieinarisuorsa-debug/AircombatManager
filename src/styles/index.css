@@ -20,6 +20,7 @@
 @import "./views/pilots.css?v=4";
 @import "./views/results.css?v=4";
 @import "./views/participants.css?v=4";
+@import "./views/aircraft.css?v=1";
 
 /* Components / Features */
 @import "./components/sunlight-mode.css?v=4";

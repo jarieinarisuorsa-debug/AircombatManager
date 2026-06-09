@@ -20,7 +20,7 @@ export function renderMobileScoreCardEditor(activeEvent, row, template, SCORE_CA
           <label>Taajuus<input name="frequency" value="${escapeHtml(card.frequency || "2.4 GHz")}" /></label>
           <label>Lennät kierroksella:<input name="flyingRound" value="${escapeHtml(card.__calculatedFlyingRound || card.flyingRound || "")}" /></label>
         </div>
-        <p class="muted mobile-score-subline">${escapeHtml(activeEvent.name)}${pilot?.country ? ` · ${escapeHtml(pilot.country)}` : ""}${pilot?.club ? ` · ${escapeHtml(pilot.club)}` : ""}</p>
+        <p class="muted mobile-score-subline">${escapeHtml(activeEvent.name)}${pilot?.country ? ` · ${UI.CountryFlag(pilot.country)}` : ""}${pilot?.club ? ` · ${escapeHtml(pilot.club)}` : ""}</p>
       </div>
 
       ${rounds.map((round, index) => template.id === SCORE_CARD_TEMPLATE_WWI

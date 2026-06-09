@@ -21,35 +21,62 @@ export function renderAircraftView(state) {
   let contentHtml = "";
 
   if (tab === "konetyypit") {
-    const headers = ["Konetyyppi", "Oikea kärkiväli", "Oikea pituus", "1:12 Kärkiväli (Sallittu väli)", "1:12 Pituus (Sallittu väli)"];
-    if (admin) {
-      headers.push("Toiminnot");
-    }
+    const isAdminClass = admin ? "is-admin" : "";
     
     const rows = aircraftSpecs.map(ac => {
       const span = calculateModelSpecs(ac.realSpanM);
       const len = calculateModelSpecs(ac.realLengthM);
-      const cells = [
-        `<strong>${escapeHtml(ac.name)}</strong>`,
-        `${Number(ac.realSpanM || 0).toFixed(2)} m`,
-        `${Number(ac.realLengthM || 0).toFixed(2)} m`,
-        `<strong>${span.target} cm</strong> <span class="muted">(${span.min} - ${span.max})</span>`,
-        `<strong>${len.target} cm</strong> <span class="muted">(${len.min} - ${len.max})</span>`
-      ];
-      if (admin) {
-        cells.push(UI.Button({
-          label: "Poista",
-          action: "delete-aircraft-spec",
-          specId: ac.id,
-          variant: "small danger"
-        }));
-      }
-      return UI.TableRow({ cells });
-    });
+      
+      const adminActions = admin ? `
+        <div class="ac-actions">
+          ${UI.Button({
+            label: "Poista",
+            action: "delete-aircraft-spec",
+            specId: ac.id,
+            variant: "small danger"
+          })}
+        </div>
+      ` : "";
 
-    const tableContainer = UI.TableContainer({
-      content: UI.Table({ headers, rows })
-    });
+      return `
+        <div class="aircraft-card">
+          <div class="ac-title"><strong>${escapeHtml(ac.name)}</strong></div>
+          <div class="ac-stat">
+            <span class="ac-label">Oikea kärkiväli</span>
+            <span class="ac-val">${Number(ac.realSpanM || 0).toFixed(2)} m</span>
+          </div>
+          <div class="ac-stat">
+            <span class="ac-label">Oikea pituus</span>
+            <span class="ac-val">${Number(ac.realLengthM || 0).toFixed(2)} m</span>
+          </div>
+          <div class="ac-stat">
+            <span class="ac-label">1:12 Kärkiväli</span>
+            <span class="ac-val"><strong>${span.target} cm</strong> <span class="muted">(${span.min} - ${span.max})</span></span>
+          </div>
+          <div class="ac-stat">
+            <span class="ac-label">1:12 Pituus</span>
+            <span class="ac-val"><strong>${len.target} cm</strong> <span class="muted">(${len.min} - ${len.max})</span></span>
+          </div>
+          ${adminActions}
+        </div>
+      `;
+    }).join("");
+
+    const adminHeader = admin ? "<div>Toiminnot</div>" : "";
+
+    const tableContainer = `
+      <div class="aircraft-grid ${isAdminClass}">
+        <div class="aircraft-grid-header no-mobile">
+          <div>Konetyyppi</div>
+          <div>Oikea kärkiväli</div>
+          <div>Oikea pituus</div>
+          <div>1:12 Kärkiväli (Sallittu väli)</div>
+          <div>1:12 Pituus (Sallittu väli)</div>
+          ${adminHeader}
+        </div>
+        ${rows}
+      </div>
+    `;
 
     const actions = `
       <div style="display: flex; gap: 10px;" class="no-print">

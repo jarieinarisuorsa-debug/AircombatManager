@@ -65,7 +65,7 @@ export function renderSeasonStandingsView(state) {
     <tr>
       <td style="text-align: center;"><strong>${row.position}.</strong></td>
       <td><strong>${escapeHtml(row.pilotName)}</strong></td>
-      <td>${row.country ? `<span style="background: rgba(255,255,255,0.1); padding: 3px 6px; border-radius: 4px; font-size: 0.85em; font-weight: bold; border: 1px solid rgba(255,255,255,0.2);">${escapeHtml(row.country)}</span>` : '<span class="muted">-</span>'}</td>
+      <td>${row.country ? UI.CountryFlag(row.country) : '<span class="muted">-</span>'}</td>
       <td style="text-align: right; font-weight: 800; color: var(--primary);">${row.totalScore} p</td>
       ${data.events.map(event => `
         <td style="text-align: right; color: var(--muted);">${row.eventScores[event.id] !== undefined ? row.eventScores[event.id] + " p" : "-"}</td>

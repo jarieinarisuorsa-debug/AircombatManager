@@ -97,7 +97,7 @@ function renderWorkspaceRegistrationsTab(state, activeEvent) {
           <div>
             <h4 style="margin: 0 0 5px 0;">${escapeHtml(pilot.name)} <span class="badge" style="background: ${statusColor}; color: ${textColor}; font-size: 0.8rem; margin-left: 10px; padding: 3px 6px;">${statusLabel}</span></h4>
             <div class="muted" style="font-size: 0.9rem; margin-bottom: 8px;">
-              ${escapeHtml(pilot.email || "-")} · ${escapeHtml(pilot.club || "-")} (${escapeHtml(pilot.country || "-")})
+              ${escapeHtml(pilot.email || "-")} · ${escapeHtml(pilot.club || "-")} ${pilot.country ? UI.CountryFlag(pilot.country) : ""}
             </div>
             <div style="font-size: 0.95rem;">
               <strong>Luokat:</strong> ${reg.classes.map(escapeHtml).join(", ")}<br>
@@ -259,7 +259,7 @@ function renderWorkspaceParticipantsTab(state, activeEvent, className) {
           }
           <strong>${escapeHtml(pilot.name)}</strong>
         `),
-        `${pilot.country ? UI.Badge({ label: pilot.country, variant: "country" }) : ""}
+        `${pilot.country ? UI.CountryFlag(pilot.country) : ""}
          ${pilot.club ? `<span class="muted" style="margin-left: 6px;">${escapeHtml(pilot.club)}</span>` : ""}`,
         aircraftCell,
         statusCell,

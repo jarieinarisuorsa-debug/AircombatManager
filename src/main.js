@@ -275,7 +275,8 @@ export function renderApp() {
     if (activeEventPillEl) activeEventPillEl.textContent = "";
     titleEl.textContent = ROUTES.login.title;
     appEl.innerHTML = ROUTES.login.render(state);
-    if (roleSelectEl) roleSelectEl.style.display = "none";
+    const topbarRoleSelect = document.querySelector("#current-role-select");
+    if (topbarRoleSelect) topbarRoleSelect.style.display = "none";
     applyTheme(state);
     applyDeviceProfile();
     return;
@@ -294,9 +295,7 @@ export function renderApp() {
   const roleSelectEl = document.querySelector("#current-role-select");
   if (roleSelectEl) {
     const showRoleSwitch = isDebug || isUserAdmin(state);
-    if (roleSelectEl.parentElement) {
-      roleSelectEl.parentElement.style.display = showRoleSwitch ? "flex" : "none";
-    }
+    roleSelectEl.style.display = showRoleSwitch ? "inline-block" : "none";
   }
 
   // Näytä admin-näkymä otsikko (esim. kun pilotti onkin admin ja simuloi toista roolia);
