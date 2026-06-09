@@ -76,6 +76,8 @@ export function renderAuthView() {
             label: t(state, "auth.email"),
             placeholder: t(state, "auth.email_placeholder"),
             required: true,
+            autocapitalize: "none",
+            autocorrect: "off",
             style: "width: 100%; box-sizing: border-box; padding: 10px; font-size: 1rem; border-radius: 6px;"
           })}
         </div>
