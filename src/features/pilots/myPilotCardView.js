@@ -119,7 +119,7 @@ export function renderMyPilotCardView(state) {
           <p class="muted">${t(state, "my_pilot.reg_classes")} ${existingReg.classes.join(", ")}</p>
         </div>
         <div style="margin-bottom: 20px;">
-          ${existingReg.status === "pending" ? UI.Button({ label: t(state, "my_pilot.reg_cancel"), action: "cancel-registration", regId: existingReg.id, variant: "small danger" }) : ""}
+          ${UI.Button({ label: t(state, "my_pilot.reg_cancel"), action: "cancel-registration", regId: existingReg.id, variant: "small danger" })}
         </div>
       `;
     }
