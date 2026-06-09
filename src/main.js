@@ -278,6 +278,75 @@ async function initApp() {
           }
         }).catch(err => console.error("Realtime init failed:", err));
         
+        // Automaattinen taustapäivitys (30 sekunnin välein)
+        setInterval(async () => {
+          if (!isCloudMode()) return;
+          
+          const state = getState();
+          // Älä päivitä jos käyttäjällä on jokin lomake tai modaali auki, jotta työ ei katoa
+          if (state.settings?.aircraftSpecFormOpen || 
+              state.settings?.eventFormOpen || 
+              state.settings?.competitionFormatModalOpen || 
+              state.settings?.scoreCardEditorOpen ||
+              state.settings?.mapEditorOpen ||
+              state.settings?.registrationFormOpen ||
+              state.settings?.editingAircraftId ||
+              state.settings?.editingPilotId) return;
+              
+          // Älä päivitä jos käyttäjä kirjoittaa johonkin kenttään
+          const activeTag = document.activeElement ? document.activeElement.tagName : "";
+          if (["INPUT", "TEXTAREA", "SELECT"].includes(activeTag)) return;
+
+          try {
+            const cloudData = await import("./services/cloudStore.js").then(m => m.syncAllFromCloud());
+            if (cloudData) {
+              const oldState = getState();
+              const oldStr = JSON.stringify({
+                events: oldState.events,
+                pilots: oldState.pilots,
+                aircraft: oldState.aircraft,
+                entries: oldState.entries,
+                heats: oldState.heats,
+                results: oldState.results,
+                scoreCards: oldState.scoreCards,
+                registrations: oldState.registrations
+              });
+              const newStr = JSON.stringify({
+                events: cloudData.events,
+                pilots: cloudData.pilots,
+                aircraft: cloudData.aircraft,
+                entries: cloudData.entries,
+                heats: cloudData.heats,
+                results: cloudData.results,
+                scoreCards: cloudData.scoreCards,
+                registrations: cloudData.registrations
+              });
+              
+              if (oldStr !== newStr) {
+                updateState(s => {
+                  if (cloudData.events) s.events = cloudData.events;
+                  if (cloudData.pilots) s.pilots = cloudData.pilots;
+                  if (cloudData.aircraft) s.aircraft = cloudData.aircraft;
+                  if (cloudData.entries) s.entries = cloudData.entries;
+                  if (cloudData.heats) s.heats = cloudData.heats;
+                  if (cloudData.results) s.results = cloudData.results;
+                  if (cloudData.scoreCards) s.scoreCards = cloudData.scoreCards;
+                  if (cloudData.registrations) s.registrations = cloudData.registrations;
+                }, "auto_sync_background");
+                
+                // Säilytä skrollauskohta päivityksen yli
+                const scrollY = window.scrollY;
+                import("./main.js").then(m => {
+                  m.renderApp();
+                  window.scrollTo(0, scrollY);
+                });
+              }
+            }
+          } catch (e) {
+            console.warn("Auto-sync failed:", e);
+          }
+        }, 30000);
+
       }
     } catch (err) {
       console.error("Failed to fetch cloud data:", err);
