@@ -526,7 +526,38 @@ export async function fetchScoreCardsFromCloud(eventId = null) {
     console.error("Error fetching score cards:", error);
     return [];
   }
-  return data.map(mapScoreCardFromDb);
+  
+  const scoreCards = data.map(mapScoreCardFromDb);
+
+  // Tietoturva (Vaihe 4): Suodata allekirjoitukset pois, jos käyttäjä ei ole admin tai kyseisen kortin omistaja.
+  // Näin estetään allekirjoitusten päätyminen julkiseen selaimeen (Network tab).
+  // Käytämme window.statea saadaksemme nykyisen roolin, koska cloudStore.js ei säilytä omaa tilaa.
+  const state = window.state || {};
+  const { isUserAdmin } = await import("../users/roles.js");
+  const isAdmin = isUserAdmin(state);
+  const userEmail = state?.auth?.user?.email || "";
+  
+  let userPilotId = null;
+  if (userEmail && state.pilots) {
+    const p = state.pilots.find(p => p.email && p.email.toLowerCase() === userEmail.toLowerCase());
+    if (p) userPilotId = p.id;
+  }
+
+  if (!isAdmin) {
+    return scoreCards.map(sc => {
+      if (sc.pilotId !== userPilotId) {
+        // Poistetaan allekirjoitukset
+        return {
+          ...sc,
+          signatures: null,
+          rounds: (sc.rounds || []).map(r => ({ ...r, signatures: null }))
+        };
+      }
+      return sc;
+    });
+  }
+
+  return scoreCards;
 }
 
 export async function saveScoreCardToCloud(scoreCard) {
