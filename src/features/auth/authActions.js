@@ -223,7 +223,6 @@ export function initAuthActions() {
     if (!password) return;
     
     try {
-      const { showToast } = await import("../../core/alertActions.js");
       showToast("Varmistetaan salasanaa...", "info");
       
       const { signInWithPassword, deleteOwnAccount } = await import("../../services/authService.js");
@@ -246,7 +245,6 @@ export function initAuthActions() {
       window.location.reload();
     } catch (err) {
       console.error("Account deletion failed:", err);
-      const { showToast } = await import("../../core/alertActions.js");
       showToast("Salasana on virheellinen tai poisto epäonnistui: " + err.message, "error");
     }
   });
