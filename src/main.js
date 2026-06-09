@@ -274,7 +274,7 @@ export function renderApp() {
   if (routeKey === "login") {
     if (navEl) navEl.innerHTML = "";
     if (activeEventPillEl) activeEventPillEl.textContent = "";
-    titleEl.textContent = ROUTES.login.title;
+    titleEl.textContent = typeof ROUTES.login.title === 'function' ? ROUTES.login.title(state) : ROUTES.login.title;
     appEl.innerHTML = ROUTES.login.render(state);
     const topbarRoleSelect = document.querySelector("#current-role-select");
     if (topbarRoleSelect) topbarRoleSelect.style.display = "none";
