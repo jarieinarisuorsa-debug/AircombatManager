@@ -162,8 +162,7 @@
     font-family: Arial, sans-serif;
   }
 
-  .no-print,
-  #app > *:not(.print-only-fullscreen-overlay) {
+  .no-print {
     display: none !important;
   }
 

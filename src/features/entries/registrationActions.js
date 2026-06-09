@@ -2,6 +2,7 @@ import { createId, updateState } from "../../state/store.js";
 import { requireAdmin, requirePilotAccess } from "../../users/roles.js";
 import { registerAction } from "../../core/actionRegistry.js";
 import { normalizeClassName } from "../../logic/participants.js";
+import { resolveRaceNumber } from "./entryActions.js";
 
 export function registerRegistrationActions() {
   registerAction("submit-registration", (event, form, { renderApp }) => {
@@ -103,7 +104,7 @@ export function registerRegistrationActions() {
             pilotId: reg.pilotId,
             aircraftId: null, // Assigned later
             className,
-            raceNumber: "",
+            raceNumber: resolveRaceNumber(state, reg.eventId, reg.pilotId),
             paymentStatus: reg.paymentConfirmed ? "paid" : "unpaid",
             checkInStatus: "not_arrived",
             technicalInspection: "pending",

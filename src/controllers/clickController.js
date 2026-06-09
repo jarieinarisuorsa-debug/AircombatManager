@@ -24,6 +24,10 @@ export function createClickHandler({ renderApp }) {
     const button = event.target.closest("[data-action]");
     if (!button || ["FORM", "SELECT", "INPUT", "TEXTAREA"].includes(button.tagName)) return;
 
+    // Prevent triggering parent actions (like row clicks) when interacting with form fields
+    const formElement = event.target.closest("select, input, textarea");
+    if (formElement && formElement !== button) return;
+
     const action = button.dataset.action;
     const context = { renderApp };
 
@@ -54,16 +58,43 @@ function runUiClickAction(action, button, { renderApp }) {
   }
 
   if (action === "print-page" || action === "print-empty-pilot" || action === "print-empty-blank") {
-    if (action === "print-empty-pilot") window.PRINT_EMPTY_CARD_MODE = "pilot";
-    else if (action === "print-empty-blank") window.PRINT_EMPTY_CARD_MODE = "blank";
-    else window.PRINT_EMPTY_CARD_MODE = "filled";
-
-    if (window.PRINT_EMPTY_CARD_MODE) {
+    const executePrint = (mode) => {
+      window.PRINT_EMPTY_CARD_MODE = mode;
       renderApp();
       window.print();
       window.PRINT_EMPTY_CARD_MODE = null;
       renderApp();
+    };
+
+    if (action === "print-page") {
+      const form = button.closest("form");
+      if (form && form.dataset.action === "save-score-card") {
+        Promise.all([
+          import("./submitController.js"),
+          import("../features/scorecards/scorecardActions.js")
+        ]).then(([submitCtrl, scorecardActions]) => {
+          const data = submitCtrl.readFormData(form, "save-score-card");
+          scorecardActions.saveScoreCard(data, form);
+          executePrint("filled");
+        }).catch(err => {
+          console.error("Tulostuksen tallennus epäonnistui:", err);
+          executePrint("filled");
+        });
+        return true;
+      }
+      executePrint("filled");
+      return true;
     }
+
+    if (action === "print-empty-pilot") {
+      executePrint("pilot");
+      return true;
+    }
+    if (action === "print-empty-blank") {
+      executePrint("blank");
+      return true;
+    }
+    
     return true;
   }
 

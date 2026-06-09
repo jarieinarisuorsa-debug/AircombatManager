@@ -122,11 +122,6 @@ export function createSubmitHandler({ renderApp }) {
           showToast("Tiedot tallennettu", "success");
           return; // Redirect will trigger a re-render
         }
-        if (action === "save-race-numbers") {
-          location.hash = `#/entries`;
-          showToast("Tiedot tallennettu", "success");
-          return;
-        }
         if (action === "add-aircraft-spec") {
           closeAircraftSpecForm();
         }
@@ -172,7 +167,7 @@ export function createSubmitHandler({ renderApp }) {
   };
 }
 
-function readFormData(form, action) {
+export function readFormData(form, action) {
   if (action !== "save-score-card") {
     const data = {};
     const formData = new FormData(form);

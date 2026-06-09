@@ -40,14 +40,24 @@ export function renderHeatsView(state) {
         style: "grid-column: 1 / -1;"
       }, `<p>${admin ? "Lisää aktiiviseen kilpailuun osallistujat ja arvo seuraava mahdollinen vaihe työympäristöstä." : "Kilpailunjärjestäjä julkaisee heatit kisapäivänä."}</p>`);
 
+  const hasTargetClassHeats = targetClass && state.heats.some(h => h.eventId === activeEvent.id && h.className === targetClass);
+
   const generateButton = admin
     ? (targetClass
-      ? UI.Button({
-          label: `Arvo ${targetClass} seuraava vaihe`,
-          action: "generate-class-heats",
-          class: targetClass,
-          variant: "primary"
-        })
+      ? UI.Flex({ gap: "10px" }, `
+          ${UI.Button({
+            label: `Arvo ${targetClass} seuraava vaihe`,
+            action: "generate-class-heats",
+            class: targetClass,
+            variant: "primary"
+          })}
+          ${hasTargetClassHeats ? UI.Button({
+            label: "Peruuta arvonta",
+            action: "cancel-class-heats",
+            class: targetClass,
+            variant: "danger dashed"
+          }) : ""}
+        `)
       : `<a class="button primary" href="#/entries">Arvo luokkakohtaisesti työympäristössä</a>`)
     : "";
 

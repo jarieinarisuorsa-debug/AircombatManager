@@ -119,16 +119,9 @@ export function renderAircraftView(state) {
     `);
   }
 
-  const pageHeader = UI.PageHeader({
-    kicker: "Ohjeistus & Katsastus",
-    title: "Koneet",
-    subtitle: `${aircraftSpecs.length} konetyyppiä rekisterissä`
-  });
-
   const modalHtml = admin && aircraftSpecFormOpen ? renderAircraftSpecModal() : "";
 
   return `
-    ${pageHeader}
     ${tabNavigation}
     <div style="width: 100%; ${tab !== 'konetyypit' ? 'max-width: 800px;' : ''}">
       ${contentHtml}

@@ -13,7 +13,7 @@ export function renderEntriesView(state) {
   const activeEvent = getActiveEvent(state);
   if (!activeEvent) {
     return UI.PageHeader({
-      kicker: "Työympäristö",
+      kicker: "Rakenna kilpailu",
       title: "Ei aktiivista kisaa",
       subtitle: "Avaa kilpailu kisakalenterista."
     });
@@ -36,7 +36,8 @@ export function renderEntriesView(state) {
       <button type="button" class="button ${tab === 'ilmoittautumiset' ? 'primary' : 'dashed'}" data-action="set-workspace-tab" data-tab="ilmoittautumiset">Ilmoittautumiset</button>
       <button type="button" class="button ${tab === 'luokka' ? 'primary' : 'dashed'}" data-action="set-workspace-tab" data-tab="luokka">Kilpailuluokka</button>
       <button type="button" class="button ${tab === 'rakenne' ? 'primary' : 'dashed'}" data-action="set-workspace-tab" data-tab="rakenne">Kilpailun rakenne</button>
-      <button type="button" class="button ${tab === 'osallistujat' ? 'primary' : 'dashed'}" data-action="set-workspace-tab" data-tab="osallistujat">Osallistujat</button>
+      <button type="button" class="button ${tab === 'osallistujat' ? 'primary' : 'dashed'}" data-action="set-workspace-tab" data-tab="osallistujat">Kaikki pilotit</button>
+      <button type="button" class="button ${tab === 'kilpailijat' ? 'primary' : 'dashed'}" data-action="set-workspace-tab" data-tab="kilpailijat">Kilpailijat</button>
       <button type="button" class="button ${tab === 'heatit' ? 'primary' : 'dashed'}" data-action="set-workspace-tab" data-tab="heatit">Heatit</button>
       <button type="button" class="button ${tab === 'tuloskortit' ? 'primary' : 'dashed'}" data-action="set-workspace-tab" data-tab="tuloskortit">Tuloskortit</button>
       <button type="button" class="button ${tab === 'tulokset' ? 'primary' : 'dashed'}" data-action="set-workspace-tab" data-tab="tulokset">Tulokset</button>
@@ -49,6 +50,7 @@ export function renderEntriesView(state) {
   else if (!activeClassName) content = UI.Panel({ title: "Valitse luokka ensin" }, "<p class='muted'>Valitse kilpailuluokka Kilpailuluokka-välilehdeltä jatkaaksesi.</p>");
   else if (tab === "rakenne") content = renderWorkspaceFormatTab(state, activeEvent, activeClassName);
   else if (tab === "osallistujat") content = renderWorkspaceParticipantsTab(state, activeEvent, activeClassName, eventEntries);
+  else if (tab === "kilpailijat") content = renderWorkspaceCompetitorsTab(state, activeEvent, activeClassName, eventEntries);
   else if (tab === "heatit") content = renderWorkspaceHeatsTab(state, activeEvent, activeClassName);
   else if (tab === "tuloskortit") content = renderWorkspaceScorecardsTab(state, activeEvent, activeClassName);
   else if (tab === "tulokset") content = renderWorkspaceResultsTab(state, activeEvent, activeClassName);
@@ -214,7 +216,7 @@ function renderWorkspaceParticipantsTab(state, activeEvent, className) {
       statusCell = `<span style="color: var(--success); font-weight: bold;">✓ Mukana</span>`;
       actionsCell = UI.Flex({ gap: "6px", align: "center" }, `
         ${UI.Button({ label: "Pilottikortti", action: "open-pilot-card", pilotId: pilot.id, variant: "dashed small" })}
-        ${UI.Button({ label: "Poista luokasta", action: "delete-entry", entryId: enrolledRow.entryId, variant: "danger small" })}
+        ${UI.Button({ label: "Poista luokasta", action: "delete-entry", entryId: enrolledRow.id, variant: "danger small" })}
       `);
     } else {
       const matchingPlanes = state.aircraft.filter(a => a.pilotId === pilot.id && a.className === className);
@@ -227,7 +229,7 @@ function renderWorkspaceParticipantsTab(state, activeEvent, className) {
         actionBtn = `<button class="button small primary" data-action="quick-add-class-entry" data-pilot-id="${pilot.id}" data-class-name="${escapeHtml(className)}" data-aircraft-id="${matchingPlanes[0].id}">+ Ilmoita</button>`;
       } else {
         aircraftCell = `
-          <select class="quick-aircraft-select-class" style="padding: 2px; max-width: 150px;">
+          <select class="ui-input quick-aircraft-select-class" style="padding: 2px; max-width: 150px; font-size: 0.9em; height: 32px;">
             ${matchingPlanes.map(p => `<option value="${p.id}">${escapeHtml(p.name)}</option>`).join("")}
           </select>
         `;
@@ -236,8 +238,8 @@ function renderWorkspaceParticipantsTab(state, activeEvent, className) {
       
       statusCell = `<span class="muted">-</span>`;
       actionsCell = UI.Flex({ gap: "6px", align: "center" }, `
-        ${actionBtn}
         ${UI.Button({ label: "Pilottikortti", action: "open-pilot-card", pilotId: pilot.id, variant: "dashed small" })}
+        ${actionBtn}
       `);
     }
 
@@ -298,12 +300,14 @@ function renderWorkspaceHeatsTab(state, activeEvent, className) {
   });
 
   const printBtn = heats.length > 0 ? UI.Button({ label: "Tulosta heatit", action: "print-class-heats", class: className, variant: "dashed", style: "margin-left: 10px;" }) : "";
+  const cancelBtn = heats.length > 0 && admin ? UI.Button({ label: "Peruuta arvonta", action: "cancel-class-heats", class: className, variant: "danger dashed", style: "margin-left: 10px;" }) : "";
 
   const controls = `
     <div style="margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid var(--border);">
       <p class="muted" style="margin-bottom: 10px;">${status.disabledReason || (status.nextPhase ? `Seuraava vaihe: ${escapeHtml(status.nextLabel)} (${status.advancingCount || 'kaikki'} etenijää)` : "Kaikki vaiheet on arvottu.")}</p>
       ${generateBtn}
       ${printBtn}
+      ${cancelBtn}
     </div>
   `;
 
@@ -347,4 +351,87 @@ function renderWorkspaceResultsTab(state, activeEvent, className) {
     </div>
     ${tableHtml}
   `);
+}
+
+function renderWorkspaceCompetitorsTab(state, activeEvent, className, eventEntries) {
+  const classEntries = eventEntries.filter(e => e.className === className);
+  
+  const classRows = classEntries.map(entry => {
+    const pilot = state.pilots.find(p => p.id === entry.pilotId) || {};
+    const aircraft = state.aircraft.find(a => a.id === entry.aircraftId) || {};
+    return {
+      pilotId: pilot.id,
+      pilotName: pilot.name || "",
+      pilotCountry: pilot.country || "",
+      pilotClub: pilot.club || "",
+      pilotImage: pilot.image || "",
+      aircraftName: aircraft.name || "Ei konekorttia",
+      raceNumber: entry.raceNumber || ""
+    };
+  }).sort((a, b) => {
+    const numA = parseInt(a.raceNumber, 10);
+    const numB = parseInt(b.raceNumber, 10);
+    const validA = !isNaN(numA) && a.raceNumber !== "";
+    const validB = !isNaN(numB) && b.raceNumber !== "";
+    if (validA && validB) return numA - numB;
+    if (validA) return -1;
+    if (validB) return 1;
+    return a.pilotName.localeCompare(b.pilotName, "fi");
+  });
+
+  // Calculate automatic numbers "top to bottom" for the form inputs
+  let nextAvailableNumber = 1;
+  const usedNumbers = new Set(eventEntries.map(e => parseInt(e.raceNumber, 10)).filter(n => !isNaN(n)));
+
+  classRows.forEach(row => {
+    const pilotEntries = eventEntries.filter(e => e.pilotId === row.pilotId);
+    const existingNumber = pilotEntries.find(e => e.raceNumber)?.raceNumber;
+    
+    if (existingNumber) {
+      row.displayRaceNumber = existingNumber;
+    } else {
+      while (usedNumbers.has(nextAvailableNumber)) {
+        nextAvailableNumber++;
+      }
+      row.displayRaceNumber = String(nextAvailableNumber);
+      usedNumbers.add(nextAvailableNumber);
+    }
+  });
+
+  const formContent = `
+    <input type="hidden" name="eventId" value="${escapeHtml(activeEvent.id)}" />
+    
+    ${UI.Table({
+      headers: ["Nimi", "Maa / Seura", "Kone", "Kilpailunumero"],
+      rows: classRows.map(row => {
+        return UI.TableRow({
+          className: "pilot-table-row",
+          cells: [
+            UI.Flex({ gap: "10px", align: "center" }, `
+              <div style="width: 24px; height: 24px; border-radius: 50%; overflow: hidden; flex-shrink: 0; background: var(--bg-card); display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: bold; color: var(--text-secondary);">
+                ${row.pilotImage ? `<img src="${row.pilotImage}" style="width: 100%; height: 100%; object-fit: cover;">` : (row.pilotName || "?").charAt(0).toUpperCase()}
+              </div>
+              <span style="font-weight: 500;">${escapeHtml(row.pilotName)}</span>
+            `),
+            UI.Flex({ gap: "6px", align: "center" }, `
+              ${row.pilotCountry ? UI.CountryFlag(row.pilotCountry) : ''}
+              <span>${escapeHtml(row.pilotClub)}</span>
+            `),
+            escapeHtml(row.aircraftName),
+            `<input type="text" class="ui-input" name="raceNumber_${row.pilotId}" value="${escapeHtml(row.displayRaceNumber)}" style="max-width: 80px; text-align: center; font-weight: bold;" placeholder="#" />`
+          ]
+        });
+      })
+    })}
+    
+    ${classRows.length === 0 ? `<p class="muted" style="padding: 20px; text-align: center;">Ei ilmoittautuneita tässä luokassa.</p>` : ''}
+    
+    ${classRows.length > 0 ? `
+      <div style="margin-top: 20px; display: flex; justify-content: flex-end;">
+        <button type="submit" class="button primary">Tallenna kilpailunumerot</button>
+      </div>
+    ` : ''}
+  `;
+
+  return UI.FormPanel({ kicker: "Vaihe 3.5", title: `${escapeHtml(className)}: Kilpailijat`, action: "save-race-numbers" }, formContent);
 }

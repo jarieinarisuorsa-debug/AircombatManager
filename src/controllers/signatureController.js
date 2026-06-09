@@ -133,16 +133,66 @@ export function saveSignature() {
   const targetImageId = document.getElementById("signature-target-image")?.value;
   
   if (canvas && targetInputName) {
-    // Check if canvas is essentially empty (optional but good)
     const ctx = canvas.getContext("2d");
-    const pixelBuffer = new Uint32Array(ctx.getImageData(0, 0, canvas.width, canvas.height).data.buffer);
-    const hasPixels = pixelBuffer.some(color => color !== 0);
+    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    const data = imageData.data;
+    
+    let minX = canvas.width, minY = canvas.height, maxX = 0, maxY = 0;
+    let hasPixels = false;
+    
+    for (let y = 0; y < canvas.height; y++) {
+      for (let x = 0; x < canvas.width; x++) {
+        const alpha = data[(y * canvas.width + x) * 4 + 3];
+        if (alpha > 0) {
+          hasPixels = true;
+          if (x < minX) minX = x;
+          if (x > maxX) maxX = x;
+          if (y < minY) minY = y;
+          if (y > maxY) maxY = y;
+        }
+      }
+    }
+    
+    let dataUrl = "";
+    if (hasPixels) {
+      const padding = 10;
+      minX = Math.max(0, minX - padding);
+      minY = Math.max(0, minY - padding);
+      maxX = Math.min(canvas.width, maxX + padding);
+      maxY = Math.min(canvas.height, maxY + padding);
+      
+      const bboxWidth = Math.max(1, maxX - minX);
+      const bboxHeight = Math.max(1, maxY - minY);
+      
+      // Force all signatures into a standardized 300x120 image.
+      // This guarantees identical scaling and stroke thickness in the print view.
+      const targetWidth = 300;
+      const targetHeight = 120;
+      
+      const tempCanvas = document.createElement("canvas");
+      tempCanvas.width = targetWidth;
+      tempCanvas.height = targetHeight;
+      const tempCtx = tempCanvas.getContext("2d");
+      
+      let drawWidth = bboxWidth;
+      let drawHeight = bboxHeight;
+      
+      // Only scale down if it exceeds the 300x120 bounds. Never scale up!
+      if (drawWidth > targetWidth || drawHeight > targetHeight) {
+         const scale = Math.min(targetWidth / drawWidth, targetHeight / drawHeight);
+         drawWidth *= scale;
+         drawHeight *= scale;
+      }
+      
+      const dx = (targetWidth - drawWidth) / 2;
+      const dy = (targetHeight - drawHeight) / 2;
+      
+      tempCtx.drawImage(canvas, minX, minY, bboxWidth, bboxHeight, dx, dy, drawWidth, drawHeight);
+      dataUrl = tempCanvas.toDataURL("image/png");
+    }
     
     // Find the input field within the form
     const inputs = document.querySelectorAll(`input[name="${targetInputName}"]`);
-    
-    // If there's pixels, save data URL. If not, save empty string.
-    const dataUrl = hasPixels ? canvas.toDataURL("image/png") : "";
     
     // Update all matching hidden inputs
     inputs.forEach(input => {

@@ -96,7 +96,7 @@ export const NAV_LABELS = {
     dashboard: "Etusivu",
     calendar: "Kilpailujen hallinta",
     eventinfo: "Kilpailun tiedot",
-    entries: "Työympäristö",
+    entries: "Rakenna kilpailu",
     pilots: "Pilotit",
     aircraft: "Koneet",
     heats: "Heatit",

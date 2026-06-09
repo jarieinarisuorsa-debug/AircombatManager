@@ -285,6 +285,7 @@ export function renderResultsTable(state, rows, showDetails = false, classPositi
   const roundColumns = (showDetails || format) ? getVisibleRoundColumns(rows, format) : [];
   const headers = ["#", "Pilotti", "Maa", "Luokka", "Pisteet", ...roundColumns, "Cutit"];
   if (showDetails) headers.push("Lentoaika", "Paras kierros", "Kierroksia");
+  headers.push(""); // Tyhjä otsikko painikkeelle
 
   if (!rows.length) {
     return `<div class="empty-results-box">Kilpailutuloksia ei ole vielä tallennettu.</div>`;
@@ -319,6 +320,9 @@ export function renderResultsTable(state, rows, showDetails = false, classPositi
     if (showDetails) {
       cells.push(`${row.totalFlightSeconds}s`, `${row.bestHeatScore} p`, row.resultCount);
     }
+    
+    // Tuloskorttipainike rivin loppuun
+    cells.push(`<a class="button small dashed" href="#/scorecard/${escapeHtml(row.entryId)}">Tuloskortti</a>`);
 
     return UI.TableRow({ cells });
   });

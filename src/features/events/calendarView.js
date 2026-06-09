@@ -140,7 +140,7 @@ function renderEventCard(state, event, activeEventId, admin) {
         ? UI.Badge({ label: "★ Aktiivinen", variant: "success" })
         : UI.Button({ label: "Aseta aktiiviseksi", action: "set-active-event-stay", eventId: event.id, variant: "small dashed" })
       }
-      ${UI.Button({ label: "Työympäristö ➡", action: "open-event-workspace", eventId: event.id, variant: "small primary" })}
+      ${UI.Button({ label: "Rakenna kilpailu ➡", action: "open-event-workspace", eventId: event.id, variant: "small primary" })}
       ${UI.Button({ label: "Kilpailun tiedot", action: "open-event-info", eventId: event.id, variant: "small outline" })}
       ${UI.Button({ label: "Tulokset", action: "open-public-event-results", eventId: event.id, variant: "small outline" })}
       <div style="display: flex; border: 1px solid var(--border); border-radius: 4px; overflow: hidden; margin-left: auto;">

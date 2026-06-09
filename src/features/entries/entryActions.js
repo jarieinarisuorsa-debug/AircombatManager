@@ -66,7 +66,7 @@ export function toggleClassEntry({ pilotId, targetClass }) {
     }
 
     const aircraftId = findClassAircraftId(state, pilotId, targetClass);
-    state.entries.push(createEntryRecord({
+    state.entries.push(createEntryRecord(state, {
       eventId: activeEvent.id,
       pilotId,
       aircraftId,
@@ -95,7 +95,7 @@ export function enrollPilotAllClasses(pilotId) {
       if (alreadyEnrolled) return;
 
       const defaultAircraft = aircrafts.find((aircraft) => aircraft.className === className);
-      state.entries.push(createEntryRecord({
+      state.entries.push(createEntryRecord(state, {
         eventId: activeEvent.id,
         pilotId,
         aircraftId: defaultAircraft?.id || "",
@@ -119,7 +119,7 @@ export function quickAddEntry({ pilotId, aircraftId, className }) {
     const activeEvent = getActiveEvent(state);
     if (!activeEvent) throw new Error("Aktiivista kilpailua ei ole valittu.");
 
-    state.entries.push(createEntryRecord({
+    state.entries.push(createEntryRecord(state, {
       eventId: activeEvent.id,
       pilotId,
       aircraftId,
@@ -160,7 +160,7 @@ export function quickAddClassEntry({ pilotId, className, aircraftId = "" }) {
     if (!activeEvent) throw new Error("Aktiivista kilpailua ei ole valittu.");
 
     const finalAircraftId = aircraftId || findClassAircraftId(state, pilotId, className);
-    state.entries.push(createEntryRecord({
+    state.entries.push(createEntryRecord(state, {
       eventId: activeEvent.id,
       pilotId,
       aircraftId: finalAircraftId,
@@ -252,14 +252,30 @@ function findClassAircraftId(state, pilotId, className) {
   return existingAircraft?.id || "";
 }
 
-function createEntryRecord({ eventId, pilotId, aircraftId = "", className, notes }) {
+export function resolveRaceNumber(state, eventId, pilotId) {
+  const pilotEntries = state.entries.filter(e => e.eventId === eventId && e.pilotId === pilotId);
+  const existingNumber = pilotEntries.find(e => e.raceNumber)?.raceNumber;
+  if (existingNumber) return existingNumber;
+
+  const eventEntries = state.entries.filter(e => e.eventId === eventId && e.raceNumber);
+  let maxNum = 0;
+  for (const e of eventEntries) {
+    const num = parseInt(e.raceNumber, 10);
+    if (!isNaN(num) && num > maxNum) {
+      maxNum = num;
+    }
+  }
+  return String(maxNum + 1);
+}
+
+function createEntryRecord(state, { eventId, pilotId, aircraftId = "", className, notes }) {
   return {
     id: createId("entry"),
     eventId,
     pilotId,
     aircraftId,
     className,
-    raceNumber: "",
+    raceNumber: resolveRaceNumber(state, eventId, pilotId),
     paymentStatus: "unpaid",
     checkInStatus: "not_arrived",
     technicalInspection: "pending",
@@ -317,7 +333,7 @@ export function initEntryActions() {
   registerAction("quick-add-class-select-entry", (event, button, { renderApp }) => {
     const pilotId = button.dataset.pilotId;
     const className = button.dataset.className;
-    const container = button.closest(".class-reg-select-row");
+    const container = button.closest("tr") || button.closest(".pilot-table-row");
     const select = container ? container.querySelector(".quick-aircraft-select-class") : null;
     const aircraftId = select ? select.value : "";
     if (!aircraftId) throw new Error("Valitse kone ennen ilmoittamista.");

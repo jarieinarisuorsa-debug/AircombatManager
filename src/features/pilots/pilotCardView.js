@@ -23,7 +23,7 @@ export function renderPilotCardView(state) {
   const hasWwi = entries.some((e) => e.className === "WWI");
 
   const backButton = activeEvent 
-    ? `<a href="#/entries" class="button small dashed">⬅ Työympäristöön</a><a href="#/pilots" class="button small dashed">Kaikki pilotit</a>`
+    ? `<a href="#/entries" class="button small dashed">⬅ Rakenna kilpailuun</a><a href="#/pilots" class="button small dashed">Kaikki pilotit</a>`
     : `<a href="#/pilots" class="button small dashed">⬅ Takaisin</a>`;
 
   const deleteButton = isNew ? "" : UI.Button({ label: "Poista pilotti", action: "delete-pilot", pilotId: pilot.id, variant: "danger small" });
@@ -165,7 +165,7 @@ export function renderPilotCardView(state) {
   const tab = window.PILOT_CARD_TAB || 'perustiedot';
 
   const tabNavigation = `
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid var(--border); padding-bottom: 10px; flex-wrap: wrap; gap: 10px;">
+    <div class="no-print" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid var(--border); padding-bottom: 10px; flex-wrap: wrap; gap: 10px;">
       <div class="ui-tabs" style="display: flex; gap: 10px; overflow-x: auto;">
         <button type="button" class="button ${tab === 'perustiedot' ? 'primary' : 'dashed'}" data-action="set-pilot-card-tab" data-tab="perustiedot">Perustiedot</button>
         <button type="button" class="button ${tab === 'ilmoittautuminen' ? 'primary' : 'dashed'}" data-action="set-pilot-card-tab" data-tab="ilmoittautuminen" ${isNew ? 'disabled title="Tallenna uusi pilotti ensin"' : ''}>Ilmoittautuminen</button>

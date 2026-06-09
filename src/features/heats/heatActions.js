@@ -90,6 +90,48 @@ export function generateHeats(targetClassName = null) {
   }, "generate_heats");
 }
 
+export function cancelLastHeats(className) {
+  updateState((state) => {
+    requireAdmin(state);
+    const activeEvent = getActiveEvent(state);
+    if (!activeEvent) throw new Error("Aktiivista kilpailua ei ole valittu.");
+
+    const classHeats = state.heats.filter((heat) => heat.eventId === activeEvent.id && heat.className === className);
+    if (!classHeats.length) throw new Error("Ei peruttavia heatteja.");
+
+    const finalHeats = classHeats.filter((heat) => heat.phase === "final");
+    const semifinalHeats = classHeats.filter((heat) => heat.phase === "semifinal");
+    const qualifyingHeats = classHeats.filter((heat) => !heat.phase || heat.phase === "qualifying");
+
+    let heatsToRemove = [];
+
+    if (finalHeats.length > 0) {
+      heatsToRemove = finalHeats;
+    } else if (semifinalHeats.length > 0) {
+      heatsToRemove = semifinalHeats;
+    } else {
+      const rounds = qualifyingHeats.map((heat) => Number(heat.round) || 1).filter(Number.isFinite);
+      const maxRound = rounds.length ? Math.max(...rounds) : 1;
+      heatsToRemove = qualifyingHeats.filter((heat) => (Number(heat.round) || 1) === maxRound);
+    }
+
+    const heatIdsToRemove = new Set(heatsToRemove.map((heat) => heat.id));
+
+    // Check if any of these heats have traditional results
+    const hasResults = state.results && state.results.some((result) => heatIdsToRemove.has(result.heatId));
+    if (hasResults) {
+      throw new Error("Näihin heatteihin on jo syötetty tuloksia. Tulokset pitää poistaa ennen arvonnan perumista.");
+    }
+
+    // Remove heats
+    state.heats = state.heats.filter((heat) => !heatIdsToRemove.has(heat.id));
+
+    activeEvent.resultsPublished = false;
+    activeEvent.resultsPublishedAt = null;
+    if (activeEvent.status === "results_published") activeEvent.status = "active";
+  }, "cancel_heats");
+}
+
 export function initHeatActions() {
   registerAction("generate-heats", (event, button) => {
     requireAdmin(getState());
@@ -124,6 +166,26 @@ export function initHeatActions() {
   registerAction("execute-generate-class-heats", (event, button, { renderApp }) => {
     requireAdmin(getState());
     generateHeats(button.dataset.class);
+    renderApp();
+    return true;
+  });
+
+  registerAction("cancel-class-heats", (event, button) => {
+    requireAdmin(getState());
+    openConfirmModal({
+      title: `Peruuta viimeisin arvonta (${button.dataset.class})`,
+      message: `Haluatko varmasti peruuttaa luokan ${button.dataset.class} viimeisimmän heat-arvonnan?`,
+      action: "execute-cancel-class-heats",
+      payload: { class: button.dataset.class },
+      isDanger: true,
+      submitLabel: "Peruuta arvonta"
+    });
+    return true;
+  });
+
+  registerAction("execute-cancel-class-heats", (event, button, { renderApp }) => {
+    requireAdmin(getState());
+    cancelLastHeats(button.dataset.class);
     renderApp();
     return true;
   });

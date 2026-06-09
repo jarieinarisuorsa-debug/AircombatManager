@@ -32,7 +32,7 @@ export const ROUTES = {
   dashboard: { title: (state) => (isAdmin(state) ? "Etusivu" : "Etusivu"), render: renderDashboardView },
   calendar: { title: "Kisakalenteri", render: renderCalendarView },
   eventinfo: { title: "Kilpailun tiedot", render: renderEventInfoView },
-  entries: { title: "Työympäristö", render: renderEntriesView },
+  entries: { title: "Rakenna kilpailu", render: renderEntriesView },
   pilots: { title: "Pilotit", render: renderPilotsView },
   pilot: { title: "Pilottikortti", render: renderPilotCardView },
   mypilotcard: { 
