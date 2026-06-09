@@ -47,11 +47,14 @@
   padding: 0 !important;
   margin: 0 !important;
   color: #ffffff !important;
+  font-weight: 600;
+  appearance: textfield;
   -moz-appearance: textfield;
 }
 
 .stepper-input input::-webkit-outer-spin-button,
 .stepper-input input::-webkit-inner-spin-button {
+  appearance: none;
   -webkit-appearance: none;
   margin: 0;
 }
