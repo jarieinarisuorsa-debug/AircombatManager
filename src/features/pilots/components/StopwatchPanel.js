@@ -1,6 +1,7 @@
 import { escapeHtml } from "../../../utils/html.js";
 import { UI } from "../../../ui/engine.js";
 import { buildScoreCardRows, getScoreCardStructureStages } from "../../../logic/scoreCards.js";
+import { t } from "../../../utils/i18n.js";
 
 export function renderStopwatchPanel(state, pilot, activeEvent) {
   if (!activeEvent) {
