@@ -3,6 +3,7 @@ import { normalizeEventInfo, parseDocumentLines } from "../../logic/eventInfo.js
 import { isAdmin } from "../../users/roles.js";
 import { UI } from "../../ui/engine.js";
 import { renderWeatherWidget } from "./weatherWidget.js";
+import { t } from "../../utils/i18n.js";
 
 function getZoneCenter(points) {
   if (!points || points.length === 0) return {x: 50, y: 50};
@@ -17,11 +18,11 @@ export function renderEventInfoView(state) {
 
   if (!event) {
     return UI.Panel({
-      kicker: "Kilpailun tiedot",
-      title: "Ei aktiivista kilpailua"
+      kicker: t(state, "event_info.kicker"),
+      title: t(state, "event_info.no_active")
     }, `
-      <p class="muted">Valitse kilpailu kisakalenterista.</p>
-      <a class="button primary" href="#/calendar">Avaa kisakalenteri</a>
+      <p class="muted">${t(state, "event_info.no_active_desc")}</p>
+      <a class="button primary" href="#/calendar">${t(state, "event_info.open_calendar")}</a>
     `);
   }
 
@@ -29,7 +30,7 @@ export function renderEventInfoView(state) {
   const headerActions = "";
 
   const pageHeader = UI.PageHeader({
-    kicker: "Kilpailun tiedot",
+    kicker: t(state, "event_info.kicker"),
     title: event.name,
     subtitle: `${escapeHtml(event.location)} · ${formatDateRange(event.date, event.endDate)}`,
     headerActions
@@ -40,15 +41,15 @@ export function renderEventInfoView(state) {
 
   const tabNavigation = `
     <div class="ui-tabs" style="display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 1px solid var(--border); padding-bottom: 10px; overflow-x: auto;">
-      <button type="button" class="button ${tab === 'yleista' ? 'primary' : 'dashed'}" data-action="set-event-info-tab" data-tab="yleista">Yleistä</button>
-      <button type="button" class="button ${tab === 'saapuminen' ? 'primary' : 'dashed'}" data-action="set-event-info-tab" data-tab="saapuminen">Saapuminen</button>
-      <button type="button" class="button ${tab === 'kartta' ? 'primary' : 'dashed'}" data-action="set-event-info-tab" data-tab="kartta">Kartta</button>
-      <button type="button" class="button ${tab === 'saatila' ? 'primary' : 'dashed'}" data-action="set-event-info-tab" data-tab="saatila">Säätila</button>
-      <button type="button" class="button ${tab === 'aikataulu' ? 'primary' : 'dashed'}" data-action="set-event-info-tab" data-tab="aikataulu">Aikataulu</button>
-      <button type="button" class="button ${tab === 'dokumentit' ? 'primary' : 'dashed'}" data-action="set-event-info-tab" data-tab="dokumentit">Dokumentit</button>
-      <button type="button" class="button ${tab === 'tiedotteet' ? 'primary' : 'dashed'}" data-action="set-event-info-tab" data-tab="tiedotteet">Tiedotteet</button>
-      <button type="button" class="button ${tab === 'yhteystiedot' ? 'primary' : 'dashed'}" data-action="set-event-info-tab" data-tab="yhteystiedot">Yhteystiedot</button>
-      <button type="button" class="button ${tab === 'sponsorit' ? 'primary' : 'dashed'}" data-action="set-event-info-tab" data-tab="sponsorit">Sponsorit</button>
+      <button type="button" class="button ${tab === 'yleista' ? 'primary' : 'dashed'}" data-action="set-event-info-tab" data-tab="yleista">${t(state, "event_info.tab_general")}</button>
+      <button type="button" class="button ${tab === 'saapuminen' ? 'primary' : 'dashed'}" data-action="set-event-info-tab" data-tab="saapuminen">${t(state, "event_info.tab_arrival")}</button>
+      <button type="button" class="button ${tab === 'kartta' ? 'primary' : 'dashed'}" data-action="set-event-info-tab" data-tab="kartta">${t(state, "event_info.tab_map")}</button>
+      <button type="button" class="button ${tab === 'saatila' ? 'primary' : 'dashed'}" data-action="set-event-info-tab" data-tab="saatila">${t(state, "event_info.tab_weather")}</button>
+      <button type="button" class="button ${tab === 'aikataulu' ? 'primary' : 'dashed'}" data-action="set-event-info-tab" data-tab="aikataulu">${t(state, "event_info.tab_schedule")}</button>
+      <button type="button" class="button ${tab === 'dokumentit' ? 'primary' : 'dashed'}" data-action="set-event-info-tab" data-tab="dokumentit">${t(state, "event_info.tab_docs")}</button>
+      <button type="button" class="button ${tab === 'tiedotteet' ? 'primary' : 'dashed'}" data-action="set-event-info-tab" data-tab="tiedotteet">${t(state, "event_info.tab_notices")}</button>
+      <button type="button" class="button ${tab === 'yhteystiedot' ? 'primary' : 'dashed'}" data-action="set-event-info-tab" data-tab="yhteystiedot">${t(state, "event_info.tab_contacts")}</button>
+      <button type="button" class="button ${tab === 'sponsorit' ? 'primary' : 'dashed'}" data-action="set-event-info-tab" data-tab="sponsorit">${t(state, "event_info.tab_sponsors")}</button>
     </div>
   `;
 
@@ -82,40 +83,40 @@ export function renderEventInfoView(state) {
   `;
 }
 
-function renderEditHeader(title, sectionName) {
+function renderEditHeader(title, sectionName, state) {
   return `
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
       <h3 style="margin: 0;">${title}</h3>
-      <button type="button" class="button small" data-action="cancel-edit-event-section">Peruuta</button>
+      <button type="button" class="button small" data-action="cancel-edit-event-section">${t(state, "event_info.btn_cancel")}</button>
     </div>
   `;
 }
 
-function renderEditButton(sectionName) {
-  return `<button type="button" class="button small primary" data-action="edit-event-section" data-section="${sectionName}">✏️ Muokkaa</button>`;
+function renderEditButton(sectionName, state) {
+  return `<button type="button" class="button small primary" data-action="edit-event-section" data-section="${sectionName}">${t(state, "event_info.btn_edit")}</button>`;
 }
 
-function renderSummaryPanel(event, info, admin, isEdit) {
+function renderSummaryPanel(event, info, admin, isEdit, state) {
   if (isEdit) {
     return UI.FormPanel({ action: "save-event-info", className: "event-info-editor" }, `
-      ${renderEditHeader("Muokkaa yleisiä tietoja", "yleista")}
-      <label>Kilpailun kuvaus
-        <textarea name="description" placeholder="Yleiskuvaus kilpailusta" rows="8">${escapeHtml(info.description)}</textarea>
+      ${renderEditHeader(t(state, "event_info.edit_general"), "yleista", state)}
+      <label>${t(state, "event_info.desc_label")}
+        <textarea name="description" placeholder="${t(state, "event_info.desc_placeholder")}" rows="8">${escapeHtml(info.description)}</textarea>
       </label>
       
       <div style="margin-top: 15px;">
-        <label>Paikkakunnan vaakuna</label>
+        <label>${t(state, "event_info.coat_of_arms")}</label>
         
         <div id="coat-of-arms-preview-card" class="panel" style="display: ${info.coatOfArmsData ? "flex" : "none"}; align-items: center; gap: 30px; padding: 20px; margin-top: 8px;">
           <div style="flex-shrink: 0; display: flex; align-items: center; justify-content: center;">
-            <img id="coat-of-arms-preview" src="${escapeHtml(info.coatOfArmsData || "")}" style="max-height: 160px; max-width: 200px; object-fit: contain; filter: drop-shadow(0 4px 12px rgba(0,0,0,0.3));" alt="Vaakunan esikatselu" />
+            <img id="coat-of-arms-preview" src="${escapeHtml(info.coatOfArmsData || "")}" style="max-height: 160px; max-width: 200px; object-fit: contain; filter: drop-shadow(0 4px 12px rgba(0,0,0,0.3));" alt="${t(state, "event_info.coat_of_arms")}" />
           </div>
           <div style="flex: 1;">
-            <p style="margin: 0 0 8px 0; font-size: 1.1rem;"><strong>Tallennettu vaakuna</strong></p>
-            <p style="margin: 0 0 15px 0; color: var(--muted); font-size: 0.9rem;">Vaakuna näytetään kisakalenterissa tapahtumakortin reunassa.</p>
+            <p style="margin: 0 0 8px 0; font-size: 1.1rem;"><strong>${t(state, "event_info.coat_saved")}</strong></p>
+            <p style="margin: 0 0 15px 0; color: var(--muted); font-size: 0.9rem;">${t(state, "event_info.coat_desc")}</p>
             <div style="display: flex; gap: 10px;">
-               <button type="button" class="button small outline" onclick="document.getElementById('coat-of-arms-upload').click()">Vaihda kuva</button>
-               <button type="button" class="button small danger outline" data-action="clear-coat-of-arms" id="clear-coat-of-arms-btn">Poista vaakuna</button>
+               <button type="button" class="button small outline" onclick="document.getElementById('coat-of-arms-upload').click()">${t(state, "event_info.change_image")}</button>
+               <button type="button" class="button small danger outline" data-action="clear-coat-of-arms" id="clear-coat-of-arms-btn">${t(state, "event_info.remove_image")}</button>
             </div>
           </div>
         </div>
@@ -124,125 +125,125 @@ function renderSummaryPanel(event, info, admin, isEdit) {
           <input type="file" id="coat-of-arms-upload" style="display: none;" accept="image/png, image/jpeg, image/webp, image/svg+xml" />
           <input type="hidden" name="coatOfArmsData" id="coat-of-arms-data" value="${escapeHtml(info.coatOfArmsData || "")}" />
           <span style="font-size: 2rem; margin-bottom: 10px; opacity: 0.8;">🛡️</span>
-          <span style="color: var(--text); font-weight: 600; font-size: 0.95rem;">Raahaa vaakuna tähän tai klikkaa valitaksesi tiedoston</span>
-          <span style="color: var(--muted); font-size: 0.8rem; margin-top: 6px;">Suositus: PNG ilman taustaa, koko vähintään 256x256</span>
+          <span style="color: var(--text); font-weight: 600; font-size: 0.95rem;">${t(state, "event_info.drag_drop")}</span>
+          <span style="color: var(--muted); font-size: 0.8rem; margin-top: 6px;">${t(state, "event_info.drag_hint")}</span>
         </label>
       </div>
 
       <div class="ui-form-actions" style="margin-top: 20px;">
-        ${UI.Button({ label: "Tallenna muutokset", type: "submit", variant: "primary" })}
+        ${UI.Button({ label: t(state, "event_info.save_changes"), type: "submit", variant: "primary" })}
       </div>
     `);
   }
 
   const description = String(info.description || "").trim();
-  const headerActions = admin ? renderEditButton('yleista') : "";
+  const headerActions = admin ? renderEditButton('yleista', state) : "";
 
-  return UI.Panel({ kicker: "Perustiedot", title: "Kilpailu", headerActions }, `
+  return UI.Panel({ kicker: t(state, "event_info.basic_kicker"), title: t(state, "event_info.basic_title"), headerActions }, `
     <div class="event-info-summary">
-      <article class="small-card"><span class="muted">Paikka</span><strong>${escapeHtml(event.location || "-")}</strong></article>
-      <article class="small-card"><span class="muted">Ajankohta</span><strong>${formatDateRange(event.date, event.endDate)}</strong></article>
-      <article class="small-card"><span class="muted">Luokat</span><strong>${(event.classes || []).map(escapeHtml).join(", ") || "-"}</strong></article>
-      <article class="small-card"><span class="muted">Status</span><strong>${escapeHtml(event.status || "-")}</strong></article>
+      <article class="small-card"><span class="muted">${t(state, "event_info.loc")}</span><strong>${escapeHtml(event.location || "-")}</strong></article>
+      <article class="small-card"><span class="muted">${t(state, "event_info.date")}</span><strong>${formatDateRange(event.date, event.endDate)}</strong></article>
+      <article class="small-card"><span class="muted">${t(state, "event_info.classes")}</span><strong>${(event.classes || []).map(escapeHtml).join(", ") || "-"}</strong></article>
+      <article class="small-card"><span class="muted">${t(state, "event_info.status")}</span><strong>${escapeHtml(event.status || "-")}</strong></article>
     </div>
-    ${description ? `<div class="event-info-text" style="margin-top: 20px;">${formatMultiline(description)}</div>` : `<p class="muted" style="margin-top: 20px;">Kilpailulle ei ole vielä lisätty julkista kuvausta.</p>`}
+    ${description ? `<div class="event-info-text" style="margin-top: 20px;">${formatMultiline(description)}</div>` : `<p class="muted" style="margin-top: 20px;">${t(state, "event_info.no_desc")}</p>`}
   `);
 }
 
-function renderNoticePanel(event, admin, isEdit) {
+function renderNoticePanel(event, admin, isEdit, state) {
   if (isEdit) {
     return UI.FormPanel({ action: "save-event-info", className: "event-info-editor" }, `
-      ${renderEditHeader("Muokkaa tiedotteita", "tiedotteet")}
-      <label>Kilpailunjohdon tiedote
-        <textarea name="publicNotice" placeholder="Tärkeä tiedote, aikataulumuutos tai ohje" rows="6">${escapeHtml(event.publicNotice || "")}</textarea>
+      ${renderEditHeader(t(state, "event_info.edit_notices"), "tiedotteet", state)}
+      <label>${t(state, "event_info.notice_label")}
+        <textarea name="publicNotice" placeholder="${t(state, "event_info.notice_placeholder")}" rows="6">${escapeHtml(event.publicNotice || "")}</textarea>
       </label>
       <div class="ui-form-actions">
-        ${UI.Button({ label: "Julkaise tiedote", type: "submit", variant: "primary" })}
+        ${UI.Button({ label: t(state, "event_info.publish_notice"), type: "submit", variant: "primary" })}
       </div>
     `);
   }
 
   const notice = String(event.publicNotice || "").trim();
-  const headerActions = admin ? renderEditButton('tiedotteet') : "";
-  return UI.Panel({ kicker: "Tiedotteet", title: notice ? "Kilpailunjohdon tiedote" : "Ei julkaistuja tiedotteita", headerActions },
-    notice ? `<p class="notice-text public-notice-text">${escapeHtml(notice)}</p>` : `<p class="muted">Kilpailunjohto ei ole vielä julkaissut tiedotteita tähän kilpailuun.</p>`);
+  const headerActions = admin ? renderEditButton('tiedotteet', state) : "";
+  return UI.Panel({ kicker: t(state, "event_info.notices_kicker"), title: notice ? t(state, "event_info.notices_title") : t(state, "event_info.no_notices_title"), headerActions },
+    notice ? `<p class="notice-text public-notice-text">${escapeHtml(notice)}</p>` : `<p class="muted">${t(state, "event_info.no_notices")}</p>`);
 }
 
-function renderLocationPanel(event, info, admin, isEdit) {
+function renderLocationPanel(event, info, admin, isEdit, state) {
   // Fallback for old 'sijainti' tab
   return UI.Grid({ columns: "minmax(280px, 0.9fr) minmax(280px, 1.1fr)", gap: "18px", className: "event-info-grid" }, `
-    ${renderArrivalOnlyPanel(event, info, admin, false)}
-    ${renderMapOnlyPanel(event, info, admin, false)}
+    ${renderArrivalOnlyPanel(event, info, admin, false, state)}
+    ${renderMapOnlyPanel(event, info, admin, false, state)}
   `);
 }
 
-function renderArrivalOnlyPanel(event, info, admin, isEdit) {
+function renderArrivalOnlyPanel(event, info, admin, isEdit, state) {
   if (isEdit) {
     return UI.FormPanel({ action: "save-event-info", className: "event-info-editor" }, `
-      ${renderEditHeader("Muokkaa saapumisohjeita", "saapuminen")}
-      <label style="margin-top: 12px;">Saapumisohje
-        <textarea name="arrivalInfo" placeholder="Pysäköinti, leirintä, kisatoimisto, flight line..." rows="6">${escapeHtml(info.arrivalInfo)}</textarea>
+      ${renderEditHeader(t(state, "event_info.edit_arrival"), "saapuminen", state)}
+      <label style="margin-top: 12px;">${t(state, "event_info.arrival_label")}
+        <textarea name="arrivalInfo" placeholder="${t(state, "event_info.arrival_placeholder")}" rows="6">${escapeHtml(info.arrivalInfo)}</textarea>
       </label>
-      <label>Palvelut
-        <textarea name="servicesInfo" placeholder="WC, vesi, sähkö, ruokailu, ensiapu..." rows="6">${escapeHtml(info.servicesInfo)}</textarea>
+      <label>${t(state, "event_info.services_label")}
+        <textarea name="servicesInfo" placeholder="${t(state, "event_info.services_placeholder")}" rows="6">${escapeHtml(info.servicesInfo)}</textarea>
       </label>
       <div class="ui-form-actions">
-        ${UI.Button({ label: "Tallenna tiedot", type: "submit", variant: "primary" })}
+        ${UI.Button({ label: t(state, "event_info.save_info"), type: "submit", variant: "primary" })}
       </div>
     `);
   }
 
   const arrivalInfo = String(info.arrivalInfo || "").trim();
   const servicesInfo = String(info.servicesInfo || "").trim();
-  const headerActions = admin ? renderEditButton('saapuminen') : "";
+  const headerActions = admin ? renderEditButton('saapuminen', state) : "";
 
-  return UI.Panel({ kicker: "Saapuminen", title: "Ohjeet ja palvelut", headerActions }, `
+  return UI.Panel({ kicker: t(state, "event_info.arrival_kicker"), title: t(state, "event_info.arrival_title"), headerActions }, `
     <div class="event-info-block">
-      <h4>Saapumisohje</h4>
-      ${arrivalInfo ? `<div class="event-info-text">${formatMultiline(arrivalInfo)}</div>` : `<p class="muted">Saapumisohjeita ei ole vielä lisätty.</p>`}
+      <h4>${t(state, "event_info.arrival_heading")}</h4>
+      ${arrivalInfo ? `<div class="event-info-text">${formatMultiline(arrivalInfo)}</div>` : `<p class="muted">${t(state, "event_info.no_arrival")}</p>`}
     </div>
     <div class="event-info-block">
-      <h4>Palvelut</h4>
-      ${servicesInfo ? `<div class="event-info-text">${formatMultiline(servicesInfo)}</div>` : `<p class="muted">Palvelutietoja ei ole vielä lisätty.</p>`}
+      <h4>${t(state, "event_info.services_heading")}</h4>
+      ${servicesInfo ? `<div class="event-info-text">${formatMultiline(servicesInfo)}</div>` : `<p class="muted">${t(state, "event_info.no_services")}</p>`}
     </div>
   `);
 }
 
-function renderWeatherOnlyPanel(event, info, admin, isEdit) {
+function renderWeatherOnlyPanel(event, info, admin, isEdit, state) {
   if (isEdit) {
     return UI.FormPanel({ action: "save-event-info", className: "event-info-editor" }, `
-      ${renderEditHeader("Muokkaa säätilan sijaintia", "saatila")}
+      ${renderEditHeader(t(state, "event_info.edit_weather"), "saatila", state)}
       <div style="padding: 15px; background: var(--surface-1); border-radius: 8px; border: 1px solid var(--border);">
-        <label style="display: block; margin-bottom: 12px; font-weight: bold;">Säätilan koordinaatit</label>
+        <label style="display: block; margin-bottom: 12px; font-weight: bold;">${t(state, "event_info.coords_label")}</label>
         ${UI.Grid({ columns: "1fr 1fr", gap: "12px", className: "form-grid-two" }, `
-          ${UI.Input({ label: "Leveysaste (Latitude)", name: "latitude", id: "event-latitude-input", value: info.latitude, placeholder: "esim. 61.777" })}
-          ${UI.Input({ label: "Pituusaste (Longitude)", name: "longitude", id: "event-longitude-input", value: info.longitude, placeholder: "esim. 22.723" })}
+          ${UI.Input({ label: t(state, "event_info.lat"), name: "latitude", id: "event-latitude-input", value: info.latitude, placeholder: "esim. 61.777" })}
+          ${UI.Input({ label: t(state, "event_info.lon"), name: "longitude", id: "event-longitude-input", value: info.longitude, placeholder: "esim. 22.723" })}
         `)}
         <div style="margin-top: 15px;">
-          <button type="button" class="button small dashed" data-action="fetch-admin-location">📍 Hae nykyinen sijaintini laitteelta</button>
+          <button type="button" class="button small dashed" data-action="fetch-admin-location">${t(state, "event_info.fetch_loc")}</button>
           <span id="admin-location-status" style="font-size: 0.8rem; color: var(--muted); margin-left: 8px;"></span>
         </div>
       </div>
       <div class="ui-form-actions" style="margin-top: 20px;">
-        ${UI.Button({ label: "Tallenna koordinaatit", type: "submit", variant: "primary" })}
+        ${UI.Button({ label: t(state, "event_info.save_coords"), type: "submit", variant: "primary" })}
       </div>
     `);
   }
 
-  const headerActions = admin ? renderEditButton('saatila') : "";
-  return renderWeatherWidget(event, admin, headerActions);
+  const headerActions = admin ? renderEditButton('saatila', state) : "";
+  return renderWeatherWidget(event, admin, headerActions, state);
 }
 
-function renderMapOnlyPanel(event, info, admin, isEdit) {
+function renderMapOnlyPanel(event, info, admin, isEdit, state) {
   if (isEdit) {
     return UI.FormPanel({ action: "save-event-info", className: "event-info-editor" }, `
-      ${renderEditHeader("Muokkaa kartan osoitetta", "kartta")}
+      ${renderEditHeader(t(state, "event_info.edit_map"), "kartta", state)}
       ${UI.Grid({ columns: "1fr 1fr", gap: "12px", className: "form-grid-two" }, `
-        ${UI.Input({ label: "Osoite", name: "address", value: info.address, placeholder: "Jämijärven lentokenttä" })}
-        ${UI.Input({ label: "Google Maps / karttalinkki", name: "mapsUrl", value: info.mapsUrl, placeholder: "https://maps.google.com/..." })}
+        ${UI.Input({ label: t(state, "event_info.address"), name: "address", value: info.address, placeholder: t(state, "event_info.address_placeholder") })}
+        ${UI.Input({ label: t(state, "event_info.maps_url"), name: "mapsUrl", value: info.mapsUrl, placeholder: "https://maps.google.com/..." })}
       `)}
       <div class="ui-form-actions" style="margin-top: 20px;">
-        ${UI.Button({ label: "Tallenna osoite", type: "submit", variant: "primary" })}
+        ${UI.Button({ label: t(state, "event_info.save_address"), type: "submit", variant: "primary" })}
       </div>
     `);
   }
@@ -287,7 +288,7 @@ function renderMapOnlyPanel(event, info, admin, isEdit) {
   const mapContent = mapImageUrl
     ? `
       <div class="map-container">
-        <img class="event-map-image" src="${escapeHtml(mapImageUrl)}" alt="Kilpailualueen kartta" />
+        <img class="event-map-image" src="${escapeHtml(mapImageUrl)}" alt="${t(state, "event_info.map_alt")}" />
         ${windAnim}
         ${svgOverlay}
         ${pois.map(poi => {
@@ -301,88 +302,88 @@ function renderMapOnlyPanel(event, info, admin, isEdit) {
         `}).join("")}
       </div>
     `
-    : `<div class="event-map-placeholder">Karttakuvaa ei ole lisätty.</div>`;
+    : `<div class="event-map-placeholder">${t(state, "event_info.no_map")}</div>`;
 
-  const editButton = admin ? renderEditButton('kartta') : "";
-  const windButton = (info.latitude && info.longitude) ? `<button class="button small ${window.WIND_ANIM_ENABLED ? 'primary' : ''}" data-action="toggle-wind-animation" data-lat="${info.latitude}" data-lon="${info.longitude}" data-event-id="${event.id}">💨 ${window.WIND_ANIM_ENABLED ? 'Piilota tuuli' : 'Näytä tuuli'}</button>` : "";
+  const editButton = admin ? renderEditButton('kartta', state) : "";
+  const windButton = (info.latitude && info.longitude) ? `<button class="button small ${window.WIND_ANIM_ENABLED ? 'primary' : ''}" data-action="toggle-wind-animation" data-lat="${info.latitude}" data-lon="${info.longitude}" data-event-id="${event.id}">${window.WIND_ANIM_ENABLED ? t(state, "event_info.hide_wind") : t(state, "event_info.show_wind")}</button>` : "";
   
   const headerActions = `
     <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap; justify-content: flex-end;">
       ${windButton}
-      ${mapsUrl ? `<a class="button small" href="${escapeHtml(mapsUrl)}" target="_blank" rel="noopener noreferrer">Avaa Google Maps</a>` : ""}
-      ${admin ? `<a class="button small" href="#/mapeditor">🎨 Karttaeditori</a>` : ""}
+      ${mapsUrl ? `<a class="button small" href="${escapeHtml(mapsUrl)}" target="_blank" rel="noopener noreferrer">${t(state, "event_info.open_maps")}</a>` : ""}
+      ${admin ? `<a class="button small" href="#/mapeditor">${t(state, "event_info.map_editor")}</a>` : ""}
       ${editButton}
     </div>
   `;
 
-  return UI.Panel({ kicker: "Kartta", title: "Sijainti", headerActions }, `
-    ${address ? `<p style="margin-bottom: 12px;"><strong>Osoite:</strong><br />${escapeHtml(address)}</p>` : `<p class="muted" style="margin-bottom: 12px;">Osoitetta ei ole vielä lisätty.</p>`}
+  return UI.Panel({ kicker: t(state, "event_info.map_kicker"), title: t(state, "event_info.map_title"), headerActions }, `
+    ${address ? `<p style="margin-bottom: 12px;"><strong>${t(state, "event_info.address_bold")}</strong><br />${escapeHtml(address)}</p>` : `<p class="muted" style="margin-bottom: 12px;">${t(state, "event_info.no_address")}</p>`}
     ${mapContent}
   `);
 }
 
-function renderDocumentsPanel(info, admin, isEdit) {
+function renderDocumentsPanel(info, admin, isEdit, state) {
   if (isEdit) {
     return UI.FormPanel({ action: "save-event-info", className: "event-info-editor" }, `
-      ${renderEditHeader("Muokkaa dokumentteja", "dokumentit")}
-      <label>Dokumentit ja linkit
-        <textarea name="documentsText" placeholder="Yksi per rivi: Kenttäkartta | https://..." rows="6">${escapeHtml(info.documentsText)}</textarea>
+      ${renderEditHeader(t(state, "event_info.edit_docs"), "dokumentit", state)}
+      <label>${t(state, "event_info.docs_label")}
+        <textarea name="documentsText" placeholder="${t(state, "event_info.docs_placeholder")}" rows="6">${escapeHtml(info.documentsText)}</textarea>
       </label>
       <div class="ui-form-actions">
-        ${UI.Button({ label: "Tallenna dokumentit", type: "submit", variant: "primary" })}
+        ${UI.Button({ label: t(state, "event_info.save_docs"), type: "submit", variant: "primary" })}
       </div>
     `);
   }
 
   const documents = parseDocumentLines(info.documentsText);
-  const headerActions = admin ? renderEditButton('dokumentit') : "";
+  const headerActions = admin ? renderEditButton('dokumentit', state) : "";
 
-  return UI.Panel({ kicker: "Dokumentit", title: "Linkit ja liitteet", headerActions }, documents.length ? `
+  return UI.Panel({ kicker: t(state, "event_info.docs_kicker"), title: t(state, "event_info.docs_title"), headerActions }, documents.length ? `
     <div class="event-document-list">
       ${documents.map((doc) => `
         <a class="event-document-card" href="${escapeHtml(doc.url || "#")}" ${doc.url ? `target="_blank" rel="noopener noreferrer"` : ""}>
           <strong>${escapeHtml(doc.title)}</strong>
-          <span>${doc.url ? escapeHtml(doc.url) : "Ei linkkiä"}</span>
+          <span>${doc.url ? escapeHtml(doc.url) : t(state, "event_info.no_link")}</span>
         </a>
       `).join("")}
     </div>
   ` : `
-    <p class="muted">Dokumentteja ei ole vielä lisätty.</p>
-    <p class="muted">Admin voi lisätä tähän esimerkiksi kenttäkartan, aikataulun, turvallisuusohjeen tai majoitusinfon.</p>
+    <p class="muted">${t(state, "event_info.no_docs")}</p>
+    <p class="muted">${t(state, "event_info.docs_admin_hint")}</p>
   `);
 }
 
-function renderContactPanel(info, admin, isEdit) {
+function renderContactPanel(info, admin, isEdit, state) {
   if (isEdit) {
     return UI.FormPanel({ action: "save-event-info", className: "event-info-editor" }, `
-      ${renderEditHeader("Muokkaa yhteystietoja", "yhteystiedot")}
+      ${renderEditHeader(t(state, "event_info.edit_contacts"), "yhteystiedot", state)}
       ${UI.Grid({ columns: "1fr 1fr", gap: "12px", className: "form-grid-two" }, `
-        ${UI.Input({ label: "Järjestäjä", name: "organizer", value: info.organizer, placeholder: "Seura / järjestäjä" })}
-        ${UI.Input({ label: "Verkkosivu", name: "websiteUrl", value: info.websiteUrl, placeholder: "https://..." })}
-        ${UI.Input({ label: "Yhteyshenkilö", name: "contactName", value: info.contactName, placeholder: "Nimi" })}
-        ${UI.Input({ label: "Yhteyssähköposti", name: "contactEmail", type: "email", value: info.contactEmail, placeholder: "info@example.com" })}
+        ${UI.Input({ label: t(state, "event_info.org_label"), name: "organizer", value: info.organizer, placeholder: t(state, "event_info.org_placeholder") })}
+        ${UI.Input({ label: t(state, "event_info.web_label"), name: "websiteUrl", value: info.websiteUrl, placeholder: "https://..." })}
+        ${UI.Input({ label: t(state, "event_info.contact_name"), name: "contactName", value: info.contactName, placeholder: "Nimi" })}
+        ${UI.Input({ label: t(state, "event_info.contact_email"), name: "contactEmail", type: "email", value: info.contactEmail, placeholder: "info@example.com" })}
       `)}
       <div class="ui-form-actions">
-        ${UI.Button({ label: "Tallenna yhteystiedot", type: "submit", variant: "primary" })}
+        ${UI.Button({ label: t(state, "event_info.save_contacts"), type: "submit", variant: "primary" })}
       </div>
     `);
   }
 
   const parts = [
-    info.organizer ? `<strong>Järjestäjä:</strong> ${escapeHtml(info.organizer)}` : "",
-    info.contactName ? `<strong>Yhteyshenkilö:</strong> ${escapeHtml(info.contactName)}` : "",
-    info.contactEmail ? `<strong>Sähköposti:</strong> ${escapeHtml(info.contactEmail)}` : ""
+    info.organizer ? `<strong>${t(state, "event_info.org_bold")}</strong> ${escapeHtml(info.organizer)}` : "",
+    info.contactName ? `<strong>${t(state, "event_info.name_bold")}</strong> ${escapeHtml(info.contactName)}` : "",
+    info.contactEmail ? `<strong>${t(state, "event_info.email_bold")}</strong> ${escapeHtml(info.contactEmail)}` : ""
   ].filter(Boolean);
 
-  const website = info.websiteUrl ? `<a class="button small" href="${escapeHtml(info.websiteUrl)}" target="_blank" rel="noopener noreferrer">Avaa verkkosivu</a>` : "";
-  const headerActions = admin ? renderEditButton('yhteystiedot') : "";
+  const website = info.websiteUrl ? `<a class="button small" href="${escapeHtml(info.websiteUrl)}" target="_blank" rel="noopener noreferrer">${t(state, "event_info.open_web")}</a>` : "";
+  const headerActions = admin ? renderEditButton('yhteystiedot', state) : "";
 
-  return UI.Panel({ kicker: "Tiedustelut", title: "Yhteystiedot", headerActions }, `
+  return UI.Panel({ kicker: t(state, "event_info.contacts_kicker"), title: t(state, "event_info.contacts_title"), headerActions }, `
     ${parts.length ? `
       <div class="event-info-text" style="font-size: 1.1em; line-height: 1.6;">
         ${parts.map((part) => `<div>${part}</div>`).join("")}
       </div>
-    ` : `<p class="muted">Yhteystietoja ei ole vielä lisätty.</p>`}
+    ` : `<p class="muted">${t(state, "event_info.no_contacts")}</p>`}
     ${website ? `<div style="margin-top: 15px;">${website}</div>` : ""}
   `);
 }
@@ -391,56 +392,62 @@ function formatMultiline(value) {
   return escapeHtml(value).replaceAll("\\n", "<br />");
 }
 
-function renderSponsorsPanel(info, admin, isEdit) {
+function renderSponsorsPanel(info, admin, isEdit, state) {
   const sponsors = info.sponsors || [];
   
   if (isEdit) {
     return UI.FormPanel({ action: "add-event-sponsor", className: "event-info-editor" }, `
-      ${renderEditHeader("Lisää uusi sponsori", "sponsorit")}
+      ${renderEditHeader(t(state, "event_info.add_sponsor"), "sponsorit", state)}
       ${UI.Grid({ columns: "1fr 1fr", gap: "12px", className: "form-grid-two" }, `
-        ${UI.Input({ label: "Sponsorin nimi", name: "name", required: true })}
-        <label>Taso
+        ${UI.Input({ label: t(state, "event_info.sponsor_name"), name: "name", required: true })}
+        <label>${t(state, "event_info.level")}
           <select name="level">
-            <option value="Pääsponsori">Pääsponsori</option>
-            <option value="Yhteistyökumppani" selected>Yhteistyökumppani</option>
-            <option value="Tukija">Tukija</option>
+            <option value="${t(state, "event_info.level_main")}">${t(state, "event_info.level_main")}</option>
+            <option value="${t(state, "event_info.level_partner")}" selected>${t(state, "event_info.level_partner")}</option>
+            <option value="${t(state, "event_info.level_supporter")}">${t(state, "event_info.level_supporter")}</option>
           </select>
         </label>
-        ${UI.Input({ label: "Logon URL-osoite", name: "logoUrl", placeholder: "https://..." })}
+        ${UI.Input({ label: t(state, "event_info.logo_url"), name: "logoUrl", placeholder: "https://..." })}
         <div>
-          <label style="display: block; margin-bottom: 4px; font-weight: bold; font-size: 0.9rem;">Lisää logo</label>
+          <label style="display: block; margin-bottom: 4px; font-weight: bold; font-size: 0.9rem;">${t(state, "event_info.add_logo")}</label>
           <div class="is-admin-dropzone" style="border: 2px dashed var(--border); padding: 24px; text-align: center; border-radius: 8px; cursor: pointer; transition: all 0.2s;" onclick="this.querySelector('input[type=file]').click()">
             <input type="file" id="sponsor-logo-upload" accept="image/*" style="display: none;" />
             <div style="font-size: 2rem; margin-bottom: 8px;">🖼️</div>
-            <div style="font-weight: bold; margin-bottom: 4px;">Raahaa logo tähän</div>
-            <div style="font-size: 0.9rem; color: var(--muted);">tai klikkaa selataksesi tiedostoja</div>
+            <div style="font-weight: bold; margin-bottom: 4px;">${t(state, "event_info.drag_logo")}</div>
+            <div style="font-size: 0.9rem; color: var(--muted);">${t(state, "event_info.click_logo")}</div>
             <img id="sponsor-logo-preview" src="" alt="Esikatselu" style="max-height: 100px; max-width: 100%; display: none; margin: 16px auto 0 auto; border-radius: 4px; object-fit: contain;" />
             <input type="hidden" name="logoData" id="sponsor-logo-data" />
           </div>
         </div>
-        ${UI.Input({ label: "Verkkosivun URL", name: "websiteUrl", placeholder: "https://..." })}
+        ${UI.Input({ label: t(state, "event_info.web_url"), name: "websiteUrl", placeholder: "https://..." })}
       `)}
-      <label>Kuvaus (valinnainen)
-        <textarea name="description" placeholder="Lyhyt esittely..." rows="3"></textarea>
+      <label>${t(state, "event_info.desc_opt")}
+        <textarea name="description" placeholder="${t(state, "event_info.desc_placeholder_sponsor")}" rows="3"></textarea>
       </label>
       <div class="ui-form-actions">
-        ${UI.Button({ label: "Lisää sponsori", type: "submit", variant: "primary" })}
+        ${UI.Button({ label: t(state, "event_info.btn_add_sponsor"), type: "submit", variant: "primary" })}
       </div>
     `);
   }
 
-  const levels = ["Pääsponsori", "Yhteistyökumppani", "Tukija"];
+  const levels = [t(state, "event_info.level_main"), t(state, "event_info.level_partner"), t(state, "event_info.level_supporter")];
   let content = "";
 
   levels.forEach(level => {
-    const levelSponsors = sponsors.filter(s => s.level === level);
+    // In db they might be saved in Finnish, so we should map if needed, but for now we filter by UI text 
+    // or just assume they are saved as the localized text. If saved as finnish we should probably just use Finnish mapping.
+    // Actually, to be safe, filter by the finnish text if it's stored in db, but let's check.
+    const levelSponsors = sponsors.filter(s => s.level === level || s.level === "Pääsponsori" && level === t(state, "event_info.level_main") || s.level === "Yhteistyökumppani" && level === t(state, "event_info.level_partner") || s.level === "Tukija" && level === t(state, "event_info.level_supporter"));
     if (levelSponsors.length === 0) return;
+
+    // Use a Set to avoid duplicates if checking multiple conditions above
+    const uniqueSponsors = Array.from(new Set(levelSponsors));
 
     content += `
       <div style="margin-bottom: 24px;">
         <h3 style="margin-top: 0; margin-bottom: 12px; font-size: 1.2rem; border-bottom: 1px solid var(--border); padding-bottom: 8px;">${escapeHtml(level)}</h3>
         ${UI.Grid({ columns: "repeat(auto-fill, minmax(250px, 1fr))", gap: "16px" }, 
-          levelSponsors.map(sponsor => {
+          uniqueSponsors.map(sponsor => {
             let logo = "";
             if (sponsor.logoUrl) {
               logo = `<img src="${escapeHtml(sponsor.logoUrl)}" alt="${escapeHtml(sponsor.name)} logo" style="max-height: 80px; max-width: 100%; object-fit: contain; margin-bottom: 12px;" />`;
@@ -451,7 +458,7 @@ function renderSponsorsPanel(info, admin, isEdit) {
             
             const link = sponsor.websiteUrl ? `<a href="${escapeHtml(sponsor.websiteUrl)}" target="_blank" rel="noopener noreferrer" style="color: var(--accent); text-decoration: none; font-weight: bold;">${escapeHtml(sponsor.name)}</a>` : `<strong>${escapeHtml(sponsor.name)}</strong>`;
             const desc = sponsor.description ? `<p style="margin: 8px 0 0 0; font-size: 0.9rem; color: var(--muted);">${escapeHtml(sponsor.description)}</p>` : "";
-            const delBtn = admin ? `<div style="margin-top: 12px; text-align: center;"><button type="button" class="button small danger" data-action="delete-event-sponsor" data-sponsor-id="${escapeHtml(sponsor.id)}">Poista</button></div>` : "";
+            const delBtn = admin ? `<div style="margin-top: 12px; text-align: center;"><button type="button" class="button small danger" data-action="delete-event-sponsor" data-sponsor-id="${escapeHtml(sponsor.id)}">${t(state, "event_info.delete")}</button></div>` : "";
             
             return `
               <div class="small-card" style="display: flex; flex-direction: column; justify-content: space-between; text-align: center; padding: 20px;">
@@ -470,14 +477,14 @@ function renderSponsorsPanel(info, admin, isEdit) {
   });
 
   if (sponsors.length === 0) {
-    content = `<p class="muted">Tähän kilpailuun ei ole vielä lisätty sponsoreita.</p>`;
+    content = `<p class="muted">${t(state, "event_info.no_sponsors")}</p>`;
   }
 
-  const headerActions = admin ? `<button type="button" class="button small primary" data-action="edit-event-section" data-section="sponsorit">➕ Lisää sponsori</button>` : "";
-  return UI.Panel({ kicker: "Kilpailun tukijat", title: "Sponsorit", headerActions }, content);
+  const headerActions = admin ? `<button type="button" class="button small primary" data-action="edit-event-section" data-section="sponsorit">${t(state, "event_info.btn_add_sponsor_small")}</button>` : "";
+  return UI.Panel({ kicker: t(state, "event_info.sponsors_kicker"), title: t(state, "event_info.sponsors_title"), headerActions }, content);
 }
 
-function renderSchedulePanel(info, admin, editMode) {
+function renderSchedulePanel(info, admin, editMode, state) {
   const schedule = info.schedule || [];
   
   if (editMode === 'lisaa-aikataulu' || (editMode && editMode.startsWith('muokkaa-aikataulu-'))) {
@@ -486,27 +493,27 @@ function renderSchedulePanel(info, admin, editMode) {
     const row = isEdit ? schedule.find(r => r.id === rowId) : {};
     
     return UI.FormPanel({ action: "save-event-schedule-row", className: "event-info-editor" }, `
-      ${renderEditHeader(isEdit ? "Muokkaa ohjelmaa" : "Lisää ohjelma", "aikataulu")}
+      ${renderEditHeader(isEdit ? t(state, "event_info.edit_schedule") : t(state, "event_info.add_schedule"), "aikataulu", state)}
       <input type="hidden" name="id" value="${escapeHtml(row.id || "")}" />
       ${UI.Grid({ columns: "1fr 1fr", gap: "12px", className: "form-grid-two" }, `
-        ${UI.Input({ label: "Päivämäärä (esim. La 1.6.)", name: "date", value: row.date, placeholder: "La 1.6." })}
-        ${UI.Input({ label: "Kellonaika (HH:MM)", name: "time", required: true, value: row.time, placeholder: "09:00" })}
+        ${UI.Input({ label: t(state, "event_info.date_label"), name: "date", value: row.date, placeholder: "La 1.6." })}
+        ${UI.Input({ label: t(state, "event_info.time_label"), name: "time", required: true, value: row.time, placeholder: "09:00" })}
       `)}
-      ${UI.Input({ label: "Otsikko", name: "title", required: true, value: row.title, placeholder: "Pilottikokous" })}
-      <label>Kuvaus (valinnainen)
-        <textarea name="description" placeholder="Tarkempi kuvaus ohjelman sisällöstä..." rows="3">${escapeHtml(row.description || "")}</textarea>
+      ${UI.Input({ label: t(state, "event_info.title_label"), name: "title", required: true, value: row.title, placeholder: t(state, "event_info.title_placeholder") })}
+      <label>${t(state, "event_info.desc_schedule")}
+        <textarea name="description" placeholder="${t(state, "event_info.desc_schedule_placeholder")}" rows="3">${escapeHtml(row.description || "")}</textarea>
       </label>
       ${UI.Grid({ columns: "1fr 1fr", gap: "12px", className: "form-grid-two" }, `
-        ${UI.Input({ label: "Luokka (valinnainen)", name: "className", value: row.className, placeholder: "esim. WWII" })}
-        ${UI.Input({ label: "Sijainti (valinnainen)", name: "location", value: row.location, placeholder: "esim. Kisatoimisto" })}
+        ${UI.Input({ label: t(state, "event_info.class_opt"), name: "className", value: row.className, placeholder: t(state, "event_info.class_placeholder") })}
+        ${UI.Input({ label: t(state, "event_info.loc_opt"), name: "location", value: row.location, placeholder: t(state, "event_info.loc_placeholder") })}
       `)}
       <label style="display: flex; align-items: center; gap: 8px; margin-top: 10px;">
         <input type="checkbox" name="isPublished" value="true" ${row.isPublished === false ? "" : "checked"} />
-        <strong>Julkaise tämä ohjelma</strong>
-        <span class="muted" style="margin-left: 8px; font-weight: normal;">(Poista valinta piilottaaksesi)</span>
+        <strong>${t(state, "event_info.publish_this")}</strong>
+        <span class="muted" style="margin-left: 8px; font-weight: normal;">${t(state, "event_info.hide_hint")}</span>
       </label>
       <div class="ui-form-actions" style="margin-top: 20px;">
-        ${UI.Button({ label: isEdit ? "Tallenna muutokset" : "Lisää ohjelma", type: "submit", variant: "primary" })}
+        ${UI.Button({ label: isEdit ? t(state, "event_info.save_schedule") : t(state, "event_info.add_schedule_btn"), type: "submit", variant: "primary" })}
       </div>
     `);
   }
@@ -525,12 +532,12 @@ function renderSchedulePanel(info, admin, editMode) {
 
   let content = "";
   if (visibleRows.length === 0) {
-    content = `<p class="muted">Aikataulua ei ole vielä lisätty tai julkaistu.</p>`;
+    content = `<p class="muted">${t(state, "event_info.no_schedule")}</p>`;
   } else {
     content = `
       <div class="event-schedule-list" style="display: flex; flex-direction: column; gap: 12px;">
         ${visibleRows.map(row => {
-          const publishedTag = row.isPublished === false ? `<span class="badge warning" style="font-size: 0.75rem; margin-left: 8px;">Piilotettu</span>` : "";
+          const publishedTag = row.isPublished === false ? `<span class="badge warning" style="font-size: 0.75rem; margin-left: 8px;">${t(state, "event_info.hidden_badge")}</span>` : "";
           const metaParts = [
             row.className ? `<strong>${escapeHtml(row.className)}</strong>` : "",
             row.location ? `📍 ${escapeHtml(row.location)}` : ""
@@ -540,8 +547,8 @@ function renderSchedulePanel(info, admin, editMode) {
           
           const adminActions = admin ? `
             <div style="margin-top: 12px; display: flex; gap: 8px;">
-              <button type="button" class="button small" data-action="edit-event-section" data-section="muokkaa-aikataulu-${escapeHtml(row.id)}">Muokkaa</button>
-              <button type="button" class="button small danger outline" data-action="delete-event-schedule-row" data-row-id="${escapeHtml(row.id)}">Poista</button>
+              <button type="button" class="button small" data-action="edit-event-section" data-section="muokkaa-aikataulu-${escapeHtml(row.id)}">${t(state, "event_info.edit")}</button>
+              <button type="button" class="button small danger outline" data-action="delete-event-schedule-row" data-row-id="${escapeHtml(row.id)}">${t(state, "event_info.delete")}</button>
             </div>
           ` : "";
 
@@ -567,6 +574,6 @@ function renderSchedulePanel(info, admin, editMode) {
     `;
   }
 
-  const headerActions = admin ? `<button type="button" class="button small primary" data-action="edit-event-section" data-section="lisaa-aikataulu">➕ Lisää ohjelma</button>` : "";
-  return UI.Panel({ kicker: "Kilpailun ohjelma", title: "Aikataulu", headerActions }, content);
+  const headerActions = admin ? `<button type="button" class="button small primary" data-action="edit-event-section" data-section="lisaa-aikataulu">${t(state, "event_info.btn_add_schedule_small")}</button>` : "";
+  return UI.Panel({ kicker: t(state, "event_info.schedule_kicker"), title: t(state, "event_info.schedule_title"), headerActions }, content);
 }

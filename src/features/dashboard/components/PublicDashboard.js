@@ -3,6 +3,7 @@ import { isCompetitionResultsPublished } from "../../../logic/competitionResults
 import { groupParticipantsByClass } from "../../../logic/participants.js";
 import { UI } from "../../../ui/engine.js";
 import { getEventSummary } from "../dashboardHelpers.js";
+import { t } from "../../../utils/i18n.js";
 
 export function renderPublicDashboard(state) {
   const { activeEvent, competitionResults, publicParticipants } = getEventSummary(state);
@@ -10,10 +11,10 @@ export function renderPublicDashboard(state) {
   if (!activeEvent) {
     return `
       ${UI.PageHeader({
-        kicker: "Kilpailu / tiedotteet",
-        title: "Valitse kilpailu kisakalenterista",
-        subtitle: "Kisakalenteri on julkisen puolen pääsisäänkäynti kilpailuihin.",
-        headerActions: `<a class="button primary" href="#/calendar">Avaa kisakalenteri</a>`
+        kicker: t(state, "dashboard.public_hero_kicker"),
+        title: t(state, "dashboard.public_hero_title"),
+        subtitle: t(state, "dashboard.public_hero_subtitle"),
+        headerActions: `<a class="button primary" href="#/calendar">${t(state, "dashboard.open_calendar")}</a>`
       })}
     `;
   }
@@ -24,68 +25,68 @@ export function renderPublicDashboard(state) {
   const notice = String(activeEvent.publicNotice || "").trim();
 
   const heroPanel = UI.PageHeader({
-    kicker: "Kilpailu / tiedotteet",
+    kicker: t(state, "dashboard.public_hero_kicker"),
     title: activeEvent.name,
     subtitle: `${escapeHtml(activeEvent.location)} · ${formatDateRange(activeEvent.date, activeEvent.endDate)}`,
     headerActions: UI.Flex({ gap: "10px", wrap: "wrap" }, `
-      <a class="button" href="#/calendar">← Kisakalenteri</a>
-      <a class="button primary" href="#/heats">Heat-aikataulu</a>
-      <a class="button" href="#/results">Kilpailutulokset</a>
+      <a class="button" href="#/calendar">${t(state, "dashboard.public_btn_calendar")}</a>
+      <a class="button primary" href="#/heats">${t(state, "dashboard.public_btn_heats")}</a>
+      <a class="button" href="#/results">${t(state, "dashboard.public_btn_results")}</a>
     `)
   });
 
   const noticePanel = UI.Panel({
-    kicker: "Kilpailunjohdon tiedote",
-    title: notice ? "Ajankohtaista" : "Ei julkaistuja tiedotteita"
+    kicker: t(state, "dashboard.public_notice_kicker"),
+    title: notice ? t(state, "dashboard.public_notice_title_active") : t(state, "dashboard.public_notice_title_none")
   }, notice
     ? `<p class="notice-text public-notice-text">${escapeHtml(notice)}</p>`
-    : `<p class="muted">Kilpailunjohto ei ole vielä julkaissut tiedotteita tähän kilpailuun.</p>`);
+    : `<p class="muted">${t(state, "dashboard.public_notice_none")}</p>`);
 
   const eventInfoPanel = UI.Panel({
-    kicker: "Kilpailu",
-    title: "Perustiedot"
+    kicker: t(state, "dashboard.public_info_kicker"),
+    title: t(state, "dashboard.public_info_title")
   }, `
     <div class="public-event-info-grid">
       <article class="small-card">
-        <span class="muted">Paikka</span>
+        <span class="muted">${t(state, "dashboard.public_info_loc")}</span>
         <strong>${escapeHtml(activeEvent.location || "-")}</strong>
       </article>
       <article class="small-card">
-        <span class="muted">Ajankohta</span>
+        <span class="muted">${t(state, "dashboard.public_info_date")}</span>
         <strong>${formatDateRange(activeEvent.date, activeEvent.endDate)}</strong>
       </article>
       <article class="small-card">
-        <span class="muted">Luokat</span>
+        <span class="muted">${t(state, "dashboard.public_info_classes")}</span>
         <strong>${(activeEvent.classes || []).map(escapeHtml).join(", ") || "-"}</strong>
       </article>
       <article class="small-card">
-        <span class="muted">Status</span>
+        <span class="muted">${t(state, "dashboard.public_info_status")}</span>
         <strong>${escapeHtml(activeEvent.status || "-")}</strong>
       </article>
     </div>
   `);
 
   const classSummaryPanel = UI.Panel({
-    kicker: "Osallistujat",
-    title: "Luokat"
+    kicker: t(state, "dashboard.public_classes_kicker"),
+    title: t(state, "dashboard.public_classes_title")
   }, `
     <div class="public-class-summary-grid">
       ${classSummary.map((item) => `
         <article class="small-card">
           <p class="kicker">${escapeHtml(item.className)}</p>
           <strong>${item.count}</strong>
-          <span class="muted">osallistujaa</span>
+          <span class="muted">${t(state, "dashboard.public_classes_participants")}</span>
         </article>
       `).join("")}
     </div>
   `);
 
   const top5Panel = UI.Panel({
-    kicker: "Kilpailutulokset",
-    title: published ? "Top 5" : "Tuloksia ei ole vielä julkaistu"
-  }, published ? renderPublicRankingTable(publicRanking) : `
-    <p class="muted">Kilpailutulokset julkaistaan, kun kilpailunjohto hyväksyy lopputulokset.</p>
-    <div class="ui-form-actions"><a class="button small" href="#/results">Avaa tulosnäkymä</a></div>
+    kicker: t(state, "dashboard.public_results_kicker"),
+    title: published ? t(state, "dashboard.public_results_title_active") : t(state, "dashboard.public_results_title_none")
+  }, published ? renderPublicRankingTable(publicRanking, state) : `
+    <p class="muted">${t(state, "dashboard.public_results_none")}</p>
+    <div class="ui-form-actions"><a class="button small" href="#/results">${t(state, "dashboard.public_results_btn")}</a></div>
   `);
 
   return [
@@ -104,10 +105,15 @@ function buildPublicClassSummary(activeEvent, publicParticipants) {
   }));
 }
 
-function renderPublicRankingTable(rows) {
-  if (!rows.length) return `<p class="muted">Kilpailutuloksia ei ole vielä julkaistu.</p>`;
+function renderPublicRankingTable(rows, state) {
+  if (!rows.length) return `<p class="muted">${t(state, "dashboard.public_results_none")}</p>`;
 
-  const headers = ["#", "Pilotti", "Luokka", "Pisteet"];
+  const headers = [
+    t(state, "dashboard.col_hash"), 
+    t(state, "dashboard.col_pilot"), 
+    t(state, "dashboard.col_class"), 
+    t(state, "dashboard.col_score")
+  ];
   const tableRows = rows.map((row) => {
     return UI.TableRow({ cells: [
       row.position,

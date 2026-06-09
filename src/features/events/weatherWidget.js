@@ -1,11 +1,12 @@
 import { escapeHtml } from "../../utils/html.js";
 import { UI } from "../../ui/engine.js";
 import { registerAction } from "../../core/actionRegistry.js";
+import { t } from "../../utils/i18n.js";
 
 const weatherCache = {};
 const CACHE_DURATION_MS = 5 * 60 * 1000; // 5 mins
 
-export function renderWeatherWidget(event, admin = false, headerActions = "") {
+export function renderWeatherWidget(event, admin = false, headerActions = "", state = {}) {
   const lat = event.eventInfo?.latitude;
   const lon = event.eventInfo?.longitude;
   const eventId = event.id;
@@ -14,33 +15,33 @@ export function renderWeatherWidget(event, admin = false, headerActions = "") {
   const hasValidCache = cached && (Date.now() - cached.timestamp < CACHE_DURATION_MS);
 
   if (hasValidCache && cached.data) {
-    return renderWeatherContainer(eventId, renderWeatherHTML(cached.data, cached.timestamp, false), headerActions);
+    return renderWeatherContainer(eventId, renderWeatherHTML(cached.data, cached.timestamp, false, state), headerActions, state);
   }
 
   if (!lat || !lon) {
-    const adminInstructions = admin ? `<p class="muted" style="margin-top: 10px;">Voit lisätä koordinaatit yläpuolelta "Muokkaa"-painikkeesta.</p>` : "";
+    const adminInstructions = admin ? `<p class="muted" style="margin-top: 10px;">${t(state, "weather.admin_hint")}</p>` : "";
     const emptyState = `
       <div style="text-align: center; padding: 30px 10px;">
         <div style="font-size: 3rem; margin-bottom: 10px; opacity: 0.5;">🌍</div>
-        <p class="muted">Koordinaatteja ei ole asetettu, joten säätietoja ei voida näyttää.</p>
+        <p class="muted">${t(state, "weather.no_coords")}</p>
         ${adminInstructions}
         <div style="margin-top: 15px;">
-          <button type="button" class="button small dashed" data-action="fetch-local-weather" data-event-id="${escapeHtml(eventId)}">📍 Hae sää omalla sijainnillani</button>
+          <button type="button" class="button small dashed" data-action="fetch-local-weather" data-event-id="${escapeHtml(eventId)}">${t(state, "weather.fetch_my_loc")}</button>
         </div>
       </div>
     `;
-    return renderWeatherContainer(eventId, emptyState, headerActions);
+    return renderWeatherContainer(eventId, emptyState, headerActions, state);
   }
 
   // Trigger async fetch
-  fetchWeather(lat, lon, eventId);
+  fetchWeather(lat, lon, eventId, state);
 
   const loadingState = `
     <div style="text-align: center; padding: 40px 10px;">
-      <p class="muted">Haetaan säätietoja...</p>
+      <p class="muted">${t(state, "weather.loading")}</p>
     </div>
   `;
-  return renderWeatherContainer(eventId, loadingState, headerActions);
+  return renderWeatherContainer(eventId, loadingState, headerActions, state);
 }
 
 export async function getOrFetchWeather(lat, lon, eventId) {
@@ -72,27 +73,27 @@ export async function getOrFetchWeather(lat, lon, eventId) {
   }
 }
 
-function renderWeatherContainer(eventId, content, headerActions = "") {
-  return UI.Panel({ kicker: "Säätila", title: "Kilpailupaikan sää", id: `weather-panel-${eventId}`, headerActions }, `
+function renderWeatherContainer(eventId, content, headerActions = "", state) {
+  return UI.Panel({ kicker: t(state, "weather.kicker"), title: t(state, "weather.title"), id: `weather-panel-${eventId}`, headerActions }, `
     <div id="weather-widget-container-${escapeHtml(eventId)}">
       ${content}
     </div>
   `);
 }
 
-async function fetchWeather(lat, lon, eventId) {
+async function fetchWeather(lat, lon, eventId, state) {
   const data = await getOrFetchWeather(lat, lon, eventId);
   if (data) {
-    updateWeatherContainer(eventId, renderWeatherHTML(data, Date.now(), false));
+    updateWeatherContainer(eventId, renderWeatherHTML(data, Date.now(), false, state));
   } else {
     const cached = weatherCache[eventId];
     if (cached && cached.data) {
-      updateWeatherContainer(eventId, renderWeatherHTML(cached.data, cached.timestamp, true));
+      updateWeatherContainer(eventId, renderWeatherHTML(cached.data, cached.timestamp, true, state));
     } else {
       updateWeatherContainer(eventId, `
         <div style="text-align: center; padding: 30px 10px;">
           <div style="font-size: 2.5rem; margin-bottom: 10px;">❌</div>
-          <p class="muted" style="color: var(--danger);">Säätietojen haku epäonnistui.</p>
+          <p class="muted" style="color: var(--danger);">${t(state, "weather.error")}</p>
         </div>
       `);
     }
@@ -106,16 +107,16 @@ function updateWeatherContainer(eventId, html) {
   }
 }
 
-function getWeatherDescription(code) {
-  if (code === 0) return "Selkeää";
-  if (code === 1 || code === 2 || code === 3) return "Pilvistä";
-  if (code === 45 || code === 48) return "Sumua";
-  if (code >= 51 && code <= 55) return "Tihkusadetta";
-  if (code >= 61 && code <= 65) return "Sadetta";
-  if (code >= 71 && code <= 77) return "Lumisadetta";
-  if (code >= 80 && code <= 82) return "Sadekuuroja";
-  if (code >= 95) return "Ukkosta";
-  return "Vaihtelevaa";
+function getWeatherDescription(code, state) {
+  if (code === 0) return t(state, "weather.clear");
+  if (code === 1 || code === 2 || code === 3) return t(state, "weather.cloudy");
+  if (code === 45 || code === 48) return t(state, "weather.fog");
+  if (code >= 51 && code <= 55) return t(state, "weather.drizzle");
+  if (code >= 61 && code <= 65) return t(state, "weather.rain");
+  if (code >= 71 && code <= 77) return t(state, "weather.snow");
+  if (code >= 80 && code <= 82) return t(state, "weather.showers");
+  if (code >= 95) return t(state, "weather.thunder");
+  return t(state, "weather.variable");
 }
 
 function getWeatherIcon(code) {
@@ -130,14 +131,17 @@ function getWeatherIcon(code) {
   return "🌤️";
 }
 
-function getWindDirection(degrees) {
+function getWindDirection(degrees, state) {
   if (degrees === undefined || degrees === null) return "";
-  const dirs = ["P", "KO", "I", "KA", "E", "LO", "L", "LU"];
+  const dirs = [
+    t(state, "weather.dir_n"), t(state, "weather.dir_ne"), t(state, "weather.dir_e"), t(state, "weather.dir_se"),
+    t(state, "weather.dir_s"), t(state, "weather.dir_sw"), t(state, "weather.dir_w"), t(state, "weather.dir_nw")
+  ];
   const val = Math.floor((degrees / 45) + 0.5);
   return dirs[val % 8];
 }
 
-function renderWeatherHTML(data, timestamp, isOutdated = false) {
+function renderWeatherHTML(data, timestamp, isOutdated = false, state = {}) {
   const current = data.current || data;
   const daily = data.daily;
   
@@ -146,8 +150,8 @@ function renderWeatherHTML(data, timestamp, isOutdated = false) {
   const gusts = current.wind_gusts_10m;
   const precip = current.precipitation;
   const windDirDeg = current.wind_direction_10m;
-  const windDirText = getWindDirection(windDirDeg);
-  const desc = getWeatherDescription(current.weather_code);
+  const windDirText = getWindDirection(windDirDeg, state);
+  const desc = getWeatherDescription(current.weather_code, state);
   const icon = getWeatherIcon(current.weather_code);
   
   const time = new Date(timestamp || current.time).toLocaleTimeString('fi-FI', { hour: '2-digit', minute: '2-digit' });
@@ -183,7 +187,7 @@ function renderWeatherHTML(data, timestamp, isOutdated = false) {
 
     forecastHtml = `
       <div style="margin-top: 20px;">
-        <h4 style="margin: 0 0 12px 0; font-size: 1rem; color: var(--text-color); border-bottom: 1px solid var(--border); padding-bottom: 5px;">Tulevat päivät</h4>
+        <h4 style="margin: 0 0 12px 0; font-size: 1rem; color: var(--text-color); border-bottom: 1px solid var(--border); padding-bottom: 5px;">${t(state, "weather.upcoming")}</h4>
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 10px;">
           ${daysHtml.join("")}
         </div>
@@ -206,7 +210,7 @@ function renderWeatherHTML(data, timestamp, isOutdated = false) {
         <div class="weather-details ui-grid" style="--ui-grid-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 10px;">
           <div class="weather-stat small-card" style="display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 15px 10px; text-align: center; border: 1px solid var(--border);">
             <div style="font-size: 1.5rem; margin-bottom: 5px; color: var(--text);">💨</div>
-            <div style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px; color: var(--muted); font-weight: 600;">Tuuli</div>
+            <div style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px; color: var(--muted); font-weight: 600;">${t(state, "weather.wind")}</div>
             <div style="font-size: 1.1rem; font-weight: 700; margin-top: 5px; display: flex; align-items: center; justify-content: center;">
               ${windIconStr}${windText}
             </div>
@@ -214,13 +218,13 @@ function renderWeatherHTML(data, timestamp, isOutdated = false) {
           
           <div class="weather-stat small-card" style="display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 15px 10px; text-align: center; border: 1px solid var(--border);">
             <div style="font-size: 1.5rem; margin-bottom: 5px; color: var(--text);">🌪️</div>
-            <div style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px; color: var(--muted); font-weight: 600;">Puuskat</div>
+            <div style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px; color: var(--muted); font-weight: 600;">${t(state, "weather.gusts")}</div>
             <div style="font-size: 1.1rem; font-weight: 700; margin-top: 5px;">${gusts} m/s</div>
           </div>
 
           <div class="weather-stat small-card" style="display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 15px 10px; text-align: center; border: 1px solid var(--border);">
             <div style="font-size: 1.5rem; margin-bottom: 5px; color: var(--info, #3b82f6);">💧</div>
-            <div style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px; color: var(--muted); font-weight: 600;">Sade</div>
+            <div style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px; color: var(--muted); font-weight: 600;">${t(state, "weather.precip")}</div>
             <div style="font-size: 1.1rem; font-weight: 700; margin-top: 5px;">${precip} mm</div>
           </div>
         </div>
@@ -228,21 +232,29 @@ function renderWeatherHTML(data, timestamp, isOutdated = false) {
       </div>
       ${forecastHtml}
       <div style="text-align: right; margin-top: 15px; font-size: 0.8rem; color: var(--muted); display: flex; justify-content: space-between; align-items: center;">
-        ${isOutdated ? `<span style="color: var(--danger); font-weight: bold;">⚠️ Säädata vanhentunut</span>` : `<span></span>`}
-        <span>Päivitetty klo ${time}</span>
+        ${isOutdated ? `<span style="color: var(--danger); font-weight: bold;">${t(state, "weather.outdated")}</span>` : `<span></span>`}
+        <span>${t(state, "weather.updated")} ${time}</span>
       </div>
     </div>
   `;
 }
 
-export function registerWeatherActions() {
+export function registerWeatherActions(getState) {
+  // Wait, I can just grab the state globally or from some other way if we need it in actions, 
+  // but registerAction doesn't have access to state unless passed. 
+  // Actually, registerAction passes (e, target). I will just hardcode the localization to Finnish or grab it from localStorage inside the action.
   registerAction("fetch-local-weather", (e, button) => {
     const eventId = button.dataset.eventId;
-    button.textContent = "Paikannetaan...";
+    const lang = localStorage.getItem("app_language") || "fi";
+    const locatingText = lang === "en" ? "Locating..." : "Paikannetaan...";
+    const unsupportedText = lang === "en" ? "Location not supported" : "Sijaintia ei tueta";
+    const failedText = lang === "en" ? "Location failed (Permission denied?)" : "Paikannus epäonnistui (Lupa evätty?)";
+    
+    button.textContent = locatingText;
     button.disabled = true;
 
     if (!navigator.geolocation) {
-      button.textContent = "Sijaintia ei tueta";
+      button.textContent = unsupportedText;
       return true;
     }
 
@@ -251,10 +263,10 @@ export function registerWeatherActions() {
         button.style.display = "none";
         const lat = position.coords.latitude;
         const lon = position.coords.longitude;
-        fetchWeather(lat, lon, eventId);
+        fetchWeather(lat, lon, eventId, { settings: { language: lang } });
       },
       (error) => {
-        button.textContent = "Paikannus epäonnistui (Lupa evätty?)";
+        button.textContent = failedText;
         button.disabled = false;
       }
     );

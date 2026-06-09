@@ -1,6 +1,7 @@
 import { updateState, exportState, resetState, importState, getState } from "../../state/store.js";
 import { requireAdmin } from "../../users/roles.js";
 import { registerAction } from "../../core/actionRegistry.js";
+import { t } from "../../utils/i18n.js";
 import { downloadTextFile } from "../../utils/html.js";
 import { openConfirmModal } from "../../core/confirmActions.js";
 import { openAlertModal } from "../../core/alertActions.js";
@@ -203,8 +204,8 @@ export function initSettingsActions() {
   registerAction("remove-permission", (event, button) => {
     requireAdmin(getState());
     openConfirmModal({
-      title: "Poista oikeus",
-      message: "Oletko varma että haluat poistaa tämän käyttäjän oikeudet?",
+      title: t(getState(), "settings_actions.del_right_title"),
+      message: t(getState(), "settings_actions.del_right_msg"),
       action: "execute-remove-permission",
       payload: { id: button.dataset.id }
     });
@@ -243,7 +244,7 @@ export function initSettingsActions() {
   registerAction("remove-whatsapp-receiver", (event, button) => {
     requireAdmin(getState());
     openConfirmModal({
-      title: "Poista ilmoitus",
+      title: t(getState(), "settings_actions.del_notice_title"),
       message: "Poistetaanko tämä WhatsApp-ilmoituksen saaja?",
       action: "execute-remove-whatsapp-receiver",
       payload: { id: button.dataset.id }
@@ -302,13 +303,25 @@ export function initSettingsActions() {
     return true;
   });
 
+  registerAction("toggle-language", (event, button, { renderApp }) => {
+    updateState((state) => {
+      if (!state.settings) state.settings = {};
+      const currentLang = state.settings.language || localStorage.getItem("app_language") || "fi";
+      const newLang = currentLang === "fi" ? "en" : "fi";
+      state.settings.language = newLang;
+      localStorage.setItem("app_language", newLang);
+    }, "toggle_language");
+    renderApp();
+    return true;
+  });
+
   registerAction("remove-org-logo", (event, button) => {
     requireAdmin(getState());
     openConfirmModal({
-      title: "Poista logo",
+      title: t(getState(), "settings_actions.del_logo_title"),
       message: "Poistetaanko yhdistyksen logo?",
       action: "execute-remove-org-logo",
-      requireText: "POISTA"
+      requireText: t(getState(), "settings_actions.delete_word")
     });
     return true;
   });

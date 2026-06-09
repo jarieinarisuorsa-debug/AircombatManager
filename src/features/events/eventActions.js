@@ -9,6 +9,7 @@ import { openAlertModal } from "../../core/alertActions.js";
 import { registerAction } from "../../core/actionRegistry.js";
 import { setActiveEvent } from "../settings/settingsActions.js";
 import { registerWeatherActions } from "./weatherWidget.js";
+import { t } from "../../utils/i18n.js";
 
 export function addEvent(data) {
   updateState((state) => {
@@ -366,10 +367,10 @@ export function initEventActions() {
         window.WIND_ANIM_ENABLED = true;
         window.WIND_ANIM_DATA = weather;
       } else {
-        alert("Säätietoja ei saatu haettua tai tuulen suuntaa ei ole saatavilla.");
+        alert(t(getState(), "event_actions.wind_error1"));
       }
     } catch(e) {
-      alert("Virhe haettaessa säätietoja.");
+      alert(t(getState(), "event_actions.wind_error2"));
     }
     
     button.innerHTML = originalText;
@@ -420,8 +421,8 @@ export function initEventActions() {
 
   registerAction("delete-event", (event, button, { renderApp }) => {
     openConfirmModal({
-      title: "Poista kilpailu",
-      message: "Oletko varma? Tämä poistaa kaikki kilpailun tiedot, tulokset ja ilmoittautumiset, eikä toimintoa voi perua.",
+      title: t(getState(), "event_actions.del_event_title"),
+      message: t(getState(), "event_actions.del_event_msg"),
       action: "execute-delete-event",
       payload: { eventId: button.dataset.eventId }
     });
@@ -455,10 +456,10 @@ export function initEventActions() {
 
   registerAction("add-custom-map-emoji", (event, button, { renderApp }) => {
     openConfirmModal({
-      title: "Lisää uusi merkki",
-      message: "Syötä uusi emoji ja selite (esim. 🚁 Kopterikenttä):",
+      title: t(getState(), "map_editor.add_custom_title"),
+      message: t(getState(), "map_editor.add_custom_msg"),
       isPrompt: true,
-      submitLabel: "Lisää",
+      submitLabel: t(getState(), "map_editor.add_btn"),
       isDanger: false,
       action: "execute-add-custom-map-emoji"
     });
@@ -531,12 +532,12 @@ export function initEventActions() {
       return true;
     }
 
-    let title = "Uusi kohde";
-    let message = "Syötä emoji ja selite (esim. 🚗 Pysäköinti):";
+    let title = t(getState(), "map_editor.new_poi_title");
+    let message = t(getState(), "map_editor.new_poi_msg");
     let promptDefault = "";
     if (window.ACTIVE_PALETTE_EMOJI) {
-      title = "Lisää valittu merkki";
-      message = "Voit muokata selitettä:";
+      title = t(getState(), "map_editor.add_selected_title");
+      message = t(getState(), "map_editor.edit_label_msg");
       promptDefault = window.ACTIVE_PALETTE_EMOJI;
     }
 
@@ -545,7 +546,7 @@ export function initEventActions() {
       message,
       isPrompt: true,
       promptDefault,
-      submitLabel: "Lisää kartalle",
+      submitLabel: t(getState(), "map_editor.add_to_map_btn"),
       isDanger: false,
       action: "execute-add-map-poi",
       payload: { x, y }
@@ -565,14 +566,14 @@ export function initEventActions() {
 
   registerAction("finish-zone", (event, button, { renderApp }) => {
     if (!window.DRAFT_ZONE_POINTS || window.DRAFT_ZONE_POINTS.length < 3) {
-      openAlertModal({ title: "Ei riittävästi pisteitä", message: "Piirrä ensin alue klikkaamalla vähintään kolme pistettä kartalta." });
+      openAlertModal({ title: t(getState(), "map_editor.not_enough_points_title"), message: t(getState(), "map_editor.not_enough_points_msg") });
       return true;
     }
     openConfirmModal({
-      title: "Alueen tiedot",
-      message: "Syötä alueen nimi (esim. Lennätysalue):",
+      title: t(getState(), "map_editor.zone_info_title"),
+      message: t(getState(), "map_editor.zone_name_msg"),
       isPrompt: true,
-      submitLabel: "Jatka",
+      submitLabel: t(getState(), "map_editor.continue_btn"),
       isDanger: false,
       action: "execute-finish-zone-step2"
     });
@@ -584,11 +585,11 @@ export function initEventActions() {
     if (!label || !label.trim()) return true;
 
     openConfirmModal({
-      title: "Alueen väri",
-      message: "Valitse alueen väri syöttämällä numero:\n1 = Vihreä (Sallittu)\n2 = Punainen (Kielletty)\n3 = Sininen (Yleinen)\n4 = Keltainen (Huomio)",
+      title: t(getState(), "map_editor.zone_color_title"),
+      message: t(getState(), "map_editor.zone_color_msg"),
       isPrompt: true,
       promptDefault: "1",
-      submitLabel: "Tallenna alue",
+      submitLabel: t(getState(), "map_editor.save_zone_btn"),
       isDanger: false,
       action: "execute-finish-zone-final",
       payload: { label }
@@ -620,8 +621,8 @@ export function initEventActions() {
 
   registerAction("remove-map-zone", (event, button) => {
     openConfirmModal({
-      title: "Poista alue",
-      message: "Poistetaanko tämä alue kartalta?",
+      title: t(getState(), "map_editor.del_zone_title"),
+      message: t(getState(), "map_editor.del_zone_msg"),
       action: "execute-remove-map-zone",
       payload: { zoneId: button.dataset.zoneId }
     });
@@ -638,8 +639,8 @@ export function initEventActions() {
     requireAdmin(getState());
     event.stopPropagation(); // Älä laukaise kartan klikkausta
     openConfirmModal({
-      title: "Poista karttamerkintä",
-      message: "Poistetaanko tämä karttamerkintä?",
+      title: t(getState(), "map_editor.del_poi_title"),
+      message: t(getState(), "map_editor.del_poi_msg"),
       action: "execute-remove-map-poi",
       payload: { poiId: button.dataset.poiId }
     });
@@ -656,8 +657,8 @@ export function initEventActions() {
   registerAction("delete-event-sponsor", (e, button) => {
     requireAdmin(getState());
     openConfirmModal({
-      title: "Poista sponsori",
-      message: "Poistetaanko tämä sponsori?",
+      title: t(getState(), "event_actions.del_sponsor_title"),
+      message: t(getState(), "event_actions.del_sponsor_msg"),
       action: "execute-delete-event-sponsor",
       payload: { sponsorId: button.dataset.sponsorId }
     });
@@ -678,8 +679,8 @@ export function initEventActions() {
   registerAction("delete-event-schedule-row", (e, button) => {
     requireAdmin(getState());
     openConfirmModal({
-      title: "Poista aikataulurivi",
-      message: "Poistetaanko tämä aikataulurivi?",
+      title: t(getState(), "event_actions.del_sched_title"),
+      message: t(getState(), "event_actions.del_sched_msg"),
       action: "execute-delete-event-schedule-row",
       payload: { rowId: button.dataset.rowId }
     });
@@ -699,10 +700,10 @@ export function initEventActions() {
 
   registerAction("fetch-admin-location", (e, button, { renderApp }) => {
     const statusEl = document.getElementById("admin-location-status");
-    if (statusEl) statusEl.textContent = "Haetaan sijaintia...";
+    if (statusEl) statusEl.textContent = t(getState(), "event_actions.fetch_loc_loading");
     
     if (!navigator.geolocation) {
-      if (statusEl) statusEl.textContent = "Sijaintia ei tueta selaimessasi.";
+      if (statusEl) statusEl.textContent = t(getState(), "event_actions.fetch_loc_unsupported");
       return true;
     }
     
@@ -712,10 +713,10 @@ export function initEventActions() {
         const lonInput = document.getElementById("event-longitude-input");
         if (latInput) latInput.value = position.coords.latitude.toFixed(6);
         if (lonInput) lonInput.value = position.coords.longitude.toFixed(6);
-        if (statusEl) statusEl.textContent = "Sijainti haettu!";
+        if (statusEl) statusEl.textContent = t(getState(), "event_actions.fetch_loc_success");
       },
       (error) => {
-        if (statusEl) statusEl.textContent = "Sijainnin haku epäonnistui. Varmista selainoikeudet.";
+        if (statusEl) statusEl.textContent = t(getState(), "event_actions.fetch_loc_failed");
       }
     );
     return true;

@@ -1,4 +1,5 @@
 import { createId, updateState, getState } from "../../state/store.js";
+import { t } from "../../utils/i18n.js";
 import { requireAdmin, requirePilotAccess } from "../../users/roles.js";
 import { requireFloat, requireText } from "../../utils/formValues.js";
 import { removeEntriesById } from "../entries/entryActions.js";
@@ -126,7 +127,7 @@ export function initAircraftActions() {
     const isHidden = form.style.display === "none";
     form.style.display = isHidden ? "grid" : "none";
     if (toggleBtn) {
-      toggleBtn.textContent = isHidden ? "Peruuta" : "+ Lisää konekortti";
+      toggleBtn.textContent = isHidden ? t(getState(), "aircraft_actions.cancel") : t(getState(), "aircraft_actions.add_aircraft");
     }
     if (isHidden) form.querySelector('input[name="name"]')?.focus();
     return true;
@@ -152,11 +153,11 @@ export function initAircraftActions() {
 
   registerAction("delete-aircraft", (event, button) => {
     openConfirmModal({
-      title: "Poista konekortti",
-      message: "Poistetaanko kone? Tämä poistaa myös tällä koneella tehdyt kilpailukohtaiset osallistumiset.",
+      title: t(getState(), "aircraft_actions.del_aircraft_title"),
+      message: t(getState(), "aircraft_actions.del_aircraft_msg"),
       action: "execute-delete-aircraft",
       payload: { aircraftId: button.dataset.aircraftId },
-      requireText: "POISTA"
+      requireText: t(getState(), "settings_actions.delete_word")
     });
     return true;
   });
@@ -170,7 +171,7 @@ export function initAircraftActions() {
   registerAction("delete-aircraft-spec", (event, button) => {
     requireAdmin(getState());
     openConfirmModal({
-      title: "Poista konetyyppi",
+      title: t(getState(), "aircraft_actions.del_type_title"),
       message: "Poistetaanko konetyyppi taulukosta?",
       action: "execute-delete-aircraft-spec",
       payload: { specId: button.dataset.specId }

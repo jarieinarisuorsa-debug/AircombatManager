@@ -13,11 +13,12 @@ import { getCompetitionFormatForClass, formatCompetitionStructureLabel } from ".
 import { formatDuration } from "./ScoreCardUtils.js";
 import { renderScoreCardPrintView } from "./ScoreCardPrintView.js";
 import { renderScoreCardTabbedEditor } from "./ScoreCardTabbedEditor.js";
+import { t } from "../../../utils/i18n.js";
 
 export function renderScoreCardEditorView(state) {
   const activeEvent = getActiveEvent(state);
   if (!activeEvent) {
-    return UI.Panel({ title: "Ei aktiivista kisaa" }, "<p>Avaa kilpailu kisakalenterista.</p>");
+    return UI.Panel({ title: t(state, "scorecards.no_active_event") }, `<p>${t(state, "scorecards.open_event_from_calendar")}</p>`);
   }
 
   const entryIdParam = getRouteParam();
@@ -26,9 +27,9 @@ export function renderScoreCardEditorView(state) {
   const row = allRows.find((r) => r.entry.id === entryId);
 
   if (!row) {
-    return UI.Panel({ title: "Tuloskorttia ei löytynyt" }, `
-      <p class="muted">Tätä tuloskorttia ei löytynyt tai se on poistettu.</p>
-      <a class="button primary" href="${isAdmin(state) ? '#/scorecards' : '#/myevent'}">Palaa takaisin</a>
+    return UI.Panel({ title: t(state, "scorecard_editor.not_found_title") }, `
+      <p class="muted">${t(state, "scorecard_editor.not_found_msg")}</p>
+      <a class="button primary" href="${isAdmin(state) ? '#/scorecards' : '#/myevent'}">${t(state, "scorecard_editor.go_back")}</a>
     `);
   }
 
@@ -105,12 +106,12 @@ export function renderScoreCardForm(activeEvent, row, options = {}) {
   }
 
   const rightActionsHtml = isPilotMode ? `
-    <button type="submit" class="button primary" style="flex: 1; padding: 14px 20px; font-size: 1.1rem; font-weight: bold;">Tallenna / Lähetä</button>
-    <a class="button dashed" style="flex: 1; padding: 14px 20px; font-size: 1.1rem; display: flex; justify-content: center; align-items: center;" href="${backUrl}">Sulje</a>
+    <button type="submit" class="button primary" style="flex: 1; padding: 14px 20px; font-size: 1.1rem; font-weight: bold;">${t(state, "scorecard_editor.save_submit")}</button>
+    <a class="button dashed" style="flex: 1; padding: 14px 20px; font-size: 1.1rem; display: flex; justify-content: center; align-items: center;" href="${backUrl}">${t(state, "common.close")}</a>
   ` : `
-    <button type="submit" class="button primary" style="flex: 1; padding: 14px 20px; font-size: 1.1rem; font-weight: bold;">Tallenna</button>
-    <button type="button" class="button outline" style="flex: 1; padding: 14px 20px; font-size: 1.1rem;" data-action="print-page" title="Tulosta täytetty kortti">Tulosta</button>
-    <a class="button dashed" style="flex: 1; padding: 14px 20px; font-size: 1.1rem; display: flex; justify-content: center; align-items: center;" href="${backUrl}">Sulje</a>
+    <button type="submit" class="button primary" style="flex: 1; padding: 14px 20px; font-size: 1.1rem; font-weight: bold;">${t(state, "common.save")}</button>
+    <button type="button" class="button outline" style="flex: 1; padding: 14px 20px; font-size: 1.1rem;" data-action="print-page" title="${t(state, "scorecard_editor.print_tooltip")}">${t(state, "common.print")}</button>
+    <a class="button dashed" style="flex: 1; padding: 14px 20px; font-size: 1.1rem; display: flex; justify-content: center; align-items: center;" href="${backUrl}">${t(state, "common.close")}</a>
   `;
 
   const format = getCompetitionFormatForClass(activeEvent, row.className);
@@ -120,13 +121,13 @@ export function renderScoreCardForm(activeEvent, row, options = {}) {
   const summary = `
     <summary class="score-card-summary no-print">
       <div class="score-card-summary__main">
-        <p class="kicker" style="color: var(--primary); font-size: 0.75rem; font-weight: 700; text-transform: uppercase; margin-bottom: 5px; letter-spacing: 0.05em;">TULOSKORTTI</p>
+        <p class="kicker" style="color: var(--primary); font-size: 0.75rem; font-weight: 700; text-transform: uppercase; margin-bottom: 5px; letter-spacing: 0.05em;">${t(state, "scorecard_editor.kicker")}</p>
         <h3 style="margin: 0 0 5px 0;">${escapeHtml(row.pilotName)}</h3>
         <p style="margin: 0 0 5px 0;"><strong>${escapeHtml(row.className)}</strong>${raceNumberStr}</p>
         <p class="muted" style="margin: 0; font-size: 0.85rem;">${escapeHtml(activeEvent.name)} · ${structureText}</p>
       </div>
       <div class="score-card-summary__stats">
-        <span class="status ${isSaved ? "approved" : "pending"}">${isSaved ? "Tallennettu" : "Ei tallennettu"}</span>
+        <span class="status ${isSaved ? "approved" : "pending"}">${isSaved ? t(state, "scorecard_editor.saved") : t(state, "scorecard_editor.not_saved")}</span>
       </div>
     </summary>
   `;
@@ -135,7 +136,7 @@ export function renderScoreCardForm(activeEvent, row, options = {}) {
     <div class="score-card-sticky-footer no-print" style="display: flex; flex-direction: column; gap: 15px;">
       <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 5px;">
         <div class="footer-totals" style="display: flex; align-items: center;">
-          <strong style="font-size: 1.5rem; color: #ffd166; text-shadow: 0 0 10px rgba(255, 209, 102, 0.4);">Yhteensä: <span name="final_sum_display">${totals.totalPoints}</span> p</strong>
+          <strong style="font-size: 1.5rem; color: #ffd166; text-shadow: 0 0 10px rgba(255, 209, 102, 0.4);">${t(state, "scorecard_editor.total")} <span name="final_sum_display">${totals.totalPoints}</span> p</strong>
         </div>
         ${templateSelectHtml}
       </div>

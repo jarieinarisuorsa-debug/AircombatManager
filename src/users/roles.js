@@ -1,3 +1,5 @@
+import { t } from "../utils/i18n.js";
+
 // ==============================
 // Aircombat Competition Manager
 // src/users/roles.js
@@ -221,9 +223,8 @@ export function getNavRouteKeys(state) {
 }
 
 export function getNavItems(state) {
-  const role = getCurrentRole(state);
-  const labels = NAV_LABELS[role] || NAV_LABELS.guest;
-  return getNavRouteKeys(state)
-    .filter(key => labels[key])
-    .map((key) => ({ key, label: labels[key] }));
+  return getNavRouteKeys(state).map((key) => ({
+    key,
+    label: t(state, `nav.${key}`)
+  }));
 }

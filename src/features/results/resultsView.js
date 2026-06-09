@@ -4,6 +4,7 @@ import { isAdmin } from "../../users/roles.js";
 import { UI } from "../../ui/engine.js";
 import { getCompetitionFormatForClass, formatCompetitionStructureLabel } from "../../logic/competitionFormat.js";
 import { getRouteParam } from "../../router.js";
+import { t } from "../../utils/i18n.js";
 
 export function renderResultsView(state) {
   const eventId = getRouteParam();
@@ -50,16 +51,16 @@ function renderEventList(state) {
     <a href="#/standings/${selectedYear}" class="event-card event-card-hub" style="text-decoration: none; color: inherit; transition: transform 0.2s; cursor: pointer; display: flex; overflow: hidden; border: 2px solid var(--primary);">
       ${orgLogoHtml}
       <div class="event-card-main" style="flex: 1; padding: 20px;">
-        <p class="kicker" style="margin-top: 0; font-weight: 800; color: var(--primary);">SARJATAULUKKO</p>
-        <h4 style="margin: 0 0 5px 0; color: var(--text); font-size: 1.2rem;">${selectedYear} Kokonaispisteet</h4>
-        <p class="muted" style="margin: 0 0 10px 0;">Kauden kaikki kilpailut</p>
-        <p class="muted" style="margin: 0; font-size: 0.9rem;">Näytä sarjataulukko &rarr;</p>
+        <p class="kicker" style="margin-top: 0; font-weight: 800; color: var(--primary);">${t(state, "results.standings_kicker")}</p>
+        <h4 style="margin: 0 0 5px 0; color: var(--text); font-size: 1.2rem;">${selectedYear} ${t(state, "results.total_points")}</h4>
+        <p class="muted" style="margin: 0 0 10px 0;">${t(state, "results.all_season_events")}</p>
+        <p class="muted" style="margin: 0; font-size: 0.9rem;">${t(state, "results.show_standings")}</p>
       </div>
     </a>
   `;
 
   const eventCards = events.map(event => {
-    const location = event.location || "Tuntematon paikka";
+    const location = event.location || t(state, "results.unknown_location");
     const dateStr = event.date ? new Date(event.date).toLocaleDateString("fi-FI") : "";
     
     const coatOfArmsHtml = event.eventInfo && event.eventInfo.coatOfArmsData
@@ -73,7 +74,7 @@ function renderEventList(state) {
           <p class="kicker" style="margin-top: 0;">${dateStr}</p>
           <h4 style="margin: 0 0 5px 0; color: var(--primary); font-size: 1.2rem;">${escapeHtml(event.name)}</h4>
           <p style="margin: 0 0 10px 0;">${escapeHtml(location)}</p>
-          <p class="muted" style="margin: 0; font-size: 0.9rem;">Klikkaa nähdäksesi tulokset &rarr;</p>
+          <p class="muted" style="margin: 0; font-size: 0.9rem;">${t(state, "results.click_to_view")}</p>
         </div>
       </a>
     `;
@@ -82,7 +83,7 @@ function renderEventList(state) {
   return `
     ${yearTabs}
     <div style="margin-top: 20px;">
-      <p class="muted">Valitse sarjataulukko tai yksittäinen kilpailu nähdäksesi tulokset.</p>
+      <p class="muted">${t(state, "results.select_event_or_standings")}</p>
       <div style="display: grid; gap: 15px; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); margin-bottom: 30px;">
         ${standingsCard}
         ${eventCards}
@@ -105,7 +106,7 @@ function getResultsModel(state, eventId) {
 function renderAdminResultsView(state, model) {
   const { activeEvent, eventResults, competitionResults } = model;
   if (!activeEvent) {
-    return UI.Panel({ title: "Kilpailua ei löytynyt" }, "<p>Tarkista osoite tai palaa <a href='#/results'>tuloslistaukseen</a>.</p>");
+    return UI.Panel({ title: t(state, "results.event_not_found") }, `<p>${t(state, "results.check_address_or_return")}</p>`);
   }
 
   const published = isCompetitionResultsPublished(activeEvent);
@@ -123,7 +124,7 @@ function renderAdminResultsView(state, model) {
 function renderPublicResultsView(state, model) {
   const { activeEvent, competitionResults, heats } = model;
   if (!activeEvent) {
-    return UI.Panel({ title: "Kilpailua ei löytynyt" }, "<p>Tarkista osoite tai palaa <a href='#/results'>tuloslistaukseen</a>.</p>");
+    return UI.Panel({ title: t(state, "results.event_not_found") }, `<p>${t(state, "results.check_address_or_return")}</p>`);
   }
 
   const published = isCompetitionResultsPublished(activeEvent);
@@ -148,7 +149,7 @@ function renderResultsContent(state, model, admin, published = true) {
   
   const classNames = activeEvent?.classes?.length 
     ? [...activeEvent.classes] 
-    : Array.from(new Set(rows.map((row) => row.className || "Yleinen"))).sort();
+    : Array.from(new Set(rows.map((row) => row.className || t(state, "results.general_class")))).sort();
   
   let tab = window.RESULTS_TAB || classNames[0] || (admin ? "julkaisu" : "");
   
@@ -160,16 +161,16 @@ function renderResultsContent(state, model, admin, published = true) {
   classNames.forEach(className => {
     tabs.push({ id: className, label: className });
   });
-  if (admin) tabs.push({ id: "julkaisu", label: "Julkaisu" });
+  if (admin) tabs.push({ id: "julkaisu", label: t(state, "results.publication") });
 
   let extraActions = "";
   if (admin) {
     const hasResults = competitionResults.stats.resultRows > 0 || eventResults.length > 0;
     extraActions = `
       <div style="display: flex; gap: 8px; align-items: center; margin-left: 10px;" class="no-print">
-        ${UI.Button({ label: "Vie CSV", action: "export-results-csv", eventId: activeEvent.id, variant: "dashed" })}
-        ${hasResults && !published ? UI.Button({ label: "Julkaise", action: "publish-competition-results", eventId: activeEvent.id, variant: "primary" }) : ""}
-        ${published ? UI.Button({ label: "Piilota", action: "unpublish-competition-results", eventId: activeEvent.id, variant: "danger" }) : ""}
+        ${UI.Button({ label: t(state, "results.export_csv"), action: "export-results-csv", eventId: activeEvent.id, variant: "dashed" })}
+        ${hasResults && !published ? UI.Button({ label: t(state, "results.publish"), action: "publish-competition-results", eventId: activeEvent.id, variant: "primary" }) : ""}
+        ${published ? UI.Button({ label: t(state, "results.hide"), action: "unpublish-competition-results", eventId: activeEvent.id, variant: "danger" }) : ""}
       </div>
     `;
   }
@@ -183,11 +184,11 @@ function renderResultsContent(state, model, admin, published = true) {
 
   let tabContent = "";
   if (tab === "julkaisu" && admin) {
-    tabContent = renderPublicationPanel(activeEvent, eventResults.length);
+    tabContent = renderPublicationPanel(state, activeEvent, eventResults.length);
   } else if (tab) {
     tabContent = renderSingleClassResultsPanel(state, activeEvent, competitionResults, tab, admin, published);
   } else {
-    tabContent = `<p class="muted">Ei luokkia tai tuloksia näytettäväksi.</p>`;
+    tabContent = `<p class="muted">${t(state, "results.no_classes_or_results")}</p>`;
   }
 
   return `
@@ -201,13 +202,13 @@ function renderSingleClassResultsPanel(state, activeEvent, competitionResults, c
   if (!admin && !published) {
     return UI.Panel({
       className: "empty-state",
-      kicker: "Odottaa kilpailunjohtoa",
-      title: "Kilpailutuloksia ei ole vielä julkaistu"
-    }, `<p class="muted">Tämän luokan tulokset tulevat näkyviin, kun admin hyväksyy ja julkaisee kilpailun lopullisen rankingin.</p>`);
+      kicker: t(state, "results.waiting_for_admin_kicker"),
+      title: t(state, "results.not_published_title")
+    }, `<p class="muted">${t(state, "results.not_published_msg")}</p>`);
   }
 
   const { rows } = competitionResults;
-  const classRows = rows.filter(r => (r.className || "Yleinen") === className);
+  const classRows = rows.filter(r => (r.className || t(state, "results.general_class")) === className);
   const resultRows = classRows.filter((row) => row.resultCount > 0 || row.status === "result");
   const resultPilotIds = new Set(resultRows.map(r => r.pilotId));
   
@@ -226,49 +227,48 @@ function renderSingleClassResultsPanel(state, activeEvent, competitionResults, c
   const structureLabel = formatCompetitionStructureLabel(format);
 
   const content = `
-    <p class="muted results-section-help">Tässä luokassa on ${rankedRows.length} tuloksellista pilottia. Kilpailun rakenne: ${structureLabel}.</p>
+    <p class="muted results-section-help">${t(state, "results.class_stats_msg").replace("{count}", rankedRows.length).replace("{structure}", structureLabel)}</p>
     ${renderResultsTable(state, rankedRows, admin, true, format)}
-    ${waitingRows.length ? renderWaitingResultsPanel(waitingRows) : ""}
+    ${waitingRows.length ? renderWaitingResultsPanel(state, waitingRows) : ""}
   `;
 
-  const badge = UI.Badge({ label: published ? "Julkaistu" : "Ei julkaistu", variant: published ? "approved" : "pending" });
+  const badge = UI.Badge({ label: published ? t(state, "results.published") : t(state, "results.unpublished"), variant: published ? "approved" : "pending" });
 
   return UI.Panel({
-    kicker: "Luokkatulokset",
+    kicker: t(state, "results.class_results_kicker"),
     title: className,
     headerActions: badge
   }, content);
 }
 
-function renderPublicationPanel(activeEvent, resultCount) {
+function renderPublicationPanel(state, activeEvent, resultCount) {
   const published = isCompetitionResultsPublished(activeEvent);
   
   if (published) {
-    return UI.Panel({ kicker: "Julkaisu", title: "Tulokset on julkaistu" }, `
+    return UI.Panel({ kicker: t(state, "results.publication"), title: t(state, "results.results_published_title") }, `
       <div class="notice-text compact success-notice" style="margin-bottom: 15px;">
-        Kilpailutulokset on julkaistu peruskäyttäjille.
-        ${activeEvent.resultsPublishedAt ? `<br>Julkaistu: ${escapeHtml(new Date(activeEvent.resultsPublishedAt).toLocaleString("fi-FI"))}` : ""}
-        ${activeEvent.resultsApprovedBy ? `<br>Hyväksyjä: ${escapeHtml(activeEvent.resultsApprovedBy)}` : ""}
+        ${t(state, "results.results_published_msg")}
+        ${activeEvent.resultsPublishedAt ? `<br>${t(state, "results.published_at")} ${escapeHtml(new Date(activeEvent.resultsPublishedAt).toLocaleString("fi-FI"))}` : ""}
+        ${activeEvent.resultsApprovedBy ? `<br>${t(state, "results.approved_by")} ${escapeHtml(activeEvent.resultsApprovedBy)}` : ""}
       </div>
-      ${UI.Button({ label: "Piilota julkaisu", action: "unpublish-competition-results", variant: "danger" })}
+      ${UI.Button({ label: t(state, "results.hide_publication"), action: "unpublish-competition-results", variant: "danger" })}
     `);
   }
 
-  return UI.Panel({ kicker: "Julkaisu", title: "Tulokset ovat luonnostilassa" }, `
+  return UI.Panel({ kicker: t(state, "results.publication"), title: t(state, "results.results_draft_title") }, `
     <div class="notice-text compact warning-notice" style="margin-bottom: 15px;">
-      Peruskäyttäjä ei näe lopullista rankingia ennen julkaisua.
-      Tallennettuja tulosrivejä: ${resultCount}.
+      ${t(state, "results.results_draft_msg")} ${resultCount}.
     </div>
-    ${UI.Button({ label: "Julkaise kilpailutulokset", action: "publish-competition-results", variant: "primary" })}
+    ${UI.Button({ label: t(state, "results.publish_competition_results"), action: "publish-competition-results", variant: "primary" })}
   `);
 }
 
 
 
-function renderWaitingResultsPanel(rows) {
+function renderWaitingResultsPanel(state, rows) {
   return `
     <details class="result-group no-result-group">
-      <summary>Ei tulosta vielä · ${rows.length} osallistujaa</summary>
+      <summary>${t(state, "results.no_result_yet")} · ${rows.length} ${t(state, "results.participants")}</summary>
       <div class="waiting-result-list">
         ${rows.map((row) => `
           <div class="waiting-result-row">
@@ -282,13 +282,13 @@ function renderWaitingResultsPanel(rows) {
 }
 
 export function renderResultsTable(state, rows, showDetails = false, classPositions = false, format = null) {
-  const roundColumns = (showDetails || format) ? getVisibleRoundColumns(rows, format) : [];
-  const headers = ["#", "Pilotti", "Maa", "Luokka", "Pisteet", ...roundColumns, "Cutit"];
-  if (showDetails) headers.push("Lentoaika", "Paras kierros", "Kierroksia");
+  const roundColumns = (showDetails || format) ? getVisibleRoundColumns(state, rows, format) : [];
+  const headers = ["#", t(state, "results.pilot"), t(state, "results.country"), t(state, "results.class"), t(state, "results.points"), ...roundColumns, t(state, "results.cuts")];
+  if (showDetails) headers.push(t(state, "results.flight_time"), t(state, "results.best_round"), t(state, "results.rounds"));
   headers.push(""); // Tyhjä otsikko painikkeelle
 
   if (!rows.length) {
-    return `<div class="empty-results-box">Kilpailutuloksia ei ole vielä tallennettu.</div>`;
+    return `<div class="empty-results-box">${t(state, "results.no_results_saved")}</div>`;
   }
 
   const tableRows = rows.map((row, index) => {
@@ -322,7 +322,7 @@ export function renderResultsTable(state, rows, showDetails = false, classPositi
     }
     
     // Tuloskorttipainike rivin loppuun
-    cells.push(`<a class="button small dashed" href="#/scorecard/${escapeHtml(row.entryId)}">Tuloskortti</a>`);
+    cells.push(`<a class="button small dashed" href="#/scorecard/${escapeHtml(row.entryId)}">${t(state, "results.scorecard")}</a>`);
 
     return UI.TableRow({ cells });
   });
@@ -332,14 +332,14 @@ export function renderResultsTable(state, rows, showDetails = false, classPositi
   });
 }
 
-function getVisibleRoundColumns(rows, format = null) {
+function getVisibleRoundColumns(state, rows, format = null) {
   if (format) {
     const columns = [];
     for (let i = 1; i <= format.qualifyingRounds; i++) {
-      columns.push(`Alkuerä ${i}`);
+      columns.push(`${t(state, "results.qualifying")} ${i}`);
     }
-    if (format.semiFinalEnabled) columns.push("Semifinaali");
-    if (format.finalEnabled) columns.push("Finaali");
+    if (format.semiFinalEnabled) columns.push(t(state, "results.semifinal"));
+    if (format.finalEnabled) columns.push(t(state, "results.final"));
     return columns;
   }
 
@@ -356,11 +356,11 @@ function getVisibleRoundColumns(rows, format = null) {
 
 function compareRoundLabels(a, b) {
   const parse = (label) => {
-    if (/^(heat|alkuerä)\s+\d+/i.test(label)) {
+    if (/^(heat|alkuerä|qualifying)\s+\d+/i.test(label)) {
       return { bucket: 1, number: Number(label.match(/\d+/)?.[0] || 0) };
     }
-    if (/semifinaali/i.test(label)) return { bucket: 2, number: 0 };
-    if (/finaali/i.test(label)) return { bucket: 3, number: 0 };
+    if (/semifinaali|semifinal/i.test(label)) return { bucket: 2, number: 0 };
+    if (/finaali|final/i.test(label)) return { bucket: 3, number: 0 };
     return { bucket: 9, number: 0 };
   };
 
@@ -371,15 +371,15 @@ function compareRoundLabels(a, b) {
   return String(a).localeCompare(String(b), "fi", { numeric: true });
 }
 
-function renderHeatStatusPanel(heats) {
+function renderHeatStatusPanel(state, heats) {
   const list = heats.length ? `
     <div class="card-list">
-      ${heats.map((heat) => `<article class="small-card"><p class="kicker">Kierros ${heat.round}</p><h4>Heat ${escapeHtml(heat.groupName)}</h4><p class="muted">Status: ${escapeHtml(heat.status)}</p></article>`).join("")}
+      ${heats.map((heat) => `<article class="small-card"><p class="kicker">${t(state, "heats.round")} ${heat.round}</p><h4>${t(state, "heats.heat")} ${escapeHtml(heat.groupName)}</h4><p class="muted">Status: ${escapeHtml(heat.status)}</p></article>`).join("")}
     </div>
-  ` : `<p class="muted">Heat-ryhmiä ei ole vielä julkaistu.</p>`;
+  ` : `<p class="muted">${t(state, "results.heats_not_published")}</p>`;
 
   return UI.Panel({
-    kicker: "Heatit",
-    title: "Tulosryhmien tila"
+    kicker: t(state, "heats.heats_suffix"),
+    title: t(state, "results.heat_status")
   }, list);
 }

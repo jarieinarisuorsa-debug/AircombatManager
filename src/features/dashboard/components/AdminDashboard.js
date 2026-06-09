@@ -2,6 +2,7 @@ import { escapeHtml, formatDateRange } from "../../../utils/html.js";
 import { UI } from "../../../ui/engine.js";
 import { getEventSummary } from "../dashboardHelpers.js";
 import { getClassStageStatus } from "../../../logic/competitionFormat.js";
+import { t } from "../../../utils/i18n.js";
 
 export function renderAdminDashboard(state) {
   const { activeEvent, eventEntries, eventHeats, eventResults, ranking } = getEventSummary(state);
@@ -14,9 +15,9 @@ export function renderAdminDashboard(state) {
 
   const nextEventCard = nextEvent ? `
     <div style="margin-bottom: 20px;">
-      ${UI.Panel({ kicker: "Seuraava kilpailu tulossa", title: escapeHtml(nextEvent.name), style: "border-left: 4px solid var(--primary);" }, `
+      ${UI.Panel({ kicker: t(state, "dashboard.next_event"), title: escapeHtml(nextEvent.name), style: "border-left: 4px solid var(--primary);" }, `
         <p style="margin-bottom: 15px;">${escapeHtml(nextEvent.location)} · ${formatDateRange(nextEvent.date, nextEvent.endDate)}</p>
-        ${UI.Button({ label: "Siirry tähän kilpailuun", action: "set-active-event", eventId: nextEvent.id, variant: "primary" })}
+        ${UI.Button({ label: t(state, "dashboard.go_to_event"), action: "set-active-event", eventId: nextEvent.id, variant: "primary" })}
       `)}
     </div>
   ` : "";
@@ -25,11 +26,11 @@ export function renderAdminDashboard(state) {
   const pendingRequestsAlert = pendingRequestsCount > 0 ? `
     <div style="margin-bottom: 20px; background: rgba(255, 193, 7, 0.15); border: 1px solid #ffc107; border-radius: 8px; padding: 15px; display: flex; justify-content: space-between; align-items: center;">
       <div>
-        <strong style="color: #ffc107; font-size: 1.1rem; display: block; margin-bottom: 5px;">⚠️ Huomio: Uusia käyttöoikeuspyyntöjä!</strong>
-        <span style="color: var(--text-muted); font-size: 0.9rem;">${pendingRequestsCount} uusi käyttäjä odottaa pilotti- tai ylläpitäjäoikeuksia.</span>
+        <strong style="color: #ffc107; font-size: 1.1rem; display: block; margin-bottom: 5px;">${t(state, "dashboard.pending_requests_title")}</strong>
+        <span style="color: var(--text-muted); font-size: 0.9rem;">${t(state, "dashboard.pending_requests_desc").replace("{n}", pendingRequestsCount)}</span>
       </div>
       <div>
-        <a href="#/settings" class="button" style="background: #ffc107; color: #000; border: none; font-weight: bold;">Tarkastele pyyntöjä</a>
+        <a href="#/settings" class="button" style="background: #ffc107; color: #000; border: none; font-weight: bold;">${t(state, "dashboard.view_requests")}</a>
       </div>
     </div>
   ` : "";
@@ -38,22 +39,22 @@ export function renderAdminDashboard(state) {
   const unreadMessagesAlert = unreadMessagesCount > 0 ? `
     <div style="margin-bottom: 20px; background: rgba(var(--primary-rgb), 0.15); border: 1px solid var(--primary); border-radius: 8px; padding: 15px; display: flex; justify-content: space-between; align-items: center;">
       <div>
-        <strong style="color: var(--primary); font-size: 1.1rem; display: block; margin-bottom: 5px;">💬 Uusia viestejä!</strong>
-        <span style="color: var(--text-muted); font-size: 0.9rem;">Sinulla on ${unreadMessagesCount} lukematonta viestiä piloteilta.</span>
+        <strong style="color: var(--primary); font-size: 1.1rem; display: block; margin-bottom: 5px;">${t(state, "dashboard.new_messages_title")}</strong>
+        <span style="color: var(--text-muted); font-size: 0.9rem;">${t(state, "dashboard.new_messages_desc").replace("{n}", unreadMessagesCount)}</span>
       </div>
       <div>
-        <a href="#/messages" class="button primary" style="font-weight: bold;">Avaa viestit</a>
+        <a href="#/messages" class="button primary" style="font-weight: bold;">${t(state, "dashboard.open_messages")}</a>
       </div>
     </div>
   ` : "";
 
   if (!activeEvent) {
     const noEventHeader = UI.PageHeader({
-      kicker: "Etusivu",
-      title: "Ei aktiivista kilpailua",
-      subtitle: "Avaa kilpailu kisakalenterista tai luo uusi. Kilpailun hallintatyökalut (heatit, pilotit, tulokset) tulevat näkyviin vasta kun aktivoit kilpailun.",
+      kicker: t(state, "nav.dashboard"),
+      title: t(state, "dashboard.no_active_event"),
+      subtitle: t(state, "dashboard.no_event_desc"),
       headerActions: `
-        <a class="button primary" href="#/calendar">Avaa Kisakalenteri</a>
+        <a class="button primary" href="#/calendar">${t(state, "dashboard.open_calendar")}</a>
       `
     });
     return `
@@ -68,9 +69,9 @@ export function renderAdminDashboard(state) {
   const headerPanel = `
     <div style="background: var(--surface-2); border-radius: 8px; padding: 20px; display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 20px; border: 1px solid var(--border);">
       <div>
-        <div class="kicker" style="color: var(--primary); font-size: 0.75rem; font-weight: 700; text-transform: uppercase; margin-bottom: 5px; letter-spacing: 0.05em;">KISAPAIKKAKOHTAINEN TYÖYMPÄRISTÖ</div>
+        <div class="kicker" style="color: var(--primary); font-size: 0.75rem; font-weight: 700; text-transform: uppercase; margin-bottom: 5px; letter-spacing: 0.05em;">${t(state, "dashboard.workspace_kicker")}</div>
         <h2 style="margin: 0 0 5px 0; font-size: 1.8rem;">${escapeHtml(activeEvent.name)}</h2>
-        <div class="muted" style="font-size: 0.85rem;">${escapeHtml(activeEvent.location)} - ${formatDateRange(activeEvent.date, activeEvent.endDate)} - Hallitse tämän kilpailupaikan osallistujat, heatit, jatkovaiheet ja tulokset tästä näkymästä.</div>
+        <div class="muted" style="font-size: 0.85rem;">${t(state, "dashboard.workspace_desc").replace("{loc}", escapeHtml(activeEvent.location)).replace("{date}", formatDateRange(activeEvent.date, activeEvent.endDate))}</div>
       </div>
     </div>
   `;
@@ -139,59 +140,59 @@ export function renderAdminDashboard(state) {
 
     classesPanel = `
       <div style="margin-bottom: 30px;">
-        <div class="kicker" style="color: var(--primary); font-size: 0.75rem; font-weight: 700; text-transform: uppercase; margin-bottom: 5px; letter-spacing: 0.05em;">LUOKAT</div>
-        <h3 style="margin: 0 0 15px 0; font-size: 1.1rem;">Luokat, rakenne ja heat-arvonta</h3>
+        <div class="kicker" style="color: var(--primary); font-size: 0.75rem; font-weight: 700; text-transform: uppercase; margin-bottom: 5px; letter-spacing: 0.05em;">${t(state, "dashboard.classes_kicker")}</div>
+        <h3 style="margin: 0 0 15px 0; font-size: 1.1rem;">${t(state, "dashboard.classes_title")}</h3>
         
         ${tabNavigation}
         
         <div style="background: var(--surface-2); padding: 25px; border-radius: 8px; border: 1px solid var(--border);">
           <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 30px;">
             <div>
-              <div class="kicker" style="color: var(--primary); font-size: 0.75rem; font-weight: 700; text-transform: uppercase; margin-bottom: 5px; letter-spacing: 0.05em;">LUOKKA</div>
+              <div class="kicker" style="color: var(--primary); font-size: 0.75rem; font-weight: 700; text-transform: uppercase; margin-bottom: 5px; letter-spacing: 0.05em;">${t(state, "dashboard.class_kicker")}</div>
               <h2 style="margin: 0; font-size: 1.8rem;">${escapeHtml(className)}</h2>
             </div>
             <div style="display: flex; flex-direction: column; gap: 8px; align-items: flex-end;">
-              <span style="font-size: 0.75rem; padding: 4px 10px; border: 1px solid var(--success); color: var(--success); border-radius: 20px; font-weight: 600;">Seuraava vaihe valmis</span>
-              <button class="button small outline" style="font-size: 0.75rem;">Muokkaa rakennetta</button>
+              <span style="font-size: 0.75rem; padding: 4px 10px; border: 1px solid var(--success); color: var(--success); border-radius: 20px; font-weight: 600;">${t(state, "dashboard.next_stage_ready")}</span>
+              <button class="button small outline" style="font-size: 0.75rem;">${t(state, "dashboard.edit_structure")}</button>
             </div>
           </div>
           
           <div class="grid" style="grid-template-columns: repeat(4, 1fr); gap: 15px; border-bottom: 1px solid var(--border); padding-bottom: 20px; margin-bottom: 20px;">
             <div>
               <div style="font-size: 1.5rem; font-weight: 700; margin-bottom: 5px;">${classEntries.length}</div>
-              <div class="muted" style="font-size: 0.8rem;">pilottia</div>
+              <div class="muted" style="font-size: 0.8rem;">${t(state, "dashboard.pilots")}</div>
             </div>
             <div>
               <div style="font-size: 1.5rem; font-weight: 700; margin-bottom: 5px;">${latestRound}/${totalRounds}</div>
-              <div class="muted" style="font-size: 0.8rem;">alkuerää</div>
+              <div class="muted" style="font-size: 0.8rem;">${t(state, "dashboard.qualifying_rounds")}</div>
             </div>
             <div>
               <div style="font-size: 1.5rem; font-weight: 700; margin-bottom: 5px;">${classHeats.length}</div>
-              <div class="muted" style="font-size: 0.8rem;">heatiä</div>
+              <div class="muted" style="font-size: 0.8rem;">${t(state, "dashboard.heats")}</div>
             </div>
             <div>
               <div style="font-size: 1.5rem; font-weight: 700; margin-bottom: 5px;">${classScorecardsCount}</div>
-              <div class="muted" style="font-size: 0.8rem;">tuloskorttia</div>
+              <div class="muted" style="font-size: 0.8rem;">${t(state, "dashboard.scorecards")}</div>
             </div>
           </div>
 
           <div style="background: rgba(0,0,0,0.2); border-radius: 4px; padding: 12px 15px; margin-bottom: 25px; display: flex; justify-content: space-between; align-items: center;">
-            <span style="font-size: 0.85rem;">Alkuerät</span>
-            <span style="font-size: 0.85rem; font-weight: 600;">${completedScorecards}/${classScorecardsCount} tulosta</span>
+            <span style="font-size: 0.85rem;">${t(state, "dashboard.qualifying_rounds_title")}</span>
+            <span style="font-size: 0.85rem; font-weight: 600;">${completedScorecards}/${classScorecardsCount} ${t(state, "dashboard.results")}</span>
           </div>
 
           <div style="font-size: 0.85rem; margin-bottom: 10px;">
-            Seuraava vaihe: Arvo alkuerä ${latestRound + 1}
+            ${t(state, "dashboard.next_stage_draw").replace("{n}", latestRound + 1)}
           </div>
 
           <div style="display: flex; gap: 10px;">
             ${hasEnoughPilots ? 
-              UI.Button({ label: `Arvo alkuerä ${latestRound + 1}`, action: "generate-class-heats", class: className, variant: "primary", style: "flex: 1; justify-content: center;" })
-              : `<button class="button primary disabled" style="flex: 1; justify-content: center;" disabled>Tarvitaan vähintään 2 pilottia</button>`
+              UI.Button({ label: t(state, "dashboard.draw_qualifying_round").replace("{n}", latestRound + 1), action: "generate-class-heats", class: className, variant: "primary", style: "flex: 1; justify-content: center;" })
+              : `<button class="button primary disabled" style="flex: 1; justify-content: center;" disabled>${t(state, "dashboard.need_more_pilots")}</button>`
             }
-            <a href="#/heats" class="button outline" style="flex: 1; justify-content: center;">Näytä heatit</a>
-            <a href="#/scorecards" class="button outline" style="flex: 1; justify-content: center;">Tuloskortit (${classScorecardsCount})</a>
-            <a href="#/results" class="button outline" style="flex: 1; justify-content: center;">Tulosta</a>
+            <a href="#/heats" class="button outline" style="flex: 1; justify-content: center;">${t(state, "dashboard.show_heats")}</a>
+            <a href="#/scorecards" class="button outline" style="flex: 1; justify-content: center;">${t(state, "dashboard.scorecards_btn").replace("{n}", classScorecardsCount)}</a>
+            <a href="#/results" class="button outline" style="flex: 1; justify-content: center;">${t(state, "dashboard.print")}</a>
           </div>
         </div>
       </div>

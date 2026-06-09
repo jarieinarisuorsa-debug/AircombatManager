@@ -13,6 +13,7 @@ import { handleInput } from "./controllers/inputController.js";
 import { createSubmitHandler } from "./controllers/submitController.js?v=2";
 import { UI } from "./ui/engine.js";
 import { ROUTES, getCurrentRoute } from "./router.js";
+import { t } from "./utils/i18n.js";
 import { closeAircraftSpecForm, closeCompetitionFormatModal, closeEventForm } from "./features/settings/settingsActions.js";
 
 import { getState, updateState } from "./state/store.js";
@@ -253,7 +254,7 @@ export function renderApp() {
   if (!canUseRoute(state, routeKey)) {
     if (!state.auth?.user && routeKey !== "login") {
       location.hash = "#/login";
-      setTimeout(() => showToast("Kirjaudu sisään jatkaaksesi.", "error"), 50);
+      setTimeout(() => showToast(t(state, "auth.login_to_continue"), "error"), 50);
     } else {
       location.hash = `#/${getDefaultRouteForRole(getCurrentRole(state))}`;
     }
@@ -314,8 +315,16 @@ export function renderApp() {
 
   titleEl.textContent = typeof route.title === "function" ? route.title(state) : route.title;
   if (activeEventPillEl) {
-    activeEventPillEl.textContent = activeEvent ? activeEvent.name : "Ei aktiivista kisaa";
+    activeEventPillEl.textContent = activeEvent ? activeEvent.name : t(state, "documents.no_active_event");
   }
+  
+  const themeBtn = document.querySelector("#theme-toggle-btn");
+  if (themeBtn) {
+    const isDark = state.settings?.theme === "dark" || (!state.settings?.theme && window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches);
+    themeBtn.textContent = isDark ? t(state, "theme.sunlight") : t(state, "theme.dark");
+    themeBtn.title = isDark ? t(state, "theme.switch_light") : t(state, "theme.switch_dark");
+  }
+
   appEl.innerHTML = route.render(state) + renderConfirmModal(state) + renderAlertModal(state);
 
   const entryForm = appEl.querySelector("form[data-action='add-entry']");
@@ -370,11 +379,11 @@ function applyTheme(state) {
   if (!themeBtn) return;
 
   if (theme === "sunlight") {
-    themeBtn.innerHTML = "🌙 Tumma tila";
-    themeBtn.title = "Vaihda tummaan tilaan";
+    themeBtn.innerHTML = t(state, "theme.dark");
+    themeBtn.title = t(state, "theme.switch_dark");
   } else {
-    themeBtn.innerHTML = "☀️ Aurinkotila";
-    themeBtn.title = "Vaihda valoisaan aurinkotilaan";
+    themeBtn.innerHTML = t(state, "theme.sunlight");
+    themeBtn.title = t(state, "theme.switch_light");
   }
 }
 
@@ -403,13 +412,13 @@ function renderNavigation(state, routeKey) {
          <span class="nav-icon">
            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
          </span>
-         Kirjaudu ulos
+         ${t(state, "auth.logout")}
        </a>`
     : `<a href="#/login" style="cursor: pointer;">
          <span class="nav-icon">
            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path><polyline points="10 17 15 12 10 7"></polyline><line x1="15" y1="12" x2="3" y2="12"></line></svg>
          </span>
-         Kirjaudu sisään
+         ${t(state, "auth.login")}
        </a>`;
 
   const creditsItemHtml = `
@@ -417,7 +426,7 @@ function renderNavigation(state, routeKey) {
       <span class="nav-icon">
         <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
       </span>
-      Tietoja ohjelmasta
+      ${t(state, "nav.about")}
     </a>
   `;
 
@@ -462,7 +471,7 @@ function renderRoleSwitch(state) {
   
   const role = getCurrentRole(state);
   roleSelectEl.innerHTML = Object.entries(ROLE_LABELS)
-    .map(([value, label]) => `<option value="${value}" ${value === role ? "selected" : ""}>${label}</option>`)
+    .map(([value]) => `<option value="${value}" ${value === role ? "selected" : ""}>${t(state, 'role.' + value)}</option>`)
     .join("");
 }
 

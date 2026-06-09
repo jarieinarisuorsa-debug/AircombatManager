@@ -1,4 +1,5 @@
 import { createId, updateState, getState } from "../../state/store.js";
+import { t } from "../../utils/i18n.js";
 import { normalizeClassName } from "../../logic/participants.js";
 import { requireAdmin, requirePilotAccess } from "../../users/roles.js";
 import { getActiveEvent } from "../../utils/html.js";
@@ -226,7 +227,7 @@ function resolveAircraftForEntry(state, data, pilotId, className) {
   if (existingAircraftId) {
     const aircraft = state.aircraft.find((item) => item.id === existingAircraftId);
     if (!aircraft) throw new Error("Valittua konetta ei löydy.");
-    if (aircraft.pilotId !== pilotId) throw new Error("Valittu kone kuuluu eri pilotille. Valitse pilotin oma kone tai lisää uusi kone.");
+    if (aircraft.pilotId !== pilotId) throw new Error(t(state, "entry_actions.wrong_pilot"));
     return existingAircraftId;
   }
 
@@ -346,7 +347,7 @@ export function initEntryActions() {
   registerAction("delete-entry", (event, button) => {
     requireAdmin(getState());
     openConfirmModal({
-      title: "Poista osallistuja",
+      title: t(getState(), "entry_actions.del_entry_title"),
       message: "Poistetaanko tämä osallistuja aktiivisesta kilpailusta?",
       action: "execute-delete-entry",
       payload: { entryId: button.dataset.entryId }

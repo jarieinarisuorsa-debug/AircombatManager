@@ -1,4 +1,5 @@
 import { createId, updateState, getState } from "../../state/store.js";
+import { t } from "../../utils/i18n.js";
 import { requireAdmin, requirePilotAccess, getCurrentRole, ROLES } from "../../users/roles.js";
 import { requireText } from "../../utils/formValues.js";
 import { removeEntriesById } from "../entries/entryActions.js";
@@ -80,9 +81,9 @@ export function initPilotActions() {
   registerAction("delete-pilot", (event, button) => {
     requireAdmin(getState());
     openConfirmModal({
-      title: "Poista pilotti",
-      message: "Poistetaanko pilotti? Tämä poistaa myös pilotin kilpailukohtaiset osallistumiset ja niihin liittyvät tulosrivit.",
-      requireText: "POISTA",
+      title: t(getState(), "pilot_actions.del_pilot_title"),
+      message: t(getState(), "pilot_actions.del_pilot_msg"),
+      requireText: t(getState(), "settings_actions.delete_word"),
       action: "execute-delete-pilot",
       payload: { pilotId: button.dataset.pilotId }
     });

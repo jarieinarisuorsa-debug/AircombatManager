@@ -4,13 +4,13 @@ import { buildScoreCardRows, getScoreCardStructureStages } from "../../../logic/
 
 export function renderStopwatchPanel(state, pilot, activeEvent) {
   if (!activeEvent) {
-    return UI.Panel({ title: "Ei aktiivista kilpailua" }, "<p class='muted'>Sekuntikello vaatii aktiivisen kilpailun.</p>");
+    return UI.Panel({ title: t(state, "stopwatch.no_active_event") }, `<p class='muted'>${t(state, "stopwatch.no_event_msg")}</p>`);
   }
 
   // Find pilot's registered classes
   const entries = state.entries.filter(e => e.eventId === activeEvent.id && e.pilotId === pilot.id);
   if (entries.length === 0) {
-    return UI.Panel({ title: "Ei ilmoittautumisia" }, "<p class='muted'>Et ole ilmoittautunut mihinkään luokkaan tässä kilpailussa.</p>");
+    return UI.Panel({ title: t(state, "stopwatch.no_entries") }, `<p class='muted'>${t(state, "stopwatch.no_entries_msg")}</p>`);
   }
 
   const activeClass = state.settings?.stopwatchActiveClassName || entries[0].className;
@@ -22,7 +22,7 @@ export function renderStopwatchPanel(state, pilot, activeEvent) {
   const stages = myRow ? getScoreCardStructureStages({ card: myRow.card, event: activeEvent, entry: myRow.entry, aircraft: myRow.aircraft }) : [];
 
   if (stages.length === 0) {
-    return UI.Panel({ title: "Odottaa arvontaa" }, "<p class='muted'>Kilpailun eriä ei ole vielä arvottu.</p>");
+    return UI.Panel({ title: t(state, "stopwatch.waiting_draw") }, `<p class='muted'>${t(state, "stopwatch.waiting_draw_msg")}</p>`);
   }
 
   const activeStageRoundNumber = state.settings?.stopwatchActiveRoundNumber || stages[0].roundNumber;
@@ -49,7 +49,7 @@ export function renderStopwatchPanel(state, pilot, activeEvent) {
       <div style="padding: 20px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.03); background: rgba(0,0,0,0.2);">
         <h3 style="margin: 0; font-size: 1.05rem; color: var(--muted); display: flex; align-items: center; justify-content: center; gap: 8px; text-transform: uppercase; letter-spacing: 2px;">
           <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="var(--primary-color)" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-          Lentoaika
+          ${t(state, "stopwatch.flight_time")}
         </h3>
       </div>
       
@@ -71,15 +71,15 @@ export function renderStopwatchPanel(state, pilot, activeEvent) {
         </div>
 
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px;">
-          <button type="button" style="background: rgba(74, 222, 128, 0.1); color: #4ade80; border: 1px solid rgba(74, 222, 128, 0.25); border-radius: 12px; padding: 16px; font-size: 1rem; font-weight: bold; cursor: pointer; transition: all 0.2s ease;" data-action="start-stopwatch" onmouseover="this.style.background='rgba(74, 222, 128, 0.2)'" onmouseout="this.style.background='rgba(74, 222, 128, 0.1)'">Käynnistä</button>
-          <button type="button" style="background: rgba(248, 113, 113, 0.1); color: #f87171; border: 1px solid rgba(248, 113, 113, 0.25); border-radius: 12px; padding: 16px; font-size: 1rem; font-weight: bold; cursor: pointer; transition: all 0.2s ease;" data-action="stop-stopwatch" onmouseover="this.style.background='rgba(248, 113, 113, 0.2)'" onmouseout="this.style.background='rgba(248, 113, 113, 0.1)'">Pysäytä</button>
+          <button type="button" style="background: rgba(74, 222, 128, 0.1); color: #4ade80; border: 1px solid rgba(74, 222, 128, 0.25); border-radius: 12px; padding: 16px; font-size: 1rem; font-weight: bold; cursor: pointer; transition: all 0.2s ease;" data-action="start-stopwatch" onmouseover="this.style.background='rgba(74, 222, 128, 0.2)'" onmouseout="this.style.background='rgba(74, 222, 128, 0.1)'">${t(state, "stopwatch.start")}</button>
+          <button type="button" style="background: rgba(248, 113, 113, 0.1); color: #f87171; border: 1px solid rgba(248, 113, 113, 0.25); border-radius: 12px; padding: 16px; font-size: 1rem; font-weight: bold; cursor: pointer; transition: all 0.2s ease;" data-action="stop-stopwatch" onmouseover="this.style.background='rgba(248, 113, 113, 0.2)'" onmouseout="this.style.background='rgba(248, 113, 113, 0.1)'">${t(state, "stopwatch.stop")}</button>
         </div>
         
         <div style="text-align: center; margin-bottom: 24px;">
-          <button type="button" class="button" style="background: transparent; color: var(--muted); border: 1px dashed var(--border); border-radius: 20px; padding: 6px 16px; font-size: 0.8rem;" data-action="reset-stopwatch">Nollaa aika</button>
+          <button type="button" class="button" style="background: transparent; color: var(--muted); border: 1px dashed var(--border); border-radius: 20px; padding: 6px 16px; font-size: 0.8rem;" data-action="reset-stopwatch">${t(state, "stopwatch.reset")}</button>
         </div>
 
-        <button type="button" class="button primary" style="width: 100%; border-radius: 12px; padding: 18px; font-size: 1.05rem; font-weight: bold; box-shadow: 0 4px 15px rgba(88, 183, 255, 0.3); border: none;" data-action="transfer-stopwatch-time" data-entry-id="${entry.id}" data-round="${activeStageRoundNumber}">Tallenna tuloskortille</button>
+        <button type="button" class="button primary" style="width: 100%; border-radius: 12px; padding: 18px; font-size: 1.05rem; font-weight: bold; box-shadow: 0 4px 15px rgba(88, 183, 255, 0.3); border: none;" data-action="transfer-stopwatch-time" data-entry-id="${entry.id}" data-round="${activeStageRoundNumber}">${t(state, "stopwatch.save_to_card")}</button>
       </div>
     </div>
     <script>

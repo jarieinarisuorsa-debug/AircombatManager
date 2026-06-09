@@ -2,27 +2,28 @@ import { escapeHtml, getActiveEvent } from "../../utils/html.js";
 import { UI } from "../../ui/engine.js";
 import { SCORE_CARD_TEMPLATES } from "../../logic/scoreCards.js";
 import { renderScoreCardForm } from "../scorecards/components/ScoreCardEditor.js";
+import { t } from "../../utils/i18n.js";
 
 export function renderDocumentsView(state) {
   const activeEvent = getActiveEvent(state);
   
   if (!activeEvent) {
-    return UI.Panel({ title: "Ei aktiivista kisaa" }, "<p>Avaa kilpailu kisakalenterista, jotta voit tulostaa asiakirjoja.</p>");
+    return UI.Panel({ title: t(state, "documents.no_active_event") }, `<p>${t(state, "documents.no_active_event_desc")}</p>`);
   }
 
   const introText = `
     <p class="muted no-print" style="margin-top: 0; margin-bottom: 20px;">
-      Tulosta kilpailupaikan paperidokumentit kisaan: <strong style="color: var(--text);">${escapeHtml(activeEvent.name)}</strong>
+      ${t(state, "documents.print_intro")} <strong style="color: var(--text);">${escapeHtml(activeEvent.name)}</strong>
     </p>
   `;
 
   const tab = window.DOCUMENT_TAB || 'tuloskortit';
   const tabNavigation = `
     <div class="ui-tabs no-print" style="display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 1px solid var(--border); padding-bottom: 10px; overflow-x: auto;">
-      <button type="button" class="button ${tab === 'tuloskortit' ? 'primary' : 'dashed'}" data-action="set-document-tab" data-tab="tuloskortit">Tuloskortit</button>
-      <button type="button" class="button ${tab === 'listaukset' ? 'primary' : 'dashed'}" data-action="set-document-tab" data-tab="listaukset">Listaukset</button>
-      <button type="button" class="button ${tab === 'tarkastukset' ? 'primary' : 'dashed'}" data-action="set-document-tab" data-tab="tarkastukset">Tarkastukset</button>
-      <button type="button" class="button ${tab === 'aikataulut' ? 'primary' : 'dashed'}" data-action="set-document-tab" data-tab="aikataulut">Aikataulut</button>
+      <button type="button" class="button ${tab === 'tuloskortit' ? 'primary' : 'dashed'}" data-action="set-document-tab" data-tab="tuloskortit">${t(state, "documents.tab_scorecards")}</button>
+      <button type="button" class="button ${tab === 'listaukset' ? 'primary' : 'dashed'}" data-action="set-document-tab" data-tab="listaukset">${t(state, "documents.tab_lists")}</button>
+      <button type="button" class="button ${tab === 'tarkastukset' ? 'primary' : 'dashed'}" data-action="set-document-tab" data-tab="tarkastukset">${t(state, "documents.tab_inspections")}</button>
+      <button type="button" class="button ${tab === 'aikataulut' ? 'primary' : 'dashed'}" data-action="set-document-tab" data-tab="aikataulut">${t(state, "documents.tab_schedules")}</button>
     </div>
   `;
 
@@ -34,14 +35,14 @@ export function renderDocumentsView(state) {
   } else if (tab === "tarkastukset") {
     contentHtml = renderOfficialPrintOptions();
   } else if (tab === "aikataulut") {
-    contentHtml = UI.Panel({ title: "Aikataulut" }, `
+    contentHtml = UI.Panel({ title: t(state, "documents.tab_schedules") }, `
       <div style="display: flex; flex-direction: column; gap: 15px;">
         <div class="print-option-row">
           <div>
-            <strong>Kilpailun aikataulu</strong>
-            <div class="muted" style="font-size: 0.8rem;">Tapahtuman julkinen näkymä ja aikataulu</div>
+            <strong>${t(state, "documents.schedule_title")}</strong>
+            <div class="muted" style="font-size: 0.8rem;">${t(state, "documents.schedule_desc")}</div>
           </div>
-          <a href="#/eventinfo" class="button small primary">Avaa näkymä tulostusta varten</a>
+          <a href="#/eventinfo" class="button small primary">${t(state, "documents.open_for_print")}</a>
         </div>
       </div>
     `);
@@ -112,18 +113,18 @@ function renderScoreCardPrintOptions(state, activeEvent) {
     const templateId = getScoreCardTemplateId({ event: activeEvent, entry: { className } });
     const format = getCompetitionFormatForClass(activeEvent, className);
     
-    let structureText = `${format.qualifyingRounds} alkuerää`;
-    if (format.semiFinalEnabled) structureText += ` + semifinaali`;
-    if (format.finalEnabled) structureText += ` + finaali`;
+    let structureText = t(state, "documents.qualifying_rounds").replace("{n}", format.qualifyingRounds);
+    if (format.semiFinalEnabled) structureText += t(state, "documents.plus_semi");
+    if (format.finalEnabled) structureText += t(state, "documents.plus_final");
 
     return `
       <div class="print-option-row">
         <div>
           <strong>${escapeHtml(className)}</strong>
-          <div class="muted" style="font-size: 0.8rem;">Pohja: ${templateId === 'wwi' ? 'WWI' : 'Standard'} · ${structureText}</div>
+          <div class="muted" style="font-size: 0.8rem;">${templateId === 'wwi' ? t(state, "documents.template_wwi") : t(state, "documents.template_standard")} · ${structureText}</div>
         </div>
         ${UI.Button({ 
-          label: "🖨️ Tulosta tyhjä pohja", 
+          label: t(state, "documents.print_blank"), 
           action: "print-generic-empty-card", 
           templateId: templateId,
           raceClass: className,
@@ -133,48 +134,49 @@ function renderScoreCardPrintOptions(state, activeEvent) {
     `;
   }).join("");
 
-  return UI.Panel({ title: "Tuloskortit", kicker: "Kynällä täytettävät paperit" }, `
+  return UI.Panel({ title: t(state, "documents.tab_scorecards"), kicker: t(state, "documents.blank_papers_kicker") }, `
     <div style="display: flex; flex-direction: column; gap: 15px;">
-      <p class="muted" style="margin: 0; font-size: 0.9rem;">Tulosta kilpailun rakenteeseen mukautettuja tyhjiä tuloskortteja käytettäväksi kilpailupaikalla varakortteina tai lennosta lisätyille piloteille.</p>
+      <p class="muted" style="margin: 0; font-size: 0.9rem;">${t(state, "documents.blank_papers_desc")}</p>
       
       <div style="display: flex; flex-direction: column; gap: 8px;">
         ${classButtons}
       </div>
 
       <div style="margin-top: 10px; padding-top: 15px; border-top: 1px solid var(--border);">
-        <p class="muted" style="margin: 0 0 10px 0; font-size: 0.9rem;">Voit myös tulostaa järjestelmään jo kirjatut (osittain tai kokonaan täytetyt) tuloskortit.</p>
-        <a href="#/scorecards" class="button" style="width: 100%; justify-content: center;">Avaa täytetyt tuloskortit</a>
+        <p class="muted" style="margin: 0 0 10px 0; font-size: 0.9rem;">${t(state, "documents.filled_papers_desc")}</p>
+        <a href="#/scorecards" class="button" style="width: 100%; justify-content: center;">${t(state, "documents.open_filled")}</a>
       </div>
     </div>
   `);
 }
 
 function renderListPrintOptions() {
-  return UI.Panel({ title: "Listaukset", kicker: "Kilpailijat ja aikataulut" }, `
+  const state = window.appState;
+  return UI.Panel({ title: t(state, "documents.tab_lists"), kicker: t(state, "documents.competitors_kicker") }, `
     <div style="display: flex; flex-direction: column; gap: 15px;">
       
       <div class="print-option-row">
         <div>
-          <strong>Heat-listat</strong>
-          <div class="muted" style="font-size: 0.8rem;">Kaikkien luokkien lentovuorot</div>
+          <strong>${t(state, "documents.heat_lists")}</strong>
+          <div class="muted" style="font-size: 0.8rem;">${t(state, "documents.heat_lists_desc")}</div>
         </div>
-        <a href="#/heats" class="button small primary">Avaa näkymä</a>
+        <a href="#/heats" class="button small primary">${t(state, "documents.open_view")}</a>
       </div>
 
       <div class="print-option-row">
         <div>
-          <strong>Osallistujalista</strong>
-          <div class="muted" style="font-size: 0.8rem;">Kilpailuun ilmoittautuneet pilotit</div>
+          <strong>${t(state, "documents.entry_list")}</strong>
+          <div class="muted" style="font-size: 0.8rem;">${t(state, "documents.entry_list_desc")}</div>
         </div>
-        <a href="#/entries" class="button small primary">Avaa näkymä</a>
+        <a href="#/entries" class="button small primary">${t(state, "documents.open_view")}</a>
       </div>
 
       <div class="print-option-row">
         <div>
-          <strong>Pilottirekisteri</strong>
-          <div class="muted" style="font-size: 0.8rem;">Kaikki järjestelmän pilotit</div>
+          <strong>${t(state, "documents.pilot_register")}</strong>
+          <div class="muted" style="font-size: 0.8rem;">${t(state, "documents.pilot_register_desc")}</div>
         </div>
-        <a href="#/pilots" class="button small primary">Avaa näkymä</a>
+        <a href="#/pilots" class="button small primary">${t(state, "documents.open_view")}</a>
       </div>
 
     </div>
@@ -182,16 +184,17 @@ function renderListPrintOptions() {
 }
 
 function renderOfficialPrintOptions() {
-  return UI.Panel({ title: "Toimitsijat & Tarkastukset", kicker: "Kilpailun järjestäminen" }, `
+  const state = window.appState;
+  return UI.Panel({ title: t(state, "documents.officials_title"), kicker: t(state, "documents.officials_kicker") }, `
     <div style="display: flex; flex-direction: column; gap: 15px;">
       
       <div class="print-option-row">
         <div>
-          <strong>Katsastuslista</strong>
-          <div class="muted" style="font-size: 0.8rem;">Ruksittava lista koneiden katsastukseen</div>
+          <strong>${t(state, "documents.inspection_list")}</strong>
+          <div class="muted" style="font-size: 0.8rem;">${t(state, "documents.inspection_list_desc")}</div>
         </div>
         ${UI.Button({ 
-          label: "🖨️ Tulosta", 
+          label: t(state, "documents.print"), 
           action: "print-inspection-list", 
           variant: "small primary" 
         })}
@@ -199,11 +202,11 @@ function renderOfficialPrintOptions() {
 
       <div class="print-option-row">
         <div>
-          <strong>Tuomarilistat</strong>
-          <div class="muted" style="font-size: 0.8rem;">Tyhjä kirjauslista heat-tuomareille</div>
+          <strong>${t(state, "documents.judges_list")}</strong>
+          <div class="muted" style="font-size: 0.8rem;">${t(state, "documents.judges_list_desc")}</div>
         </div>
         ${UI.Button({ 
-          label: "🖨️ Tulosta", 
+          label: t(state, "documents.print"), 
           action: "print-judges-list", 
           variant: "small primary" 
         })}
@@ -237,10 +240,10 @@ function renderInspectionList(state, activeEvent) {
 
   return `
     <div style="padding: 20px; background: white; color: black; min-height: 100vh;">
-      <h2 style="text-align: center; margin-bottom: 5px;">Katsastuslista</h2>
+      <h2 style="text-align: center; margin-bottom: 5px;">${t(state, "documents.inspection_list")}</h2>
       <p style="text-align: center; margin-bottom: 20px;">${escapeHtml(activeEvent.name)}</p>
       ${UI.Table({
-        headers: ["#", "Numero", "Pilotti", "Luokka", "Kypärä", "Kone 1", "Kone 2", "Allekirjoitus"],
+        headers: [t(state, "documents.col_hash"), t(state, "documents.col_number"), t(state, "documents.col_pilot"), t(state, "documents.col_class"), t(state, "documents.col_helmet"), t(state, "documents.col_plane1"), t(state, "documents.col_plane2"), t(state, "documents.col_signature")],
         rows,
         style: "width: 100%; border-collapse: collapse; font-size: 0.9rem;"
       })}
@@ -265,10 +268,10 @@ function renderJudgesList(state, activeEvent) {
 
   return `
     <div style="padding: 20px; background: white; color: black; min-height: 100vh;">
-      <h2 style="text-align: center; margin-bottom: 5px;">Tuomarikirjanpito</h2>
+      <h2 style="text-align: center; margin-bottom: 5px;">${t(state, "documents.judges_accounting")}</h2>
       <p style="text-align: center; margin-bottom: 20px;">${escapeHtml(activeEvent.name)}</p>
       ${UI.Table({
-        headers: ["Heat", "Tuomari 1", "Tuomari 2", "Tuomari 3", "Tuomari 4"],
+        headers: [t(state, "documents.col_heat"), t(state, "documents.col_judge1"), t(state, "documents.col_judge2"), t(state, "documents.col_judge3"), t(state, "documents.col_judge4")],
         rows,
         style: "width: 100%; border-collapse: collapse; font-size: 0.9rem;"
       })}

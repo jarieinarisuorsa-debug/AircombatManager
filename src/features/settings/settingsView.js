@@ -1,20 +1,21 @@
 import { escapeHtml } from "../../utils/html.js";
 import { UI } from "../../ui/engine.js";
+import { t } from "../../utils/i18n.js";
 
 export function renderSettingsView(state) {
   const tab = state.settings?.settingsTab || "jarjestaja";
   const adminEmailsStr = Array.isArray(state.settings.adminEmails) ? state.settings.adminEmails.join(", ") : "";
   const publicEmailsStr = Array.isArray(state.settings.publicEmails) ? state.settings.publicEmails.join(", ") : "";
 
-  const headerSubtitle = `<p class="muted" style="margin-bottom: 20px;">Järjestäjätiedot, datan varmuuskopiointi ja hallinnan asetukset</p>`;
+  const headerSubtitle = `<p class="muted" style="margin-bottom: 20px;">${t(state, "settings.subtitle")}</p>`;
   const tabNav = `
     <nav class="sub-nav no-print" style="margin-bottom: 20px; display: flex; flex-wrap: wrap; gap: 8px;">
-      <button type="button" class="button ${tab === 'jarjestaja' ? 'primary' : 'dashed'}" data-action="set-settings-tab" data-tab="jarjestaja">Järjestäjä</button>
-      <button type="button" class="button ${tab === 'oikeudet' ? 'primary' : 'dashed'}" data-action="set-settings-tab" data-tab="oikeudet">Käyttäjät ja oikeudet</button>
-      <button type="button" class="button ${tab === 'ulkoasu' ? 'primary' : 'dashed'}" data-action="set-settings-tab" data-tab="ulkoasu">Ulkoasu ja logo</button>
-      <button type="button" class="button ${tab === 'ilmoitukset' ? 'primary' : 'dashed'}" data-action="set-settings-tab" data-tab="ilmoitukset">Ilmoitukset (WhatsApp)</button>
-      <button type="button" class="button ${tab === 'varmuuskopiot' ? 'primary' : 'dashed'}" data-action="set-settings-tab" data-tab="varmuuskopiot">Varmuuskopiot</button>
-      <button type="button" class="button ${tab === 'debug' ? 'primary' : 'dashed'}" data-action="set-settings-tab" data-tab="debug">Kehitys / debug</button>
+      <button type="button" class="button ${tab === 'jarjestaja' ? 'primary' : 'dashed'}" data-action="set-settings-tab" data-tab="jarjestaja">${t(state, "settings.tab_organizer")}</button>
+      <button type="button" class="button ${tab === 'oikeudet' ? 'primary' : 'dashed'}" data-action="set-settings-tab" data-tab="oikeudet">${t(state, "settings.tab_permissions")}</button>
+      <button type="button" class="button ${tab === 'ulkoasu' ? 'primary' : 'dashed'}" data-action="set-settings-tab" data-tab="ulkoasu">${t(state, "settings.tab_branding")}</button>
+      <button type="button" class="button ${tab === 'ilmoitukset' ? 'primary' : 'dashed'}" data-action="set-settings-tab" data-tab="ilmoitukset">${t(state, "settings.tab_notifications")}</button>
+      <button type="button" class="button ${tab === 'varmuuskopiot' ? 'primary' : 'dashed'}" data-action="set-settings-tab" data-tab="varmuuskopiot">${t(state, "settings.tab_backups")}</button>
+      <button type="button" class="button ${tab === 'debug' ? 'primary' : 'dashed'}" data-action="set-settings-tab" data-tab="debug">${t(state, "settings.tab_debug")}</button>
     </nav>
   `;
 
@@ -22,11 +23,11 @@ export function renderSettingsView(state) {
 
   if (tab === "jarjestaja") {
     const formContent = `
-      ${UI.Input({ label: "Järjestäjän nimi", name: "organizerName", value: state.settings.organizerName || "", placeholder: "Seura / järjestäjä" })}
-      <label class="check-row" style="margin-bottom: 20px;"><input type="checkbox" name="publicDisplayMode" ${state.settings.publicDisplayMode ? "checked" : ""} /> Julkinen näyttötila</label>
-      ${UI.Button({ label: "Tallenna asetukset", type: "submit", variant: "primary" })}
+      ${UI.Input({ label: t(state, "settings.organizer_name"), name: "organizerName", value: state.settings.organizerName || "", placeholder: t(state, "settings.organizer_name_placeholder") })}
+      <label class="check-row" style="margin-bottom: 20px;"><input type="checkbox" name="publicDisplayMode" ${state.settings.publicDisplayMode ? "checked" : ""} /> ${t(state, "settings.public_display_mode")}</label>
+      ${UI.Button({ label: t(state, "settings.save_settings"), type: "submit", variant: "primary" })}
     `;
-    content = UI.FormPanel({ kicker: "Asetukset", title: "Järjestäjä", action: "save-settings" }, formContent);
+    content = UI.FormPanel({ kicker: t(state, "settings.settings_kicker"), title: t(state, "settings.tab_organizer"), action: "save-settings" }, formContent);
   } else if (tab === "oikeudet") {
     let permissions = state.permissions;
     if (!permissions) {
@@ -51,17 +52,17 @@ export function renderSettingsView(state) {
       <tr style="border-bottom: 1px solid var(--border); ${perm.role === 'pending' ? 'background: rgba(255, 193, 7, 0.1);' : ''}">
         <td style="padding: 10px;">
           ${escapeHtml(perm.email)}
-          ${perm.role === 'pending' ? '<br><span style="font-size: 0.8rem; color: #ffc107; font-weight: bold;">UUSI PYYNTÖ</span>' : ''}
+          ${perm.role === 'pending' ? `<br><span style="font-size: 0.8rem; color: #ffc107; font-weight: bold;">${t(state, "settings.new_request")}</span>` : ''}
         </td>
         <td style="padding: 10px;">
           <select class="ui-input" style="padding: 4px 8px; width: auto; ${perm.role === 'pending' ? 'border-color: #ffc107;' : ''}" data-action="update-permission-role" data-id="${perm.id}">
-            ${perm.role === 'pending' ? '<option value="pending" selected>Odottaa oikeuksia</option>' : ''}
-            <option value="admin" ${perm.role === 'admin' ? 'selected' : ''}>Ylläpitäjä</option>
-            <option value="pilot" ${perm.role === 'pilot' ? 'selected' : ''}>Pilotti (Katselu)</option>
+            ${perm.role === 'pending' ? `<option value="pending" selected>${t(state, "settings.role_pending")}</option>` : ''}
+            <option value="admin" ${perm.role === 'admin' ? 'selected' : ''}>${t(state, "settings.role_admin")}</option>
+            <option value="pilot" ${perm.role === 'pilot' ? 'selected' : ''}>${t(state, "settings.role_pilot")}</option>
           </select>
         </td>
         <td style="padding: 10px; text-align: right;">
-          <button type="button" class="button small danger" data-action="remove-permission" data-id="${escapeHtml(perm.id)}">Poista</button>
+          <button type="button" class="button small danger" data-action="remove-permission" data-id="${escapeHtml(perm.id)}">${t(state, "settings.remove")}</button>
         </td>
       </tr>
     `).join("");
@@ -71,8 +72,8 @@ export function renderSettingsView(state) {
         <table style="width: 100%; border-collapse: collapse; margin: 0;">
           <thead style="position: sticky; top: 0; background: var(--surface); z-index: 1;">
             <tr style="border-bottom: 2px solid var(--border); text-align: left;">
-              <th style="padding: 10px;">Sähköposti</th>
-              <th style="padding: 10px;">Rooli</th>
+              <th style="padding: 10px;">${t(state, "settings.email")}</th>
+              <th style="padding: 10px;">${t(state, "settings.role")}</th>
               <th style="padding: 10px;"></th>
             </tr>
           </thead>
@@ -81,57 +82,57 @@ export function renderSettingsView(state) {
           </tbody>
         </table>
       </div>
-    ` : `<p class="muted" style="margin-bottom: 20px;">Ei lisättyjä käyttäjiä.</p>`;
+    ` : `<p class="muted" style="margin-bottom: 20px;">${t(state, "settings.no_users")}</p>`;
 
     const addForm = `
       <form class="stack" style="background: var(--surface); padding: 15px; border-radius: 8px; border: 1px solid var(--border); margin-bottom: 25px;" data-action="add-permission">
-        <h4 style="margin: 0 0 10px 0;">Lisää uusi käyttäjä</h4>
+        <h4 style="margin: 0 0 10px 0;">${t(state, "settings.add_new_user")}</h4>
         <div style="display: flex; gap: 10px; align-items: flex-end; flex-wrap: wrap;">
           <div style="flex: 1; min-width: 200px;">
-            ${UI.Input({ label: "Sähköposti", name: "email", type: "email", required: true, placeholder: "esim@osoite.fi" })}
+            ${UI.Input({ label: t(state, "settings.email"), name: "email", type: "email", required: true, placeholder: t(state, "settings.email_placeholder") })}
           </div>
           <div style="width: 200px;">
-            <label class="ui-label">Rooli</label>
+            <label class="ui-label">${t(state, "settings.role")}</label>
             <select name="role" class="ui-input" required>
-              <option value="admin">Ylläpitäjä</option>
-              <option value="pilot">Pilotti (Katselu)</option>
+              <option value="admin">${t(state, "settings.role_admin")}</option>
+              <option value="pilot">${t(state, "settings.role_pilot")}</option>
             </select>
           </div>
           <div style="padding-bottom: 4px;">
-            ${UI.Button({ label: "Lisää", type: "submit", variant: "primary" })}
+            ${UI.Button({ label: t(state, "settings.add"), type: "submit", variant: "primary" })}
           </div>
         </div>
       </form>
     `;
 
-    const infoText = `<p class="muted" style="margin-top: 20px;">Vinkki: Kun lisäät pilotille sähköpostiosoitteen suoraan Pilotit-sivulla, hän saa automaattisesti pilottioikeudet kirjautuessaan, eikä häntä tarvitse lisätä erikseen tähän listaan.</p>`;
+    const infoText = `<p class="muted" style="margin-top: 20px;">${t(state, "settings.permission_hint")}</p>`;
 
-    content = UI.Panel({ kicker: "Oikeudet", title: "Käyttäjät ja oikeudet" }, addForm + tableHtml + infoText);
+    content = UI.Panel({ kicker: t(state, "settings.permissions_kicker"), title: t(state, "settings.tab_permissions") }, addForm + tableHtml + infoText);
   } else if (tab === "ulkoasu") {
     const formContent = `
       <div style="margin-bottom: 20px; max-width: 400px;">
-        <label class="ui-label" style="display: block; margin-bottom: 5px; font-weight: bold; font-size: 0.9rem;">Yhdistyksen logo</label>
+        <label class="ui-label" style="display: block; margin-bottom: 5px; font-weight: bold; font-size: 0.9rem;">${t(state, "settings.org_logo")}</label>
         <div class="is-admin-dropzone" style="border: 2px dashed var(--border); padding: 16px; text-align: center; border-radius: 8px; cursor: pointer; transition: all 0.2s;" onclick="this.querySelector('input[type=file]').click()">
           <input type="file" id="org-logo-upload" accept="image/*" style="display: none;" />
           ${state.settings.organizationLogoData 
             ? `<img id="org-logo-preview" src="${escapeHtml(state.settings.organizationLogoData)}" alt="Logo" style="max-height: 80px; max-width: 100%; border-radius: 4px; object-fit: contain;" />` 
             : `<div id="org-logo-placeholder">
                  <div style="font-size: 2rem; margin-bottom: 8px;">🖼️</div>
-                 <div style="font-size: 0.9rem; color: var(--muted);">Lataa logo (klik tai raahaa)</div>
+                 <div style="font-size: 0.9rem; color: var(--muted);">${t(state, "settings.upload_logo")}</div>
                </div>
                <img id="org-logo-preview" src="" style="max-height: 80px; max-width: 100%; display: none; margin: 0 auto; border-radius: 4px; object-fit: contain;" />`
           }
         </div>
-        <label class="ui-label" style="display: block; margin-top: 15px; margin-bottom: 5px; font-weight: bold; font-size: 0.9rem;">Tai anna logon URL-osoite (esim. Dropbox-linkki)</label>
+        <label class="ui-label" style="display: block; margin-top: 15px; margin-bottom: 5px; font-weight: bold; font-size: 0.9rem;">${t(state, "settings.logo_url_label")}</label>
         <input type="url" name="organizationLogoUrl" class="ui-input" value="${escapeHtml(!state.settings.organizationLogoData || state.settings.organizationLogoData.startsWith('data:') ? '' : state.settings.organizationLogoData)}" placeholder="https://..." style="width: 100%; padding: 8px; border: 1px solid var(--border); border-radius: 4px;" />
-        <div style="font-size: 0.8rem; color: var(--muted); margin-top: 4px;">Huom: Dropbox-linkit muutetaan automaattisesti toimivaan muotoon.</div>
-        ${state.settings.organizationLogoData ? `<div style="margin-top: 15px; text-align: right;"><button type="button" class="button small danger" data-action="remove-org-logo">Poista logo</button></div>` : ""}
+        <div style="font-size: 0.8rem; color: var(--muted); margin-top: 4px;">${t(state, "settings.dropbox_hint")}</div>
+        ${state.settings.organizationLogoData ? `<div style="margin-top: 15px; text-align: right;"><button type="button" class="button small danger" data-action="remove-org-logo">${t(state, "settings.remove_logo")}</button></div>` : ""}
       </div>
       <div style="margin-top: 20px;">
-        ${UI.Button({ label: "Tallenna", type: "submit", variant: "primary" })}
+        ${UI.Button({ label: t(state, "settings.save"), type: "submit", variant: "primary" })}
       </div>
     `;
-    content = UI.FormPanel({ kicker: "Brändäys", title: "Ulkoasu ja logo", action: "save-org-logo" }, formContent);
+    content = UI.FormPanel({ kicker: t(state, "settings.branding_kicker"), title: t(state, "settings.tab_branding"), action: "save-org-logo" }, formContent);
   } else if (tab === "ilmoitukset") {
     const receivers = state.settings.whatsappReceivers || [];
     
@@ -151,8 +152,8 @@ export function renderSettingsView(state) {
         <td style="padding: 10px;">${escapeHtml(r.phone)}</td>
         <td style="padding: 10px;"><span style="filter: blur(4px); user-select: none;">${escapeHtml(r.apikey)}</span></td>
         <td style="padding: 10px; text-align: right; white-space: nowrap;">
-          <button type="button" class="button small" data-action="test-whatsapp-receiver" data-id="${escapeHtml(r.id)}">Testaa</button>
-          <button type="button" class="button small danger" data-action="remove-whatsapp-receiver" data-id="${escapeHtml(r.id)}" style="margin-left: 5px;">Poista</button>
+          <button type="button" class="button small" data-action="test-whatsapp-receiver" data-id="${escapeHtml(r.id)}">${t(state, "settings.test")}</button>
+          <button type="button" class="button small danger" data-action="remove-whatsapp-receiver" data-id="${escapeHtml(r.id)}" style="margin-left: 5px;">${t(state, "settings.remove")}</button>
         </td>
       </tr>
     `).join("");
@@ -161,9 +162,9 @@ export function renderSettingsView(state) {
       <table style="width: 100%; border-collapse: collapse; margin-bottom: 25px;">
         <thead>
           <tr style="border-bottom: 2px solid var(--border); text-align: left;">
-            <th style="padding: 10px;">Nimi</th>
-            <th style="padding: 10px;">Puhelinnumero</th>
-            <th style="padding: 10px;">API-avain</th>
+            <th style="padding: 10px;">${t(state, "settings.name")}</th>
+            <th style="padding: 10px;">${t(state, "settings.phone")}</th>
+            <th style="padding: 10px;">${t(state, "settings.api_key")}</th>
             <th style="padding: 10px;"></th>
           </tr>
         </thead>
@@ -171,61 +172,61 @@ export function renderSettingsView(state) {
           ${receiverRows}
         </tbody>
       </table>
-    ` : `<p class="muted" style="margin-bottom: 25px;">Ei asetettuja WhatsApp-ilmoitusten saajia.</p>`;
+    ` : `<p class="muted" style="margin-bottom: 25px;">${t(state, "settings.no_receivers")}</p>`;
 
     const formContent = `
-      <p style="margin-bottom: 20px;">Voit lisätä useita henkilöitä saamaan ilmoituksia (esim. muut ylläpitäjät). Jokainen tarvitsee oman CallMeBot API-avaimensa.</p>
+      <p style="margin-bottom: 20px;">${t(state, "settings.whatsapp_help1")}</p>
       
       <div style="background: rgba(255, 255, 255, 0.05); padding: 15px; border-radius: 8px; margin-bottom: 25px; font-size: 0.9rem;">
-        <h5 style="margin-top: 0; margin-bottom: 10px; color: var(--primary);">Näin saat API-avaimen (kestää 10 sekuntia):</h5>
+        <h5 style="margin-top: 0; margin-bottom: 10px; color: var(--primary);">${t(state, "settings.whatsapp_help2")}</h5>
         <ol style="margin: 0; padding-left: 20px; line-height: 1.5;">
-          <li>Tallenna puhelimeesi yhteystieto <strong>+34 644 10 28 72</strong> (esim. nimellä "CallMeBot").</li>
-          <li>Lähetä tälle numerolle WhatsApp-viesti: <strong>I allow callmebot to send me messages</strong></li>
-          <li>Botti vastaa heti ja antaa sinulle API-avaimen.</li>
-          <li>Syötä avaimesi ja puhelinnumerosi alle.</li>
+          <li>${t(state, "settings.whatsapp_step1")}</li>
+          <li>${t(state, "settings.whatsapp_step2")}</li>
+          <li>${t(state, "settings.whatsapp_step3")}</li>
+          <li>${t(state, "settings.whatsapp_step4")}</li>
         </ol>
       </div>
 
       <form class="stack" style="background: var(--surface); padding: 15px; border-radius: 8px; border: 1px solid var(--border);" data-action="add-whatsapp-receiver">
-        <h4 style="margin: 0 0 10px 0;">Lisää uusi vastaanottaja</h4>
+        <h4 style="margin: 0 0 10px 0;">${t(state, "settings.add_receiver")}</h4>
         <div style="display: flex; gap: 10px; align-items: flex-start; flex-wrap: wrap;">
           <div style="flex: 1; min-width: 150px;">
-            ${UI.Input({ label: "Henkilön nimi", name: "name", required: true, placeholder: "esim. Matti Ylläpitäjä" })}
+            ${UI.Input({ label: t(state, "settings.person_name"), name: "name", required: true, placeholder: "esim. Matti" })}
           </div>
           <div style="flex: 1; min-width: 150px;">
-            ${UI.Input({ label: "WhatsApp-numero", name: "phone", required: true, placeholder: "+358401234567" })}
+            ${UI.Input({ label: t(state, "settings.whatsapp_number"), name: "phone", required: true, placeholder: "+358401234567" })}
           </div>
           <div style="flex: 1; min-width: 150px;">
-            ${UI.Input({ label: "API-avain", name: "apikey", required: true, placeholder: "1234567" })}
+            ${UI.Input({ label: t(state, "settings.api_key"), name: "apikey", required: true, placeholder: "1234567" })}
           </div>
         </div>
         <div style="margin-top: 10px;">
-          ${UI.Button({ label: "Lisää listalle", type: "submit", variant: "primary" })}
+          ${UI.Button({ label: t(state, "settings.add_to_list"), type: "submit", variant: "primary" })}
         </div>
       </form>
     `;
     
-    content = UI.Panel({ kicker: "Automaatio", title: "WhatsApp-ilmoitukset" }, tableHtml + formContent);
+    content = UI.Panel({ kicker: t(state, "settings.automation_kicker"), title: t(state, "settings.tab_notifications") }, tableHtml + formContent);
   } else if (tab === "varmuuskopiot") {
-    content = UI.Panel({ kicker: "Data", title: "Varmuuskopiot" }, `
-      <p style="margin-bottom: 20px;">Varmuuskopioi koko kilpailun data JSON-tiedostona tai tuo aiempi varmuuskopio. Huomaa, että tuonti korvaa nykyiset tiedot.</p>
+    content = UI.Panel({ kicker: t(state, "settings.data_kicker"), title: t(state, "settings.backups_title") }, `
+      <p style="margin-bottom: 20px;">${t(state, "settings.backup_desc")}</p>
       <div class="stack" style="max-width: 300px;">
-        ${UI.Button({ label: "Vie JSON-varmuuskopio", action: "export-json", variant: "primary" })}
+        ${UI.Button({ label: t(state, "settings.export_json"), action: "export-json", variant: "primary" })}
         <label class="file-import" style="margin-top: 10px;">
-          Tuo JSON-varmuuskopio
+          ${t(state, "settings.import_json")}
           <input type="file" id="import-json-input" accept="application/json" />
         </label>
       </div>
     `);
   } else if (tab === "debug") {
-    content = UI.Panel({ kicker: "Järjestelmä", title: "Kehitys / debug" }, `
+    content = UI.Panel({ kicker: t(state, "settings.system_kicker"), title: t(state, "settings.debug_title") }, `
       <div style="border: 1px solid var(--danger); border-radius: 8px; padding: 16px; background: rgba(255,0,0,0.05); margin-bottom: 20px; max-width: 500px;">
-        <h4 style="color: var(--danger); margin-top: 0; margin-bottom: 8px;">Vaarallinen alue</h4>
-        <p class="muted" style="margin-bottom: 16px;">Tämä toiminto tyhjentää kaiken järjestelmään syötetyn tiedon ja palauttaa oletusasetukset sekä demo-datan. Toimintoa <strong>ei voi perua</strong>.</p>
-        ${UI.Button({ label: "Palauta demodata", action: "reset-data", variant: "danger" })}
+        <h4 style="color: var(--danger); margin-top: 0; margin-bottom: 8px;">${t(state, "settings.danger_zone")}</h4>
+        <p class="muted" style="margin-bottom: 16px;">${t(state, "settings.danger_desc")}</p>
+        ${UI.Button({ label: t(state, "settings.reset_data"), action: "reset-data", variant: "danger" })}
       </div>
       
-      <p class="muted">Tämä osio on tarkoitettu vain kehitykseen ja vianmääritykseen.</p>
+      <p class="muted">${t(state, "settings.debug_desc")}</p>
     `);
   }
 

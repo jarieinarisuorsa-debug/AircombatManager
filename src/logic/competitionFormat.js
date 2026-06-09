@@ -8,6 +8,7 @@
 
 import { calculateResultScore } from "./scoring.js";
 import { getScoreCardForEntry, hasRoundData } from "./scoreCards.js";
+import { t } from "../utils/i18n.js";
 
 export const HEAT_PHASES = {
   QUALIFYING: "qualifying",
@@ -63,7 +64,12 @@ export function normalizeClassFormats(classFormats = {}) {
   );
 }
 
-export function getPhaseLabel(phase) {
+export function getPhaseLabel(phase, state) {
+  if (state) {
+    if (phase === HEAT_PHASES.QUALIFYING) return t(state, "format.phase_qualifying");
+    if (phase === HEAT_PHASES.SEMIFINAL) return t(state, "format.phase_semifinal");
+    if (phase === HEAT_PHASES.FINAL) return t(state, "format.phase_final");
+  }
   return HEAT_PHASE_LABELS[phase] || "Alkuerä";
 }
 
@@ -207,7 +213,7 @@ export function getClassStageStatus({ event, className, classEntries, classHeats
     qualifyingRanking,
     semifinalRanking,
     nextPhase: null,
-    nextLabel: "Luokka valmis",
+    nextLabel: t(state, "format.class_ready"),
     canGenerate: false,
     disabledReason: "",
     advancingCount: 0,
@@ -218,8 +224,8 @@ export function getClassStageStatus({ event, className, classEntries, classHeats
     return {
       ...base,
       nextPhase: HEAT_PHASES.QUALIFYING,
-      nextLabel: "Arvo alkuerä 1",
-      disabledReason: "Tarvitaan vähintään 2 pilottia."
+      nextLabel: t(state, "format.draw_qualifying").replace("{round}", "1"),
+      disabledReason: t(state, "format.need_2_pilots")
     };
   }
 
@@ -227,7 +233,7 @@ export function getClassStageStatus({ event, className, classEntries, classHeats
     return {
       ...base,
       nextPhase: HEAT_PHASES.QUALIFYING,
-      nextLabel: `Arvo alkuerä ${qualifyingRoundsGenerated + 1}`,
+      nextLabel: t(state, "format.draw_qualifying").replace("{round}", String(qualifyingRoundsGenerated + 1)),
       canGenerate: true,
       advancingCount: classEntries.length
     };
@@ -237,8 +243,8 @@ export function getClassStageStatus({ event, className, classEntries, classHeats
     return {
       ...base,
       nextPhase: format.semiFinalEnabled ? HEAT_PHASES.SEMIFINAL : (format.finalEnabled ? HEAT_PHASES.FINAL : null),
-      nextLabel: format.semiFinalEnabled ? "Arvo semifinaali" : (format.finalEnabled ? "Arvo finaali" : "Luokka valmis"),
-      disabledReason: "Alkuerien kaikki tulokset pitää tallentaa ennen jatkovaihetta."
+      nextLabel: format.semiFinalEnabled ? t(state, "format.draw_semifinal") : (format.finalEnabled ? t(state, "format.draw_final") : t(state, "format.class_ready")),
+      disabledReason: t(state, "format.save_qualifying_first")
     };
   }
 
@@ -247,10 +253,10 @@ export function getClassStageStatus({ event, className, classEntries, classHeats
     return {
       ...base,
       nextPhase: HEAT_PHASES.SEMIFINAL,
-      nextLabel: "Arvo semifinaali",
+      nextLabel: t(state, "format.draw_semifinal"),
       canGenerate: advancingCount >= 2,
       advancingCount,
-      disabledReason: advancingCount >= 2 ? "" : "Semifinaaliin tarvitaan vähintään 2 etenijää."
+      disabledReason: advancingCount >= 2 ? "" : t(state, "format.need_2_semifinalists")
     };
   }
 
@@ -258,8 +264,8 @@ export function getClassStageStatus({ event, className, classEntries, classHeats
     return {
       ...base,
       nextPhase: format.finalEnabled ? HEAT_PHASES.FINAL : null,
-      nextLabel: format.finalEnabled ? "Arvo finaali" : "Luokka valmis",
-      disabledReason: "Semifinaalin kaikki tulokset pitää tallentaa ennen finaalia."
+      nextLabel: format.finalEnabled ? t(state, "format.draw_final") : t(state, "format.class_ready"),
+      disabledReason: t(state, "format.save_semifinal_first")
     };
   }
 
@@ -269,10 +275,10 @@ export function getClassStageStatus({ event, className, classEntries, classHeats
     return {
       ...base,
       nextPhase: HEAT_PHASES.FINAL,
-      nextLabel: "Arvo finaali",
+      nextLabel: t(state, "format.draw_final"),
       canGenerate: advancingCount >= 2,
       advancingCount,
-      disabledReason: advancingCount >= 2 ? "" : "Finaaliin tarvitaan vähintään 2 etenijää."
+      disabledReason: advancingCount >= 2 ? "" : t(state, "format.need_2_finalists")
     };
   }
 
@@ -280,8 +286,8 @@ export function getClassStageStatus({ event, className, classEntries, classHeats
     return {
       ...base,
       nextPhase: null,
-      nextLabel: "Finaali odottaa tuloksia",
-      disabledReason: "Finaalin kaikki tulokset pitää tallentaa ennen lopputuloksia."
+      nextLabel: t(state, "format.final_waiting_results"),
+      disabledReason: t(state, "format.save_final_first")
     };
   }
 
@@ -289,7 +295,7 @@ export function getClassStageStatus({ event, className, classEntries, classHeats
     ...base,
     done: true,
     nextPhase: null,
-    nextLabel: "Luokka valmis"
+    nextLabel: t(state, "format.class_ready")
   };
 }
 

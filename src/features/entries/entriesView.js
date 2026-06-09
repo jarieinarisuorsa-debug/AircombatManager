@@ -8,14 +8,15 @@ import { renderScoreCardList } from "../scorecards/components/ScoreCardList.js";
 import { buildCompetitionResults, isCompetitionResultsPublished } from "../../logic/competitionResults.js";
 import { renderResultsTable } from "../results/resultsView.js";
 import { isAdmin } from "../../users/roles.js";
+import { t } from "../../utils/i18n.js";
 
 export function renderEntriesView(state) {
   const activeEvent = getActiveEvent(state);
   if (!activeEvent) {
     return UI.PageHeader({
-      kicker: "Rakenna kilpailu",
-      title: "Ei aktiivista kisaa",
-      subtitle: "Avaa kilpailu kisakalenterista."
+      kicker: t(state, "event_workspace.kicker_build"),
+      title: t(state, "event_workspace.no_active_event"),
+      subtitle: t(state, "event_workspace.open_from_calendar")
     });
   }
 
@@ -26,28 +27,28 @@ export function renderEntriesView(state) {
   const tab = state.settings?.workspaceActiveTab || "luokka";
 
   const workspaceHero = UI.PageHeader({
-    kicker: "Kisapaikkakohtainen työympäristö",
+    kicker: t(state, "event_workspace.kicker_workspace"),
     title: activeEvent.name,
-    subtitle: `${escapeHtml(activeEvent.location)} · Luokka: ${activeClassName || "Ei valittu"}`
+    subtitle: `${escapeHtml(activeEvent.location)} · ${t(state, "event_workspace.class_label")} ${activeClassName || t(state, "event_workspace.not_selected")}`
   });
 
   const tabNav = `
     <nav class="sub-nav no-print" style="margin-bottom: 20px; display: flex; flex-wrap: wrap; gap: 8px;">
-      <button type="button" class="button ${tab === 'ilmoittautumiset' ? 'primary' : 'dashed'}" data-action="set-workspace-tab" data-tab="ilmoittautumiset">Ilmoittautumiset</button>
-      <button type="button" class="button ${tab === 'luokka' ? 'primary' : 'dashed'}" data-action="set-workspace-tab" data-tab="luokka">Kilpailuluokka</button>
-      <button type="button" class="button ${tab === 'rakenne' ? 'primary' : 'dashed'}" data-action="set-workspace-tab" data-tab="rakenne">Kilpailun rakenne</button>
-      <button type="button" class="button ${tab === 'osallistujat' ? 'primary' : 'dashed'}" data-action="set-workspace-tab" data-tab="osallistujat">Kaikki pilotit</button>
-      <button type="button" class="button ${tab === 'kilpailijat' ? 'primary' : 'dashed'}" data-action="set-workspace-tab" data-tab="kilpailijat">Kilpailijat</button>
-      <button type="button" class="button ${tab === 'heatit' ? 'primary' : 'dashed'}" data-action="set-workspace-tab" data-tab="heatit">Heatit</button>
-      <button type="button" class="button ${tab === 'tuloskortit' ? 'primary' : 'dashed'}" data-action="set-workspace-tab" data-tab="tuloskortit">Tuloskortit</button>
-      <button type="button" class="button ${tab === 'tulokset' ? 'primary' : 'dashed'}" data-action="set-workspace-tab" data-tab="tulokset">Tulokset</button>
+      <button type="button" class="button ${tab === 'ilmoittautumiset' ? 'primary' : 'dashed'}" data-action="set-workspace-tab" data-tab="ilmoittautumiset">${t(state, "event_workspace.tab_registrations")}</button>
+      <button type="button" class="button ${tab === 'luokka' ? 'primary' : 'dashed'}" data-action="set-workspace-tab" data-tab="luokka">${t(state, "event_workspace.tab_class")}</button>
+      <button type="button" class="button ${tab === 'rakenne' ? 'primary' : 'dashed'}" data-action="set-workspace-tab" data-tab="rakenne">${t(state, "event_workspace.tab_format")}</button>
+      <button type="button" class="button ${tab === 'osallistujat' ? 'primary' : 'dashed'}" data-action="set-workspace-tab" data-tab="osallistujat">${t(state, "event_workspace.tab_all_pilots")}</button>
+      <button type="button" class="button ${tab === 'kilpailijat' ? 'primary' : 'dashed'}" data-action="set-workspace-tab" data-tab="kilpailijat">${t(state, "event_workspace.tab_competitors")}</button>
+      <button type="button" class="button ${tab === 'heatit' ? 'primary' : 'dashed'}" data-action="set-workspace-tab" data-tab="heatit">${t(state, "event_workspace.tab_heats")}</button>
+      <button type="button" class="button ${tab === 'tuloskortit' ? 'primary' : 'dashed'}" data-action="set-workspace-tab" data-tab="tuloskortit">${t(state, "event_workspace.tab_scorecards")}</button>
+      <button type="button" class="button ${tab === 'tulokset' ? 'primary' : 'dashed'}" data-action="set-workspace-tab" data-tab="tulokset">${t(state, "event_workspace.tab_results")}</button>
     </nav>
   `;
 
   let content = "";
   if (tab === "ilmoittautumiset") content = renderWorkspaceRegistrationsTab(state, activeEvent);
   else if (tab === "luokka") content = renderWorkspaceClassTab(state, activeEvent, classNames, activeClassName, eventEntries);
-  else if (!activeClassName) content = UI.Panel({ title: "Valitse luokka ensin" }, "<p class='muted'>Valitse kilpailuluokka Kilpailuluokka-välilehdeltä jatkaaksesi.</p>");
+  else if (!activeClassName) content = UI.Panel({ title: t(state, "event_workspace.select_class_first_title") }, `<p class='muted'>${t(state, "event_workspace.select_class_first_msg")}</p>`);
   else if (tab === "rakenne") content = renderWorkspaceFormatTab(state, activeEvent, activeClassName);
   else if (tab === "osallistujat") content = renderWorkspaceParticipantsTab(state, activeEvent, activeClassName, eventEntries);
   else if (tab === "kilpailijat") content = renderWorkspaceCompetitorsTab(state, activeEvent, activeClassName, eventEntries);
@@ -70,7 +71,7 @@ function renderWorkspaceRegistrationsTab(state, activeEvent) {
   const registrations = state.registrations?.filter(r => r.eventId === activeEvent.id) || [];
   
   if (registrations.length === 0) {
-    return UI.Panel({ title: "Ilmoittautumiset" }, "<p class='muted'>Kilpailuun ei ole tullut yhtään ilmoittautumista.</p>");
+    return UI.Panel({ title: t(state, "event_workspace.tab_registrations") }, `<p class='muted'>${t(state, "event_workspace.no_registrations")}</p>`);
   }
 
   // Sort: pending first, then newest first
@@ -86,12 +87,12 @@ function renderWorkspaceRegistrationsTab(state, activeEvent) {
     const pilot = state.pilots.find(p => p.id === reg.pilotId);
     if (!pilot) return "";
 
-    const statusLabel = reg.status === "pending" ? "Odottaa hyväksyntää" : (reg.status === "approved" ? "Hyväksytty" : "Hylätty");
+    const statusLabel = reg.status === "pending" ? t(state, "event_workspace.pending_approval") : (reg.status === "approved" ? t(state, "event_workspace.approved") : t(state, "event_workspace.rejected"));
     const statusColor = reg.status === "pending" ? "var(--warning, #fbbf24)" : (reg.status === "approved" ? "var(--success, #22c55e)" : "var(--danger, #ef4444)");
     const textColor = reg.status === "pending" ? "#000" : "#fff";
     
     // Convert to local time string if createdAt exists
-    const timeStr = reg.createdAt ? new Date(reg.createdAt).toLocaleString("fi-FI") : "";
+    const timeStr = reg.createdAt ? new Date(reg.createdAt).toLocaleString(state.settings.language === 'fi' ? "fi-FI" : "en-US") : "";
 
     return `
       <div style="border: 1px solid var(--border); border-radius: 6px; padding: 15px; margin-bottom: 10px; background: rgba(0,0,0,0.1);">
@@ -102,30 +103,30 @@ function renderWorkspaceRegistrationsTab(state, activeEvent) {
               ${escapeHtml(pilot.email || "-")} · ${escapeHtml(pilot.club || "-")} ${pilot.country ? UI.CountryFlag(pilot.country) : ""}
             </div>
             <div style="font-size: 0.95rem;">
-              <strong>Luokat:</strong> ${reg.classes.map(escapeHtml).join(", ")}<br>
-              <strong>Maksutapa:</strong> ${reg.paymentIntent === 'paid_in_advance' ? 'Maksettu etukäteen' : 'Paikan päällä'}<br>
-              ${timeStr ? `<span class="muted" style="font-size: 0.85rem;">Ilmoittautunut: ${timeStr}</span>` : ""}
+              <strong>${t(state, "event_workspace.classes_label")}:</strong> ${reg.classes.map(escapeHtml).join(", ")}<br>
+              <strong>${t(state, "event_workspace.payment_label")}:</strong> ${reg.paymentIntent === 'paid_in_advance' ? t(state, "event_workspace.paid_in_advance") : t(state, "event_workspace.paid_on_site")}<br>
+              ${timeStr ? `<span class="muted" style="font-size: 0.85rem;">${t(state, "event_workspace.enrolled_at")}: ${timeStr}</span>` : ""}
             </div>
           </div>
           <div style="display: flex; gap: 8px; flex-direction: column; min-width: 150px;">
             ${reg.status === 'pending' ? `
-              <button type="button" class="button success small" data-action="approve-registration" data-reg-id="${escapeHtml(reg.id)}">Hyväksy</button>
-              <button type="button" class="button danger small" data-action="reject-registration" data-reg-id="${escapeHtml(reg.id)}">Hylkää</button>
+              <button type="button" class="button success small" data-action="approve-registration" data-reg-id="${escapeHtml(reg.id)}">${t(state, "event_workspace.approve")}</button>
+              <button type="button" class="button danger small" data-action="reject-registration" data-reg-id="${escapeHtml(reg.id)}">${t(state, "event_workspace.reject")}</button>
             ` : ""}
-            <button type="button" class="button dashed small" data-action="open-pilot-card" data-pilot-id="${escapeHtml(pilot.id)}">Avaa pilottikortti</button>
+            <button type="button" class="button dashed small" data-action="open-pilot-card" data-pilot-id="${escapeHtml(pilot.id)}">${t(state, "event_workspace.open_pilot_card")}</button>
           </div>
         </div>
       </div>
     `;
   }).join("");
 
-  return UI.Panel({ kicker: "Koko kilpailu", title: `Ilmoittautumisjono (${pendingCount} odottaa)` }, listHtml);
+  return UI.Panel({ kicker: t(state, "event_workspace.entire_event"), title: t(state, "event_workspace.queue_title").replace("{count}", pendingCount) }, listHtml);
 }
 
 function renderWorkspaceClassTab(state, activeEvent, classNames, activeClassName, eventEntries) {
   if (!classNames.length) {
-    return UI.Panel({ kicker: "Vaihe 1", title: "Ei kilpailuluokkia" }, `
-      <p class="muted">Lisää kilpailulle luokat kalenterin kilpailutietoihin tai ilmoita pilotteja luokkiin.</p>
+    return UI.Panel({ kicker: t(state, "event_workspace.step1"), title: t(state, "event_workspace.no_classes_title") }, `
+      <p class="muted">${t(state, "entries_view.hint")}</p>
       <a class="button primary" href="#/calendar">Avaa kisakalenteri</a>
     `);
   }
@@ -140,14 +141,14 @@ function renderWorkspaceClassTab(state, activeEvent, classNames, activeClassName
 
   const summaryText = activeClassName ? `
     <div style="margin-top: 20px; padding: 15px; border-radius: 8px; background: rgba(0,0,0,0.2);">
-      <h4 style="margin-bottom: 10px;">Yhteenveto: ${escapeHtml(activeClassName)}</h4>
-      <p class="muted">Osallistujia: <strong>${classEntries.length}</strong> | Heateja: <strong>${classHeats.length}</strong></p>
-      <p class="muted" style="margin-top: 10px; font-weight: bold; color: var(--text);">Tila: ${status.nextPhase ? `Seuraavaksi ${escapeHtml(status.nextLabel)}` : "Valmis"}</p>
+      <h4 style="margin-bottom: 10px;">${t(state, "event_workspace.summary").replace("{class}", escapeHtml(activeClassName))}</h4>
+      <p class="muted">${t(state, "event_workspace.participants")}: <strong>${classEntries.length}</strong> | ${t(state, "event_workspace.heats")}: <strong>${classHeats.length}</strong></p>
+      <p class="muted" style="margin-top: 10px; font-weight: bold; color: var(--text);">${t(state, "event_workspace.status")}: ${status.nextPhase ? `${t(state, "event_workspace.next_phase")} ${escapeHtml(status.nextLabel)}` : t(state, "event_workspace.ready")}</p>
     </div>
   ` : "";
 
-  return UI.Panel({ kicker: "Vaihe 1", title: "Valitse kilpailuluokka" }, `
-    <p class="muted" style="margin-bottom: 15px;">Valittu luokka pysyy kontekstina, kun siirryt muihin työvaiheisiin.</p>
+  return UI.Panel({ kicker: t(state, "event_workspace.step1"), title: t(state, "event_workspace.select_class_title") }, `
+    <p class="muted" style="margin-bottom: 15px;">${t(state, "event_workspace.select_class_desc")}</p>
     <div style="display: flex; gap: 10px; margin-bottom: 10px; flex-wrap: wrap;">
       ${classButtons}
     </div>
@@ -160,16 +161,16 @@ function renderWorkspaceFormatTab(state, activeEvent, className) {
   
   const formContent = `
     <input type="hidden" name="formatClassName" value="${escapeHtml(className)}" />
-    ${UI.Input({ label: "Alkuerien määrä", name: "qualifyingRounds", type: "number", min: "1", max: "20", step: "1", value: format.qualifyingRounds })}
-    <label class="check-row"><input type="checkbox" name="semiFinalEnabled" ${format.semiFinalEnabled ? "checked" : ""} /> Semifinaali käytössä</label>
-    ${UI.Input({ label: "Semifinalisteja", name: "semiFinalists", type: "number", min: "2", max: "200", step: "1", value: format.semiFinalists })}
-    <label class="check-row"><input type="checkbox" name="finalEnabled" ${format.finalEnabled ? "checked" : ""} /> Finaali käytössä</label>
-    ${UI.Input({ label: "Finalisteja", name: "finalists", type: "number", min: "2", max: "200", step: "1", value: format.finalists })}
-    <p class="muted" style="margin: 15px 0;">Jatkovaiheet aukeavat heat-arvontaan vasta, kun edellisen vaiheen kaikki tulokset on tallennettu.</p>
-    ${UI.Button({ label: "Tallenna rakenne", type: "submit", variant: "primary" })}
+    ${UI.Input({ label: t(state, "event_workspace.qualifying_rounds"), name: "qualifyingRounds", type: "number", min: "1", max: "20", step: "1", value: format.qualifyingRounds })}
+    <label class="check-row"><input type="checkbox" name="semiFinalEnabled" ${format.semiFinalEnabled ? "checked" : ""} /> ${t(state, "event_workspace.semi_enabled")}</label>
+    ${UI.Input({ label: t(state, "event_workspace.semi_count"), name: "semiFinalists", type: "number", min: "2", max: "200", step: "1", value: format.semiFinalists })}
+    <label class="check-row"><input type="checkbox" name="finalEnabled" ${format.finalEnabled ? "checked" : ""} /> ${t(state, "event_workspace.final_enabled")}</label>
+    ${UI.Input({ label: t(state, "event_workspace.final_count"), name: "finalists", type: "number", min: "2", max: "200", step: "1", value: format.finalists })}
+    <p class="muted" style="margin: 15px 0;">${t(state, "event_workspace.format_desc")}</p>
+    ${UI.Button({ label: t(state, "event_workspace.save_format"), type: "submit", variant: "primary" })}
   `;
 
-  return UI.FormPanel({ kicker: "Vaihe 2", title: `${escapeHtml(className)}: Kilpailun rakenne`, action: "save-competition-format" }, formContent);
+  return UI.FormPanel({ kicker: t(state, "event_workspace.step2"), title: t(state, "event_workspace.format_title").replace("{class}", escapeHtml(className)), action: "save-competition-format" }, formContent);
 }
 
 function renderWorkspaceParticipantsTab(state, activeEvent, className) {
@@ -185,12 +186,12 @@ function renderWorkspaceParticipantsTab(state, activeEvent, className) {
 
   const searchContainer = UI.Flex({ justify: "space-between", align: "center", wrap: "wrap", gap: "10px", className: "pilot-search-container", style: "margin-bottom: 20px;" }, `
     <div class="search-input-wrapper" style="flex: 1; min-width: 200px; max-width: 300px; display: flex;">
-      <input type="search" id="workspace-pilot-search" value="${escapeHtml(state.settings?.workspacePilotSearch || "")}" placeholder="Etsi nimellä tai seuralla..." autocomplete="off" style="flex: 1; width: 100%; min-height: 34px; padding: 6px 12px 6px 36px; border-radius: 8px;" />
+      <input type="search" id="workspace-pilot-search" value="${escapeHtml(state.settings?.workspacePilotSearch || "")}" placeholder="${t(state, "event_workspace.search_pilot_placeholder")}" autocomplete="off" style="flex: 1; width: 100%; min-height: 34px; padding: 6px 12px 6px 36px; border-radius: 8px;" />
     </div>
     ${UI.Select({ 
       id: "workspace-pilot-country-filter", 
       value: (state.settings?.workspacePilotCountryFilter || "").toUpperCase(),
-      options: [{value: "", label: "Kaikki maat"}, ...uniqueCountries.map(c => ({value: c, label: c}))],
+      options: [{value: "", label: t(state, "event_workspace.all_countries")}, ...uniqueCountries.map(c => ({value: c, label: c}))],
       style: "width: auto; min-height: 34px; padding: 6px 36px 6px 12px; border-radius: 8px;"
     })}
   `);
@@ -212,33 +213,33 @@ function renderWorkspaceParticipantsTab(state, activeEvent, className) {
     let actionsCell = "";
 
     if (isEnrolled) {
-      aircraftCell = escapeHtml(enrolledRow.aircraftName || "Ei konekorttia");
-      statusCell = `<span style="color: var(--success); font-weight: bold;">✓ Mukana</span>`;
+      aircraftCell = escapeHtml(enrolledRow.aircraftName || t(state, "event_workspace.no_aircraft"));
+      statusCell = `<span style="color: var(--success); font-weight: bold;">✓ ${t(state, "event_workspace.approved")}</span>`;
       actionsCell = UI.Flex({ gap: "6px", align: "center" }, `
-        ${UI.Button({ label: "Pilottikortti", action: "open-pilot-card", pilotId: pilot.id, variant: "dashed small" })}
-        ${UI.Button({ label: "Poista luokasta", action: "delete-entry", entryId: enrolledRow.id, variant: "danger small" })}
+        ${UI.Button({ label: t(state, "event_workspace.open_pilot_card"), action: "open-pilot-card", pilotId: pilot.id, variant: "dashed small" })}
+        ${UI.Button({ label: t(state, "entries_view.remove_class"), action: "delete-entry", entryId: enrolledRow.id, variant: "danger small" })}
       `);
     } else {
       const matchingPlanes = state.aircraft.filter(a => a.pilotId === pilot.id && a.className === className);
       let actionBtn = "";
       if (matchingPlanes.length === 0) {
-        aircraftCell = `<span class="muted" style="font-size: 0.85em; color: var(--warning);">⚠ Ei konekorttia (${escapeHtml(className)})</span>`;
-        actionBtn = `<button class="button small primary" data-action="quick-add-class-entry" data-pilot-id="${pilot.id}" data-class-name="${escapeHtml(className)}" data-aircraft-id="">+ Ilmoita (luo kone)</button>`;
+        aircraftCell = `<span class="muted" style="font-size: 0.85em; color: var(--warning);">⚠ ${t(state, "event_workspace.no_aircraft")} (${escapeHtml(className)})</span>`;
+        actionBtn = `<button class="button small primary" data-action="quick-add-class-entry" data-pilot-id="${pilot.id}" data-class-name="${escapeHtml(className)}" data-aircraft-id="">${t(state, "event_workspace.enroll_create_aircraft")}</button>`;
       } else if (matchingPlanes.length === 1) {
         aircraftCell = escapeHtml(matchingPlanes[0].name);
-        actionBtn = `<button class="button small primary" data-action="quick-add-class-entry" data-pilot-id="${pilot.id}" data-class-name="${escapeHtml(className)}" data-aircraft-id="${matchingPlanes[0].id}">+ Ilmoita</button>`;
+        actionBtn = `<button class="button small primary" data-action="quick-add-class-entry" data-pilot-id="${pilot.id}" data-class-name="${escapeHtml(className)}" data-aircraft-id="${matchingPlanes[0].id}">${t(state, "event_workspace.enroll")}</button>`;
       } else {
         aircraftCell = `
           <select class="ui-input quick-aircraft-select-class" style="padding: 2px; max-width: 150px; font-size: 0.9em; height: 32px;">
             ${matchingPlanes.map(p => `<option value="${p.id}">${escapeHtml(p.name)}</option>`).join("")}
           </select>
         `;
-        actionBtn = `<button class="button small primary" data-action="quick-add-class-select-entry" data-pilot-id="${pilot.id}" data-class-name="${escapeHtml(className)}">+ Ilmoita</button>`;
+        actionBtn = `<button class="button small primary" data-action="quick-add-class-select-entry" data-pilot-id="${pilot.id}" data-class-name="${escapeHtml(className)}">${t(state, "event_workspace.enroll")}</button>`;
       }
       
       statusCell = `<span class="muted">-</span>`;
       actionsCell = UI.Flex({ gap: "6px", align: "center" }, `
-        ${UI.Button({ label: "Pilottikortti", action: "open-pilot-card", pilotId: pilot.id, variant: "dashed small" })}
+        ${UI.Button({ label: t(state, "event_workspace.open_pilot_card"), action: "open-pilot-card", pilotId: pilot.id, variant: "dashed small" })}
         ${actionBtn}
       `);
     }
@@ -272,12 +273,12 @@ function renderWorkspaceParticipantsTab(state, activeEvent, className) {
 
   const listHtml = UI.TableContainer({
     content: UI.Table({
-      headers: ["Nimi", "Maa / Seura", "Kone", "Ilmoittautumistila", "Toiminnot"],
+      headers: [t(state, "event_workspace.table_name"), t(state, "event_workspace.table_country_club"), t(state, "event_workspace.table_aircraft"), t(state, "event_workspace.table_status"), t(state, "event_workspace.table_actions")],
       rows: rowsHtml
     })
   });
 
-  return UI.Panel({ kicker: "Vaihe 3", title: `${escapeHtml(className)}: Osallistujat` }, `
+  return UI.Panel({ kicker: t(state, "event_workspace.step3"), title: t(state, "event_workspace.participants_title").replace("{class}", escapeHtml(className)) }, `
     ${searchContainer}
     ${listHtml}
   `);
@@ -292,28 +293,37 @@ function renderWorkspaceHeatsTab(state, activeEvent, className) {
 
   const admin = isAdmin(state);
   const generateBtn = UI.Button({
-    label: status.nextLabel || "Arvo seuraava vaihe",
+    label: status.nextLabel || t(state, "event_workspace.draw_next_phase"),
     action: "generate-class-heats",
     class: className,
     variant: "primary",
     disabled: !status.canGenerate || !status.nextPhase
   });
 
-  const printBtn = heats.length > 0 ? UI.Button({ label: "Tulosta heatit", action: "print-class-heats", class: className, variant: "dashed", style: "margin-left: 10px;" }) : "";
-  const cancelBtn = heats.length > 0 && admin ? UI.Button({ label: "Peruuta arvonta", action: "cancel-class-heats", class: className, variant: "danger dashed", style: "margin-left: 10px;" }) : "";
+  const printBtn = heats.length > 0 ? UI.Button({ label: t(state, "event_workspace.print_heats"), action: "print-class-heats", class: className, variant: "dashed", style: "margin-left: 10px;" }) : "";
+  const cancelBtn = heats.length > 0 && admin ? UI.Button({ label: t(state, "event_workspace.cancel_draw"), action: "cancel-class-heats", class: className, variant: "danger dashed", style: "margin-left: 10px;" }) : "";
+
+  let nextPhaseStatusStr = t(state, "event_workspace.all_phases_done");
+  if (status.nextPhase) {
+    if (status.advancingCount) {
+      nextPhaseStatusStr = t(state, "event_workspace.next_phase_count").replace("{label}", escapeHtml(status.nextLabel)).replace("{count}", status.advancingCount);
+    } else {
+      nextPhaseStatusStr = t(state, "event_workspace.next_phase_all").replace("{label}", escapeHtml(status.nextLabel));
+    }
+  }
 
   const controls = `
     <div style="margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid var(--border);">
-      <p class="muted" style="margin-bottom: 10px;">${status.disabledReason || (status.nextPhase ? `Seuraava vaihe: ${escapeHtml(status.nextLabel)} (${status.advancingCount || 'kaikki'} etenijää)` : "Kaikki vaiheet on arvottu.")}</p>
+      <p class="muted" style="margin-bottom: 10px;">${status.disabledReason || nextPhaseStatusStr}</p>
       ${generateBtn}
       ${printBtn}
       ${cancelBtn}
     </div>
   `;
 
-  return UI.Panel({ kicker: "Vaihe 4", title: `${escapeHtml(className)}: Heat-arvonta ja listat` }, `
+  return UI.Panel({ kicker: t(state, "event_workspace.step4"), title: t(state, "event_workspace.heats_title").replace("{class}", escapeHtml(className)) }, `
     ${controls}
-    ${heats.length ? renderClassHeatSection(state, activeEvent, entries, className, heats, admin) : "<p class='muted'>Ei arvottuja heateja.</p>"}
+    ${heats.length ? renderClassHeatSection(state, activeEvent, entries, className, heats, admin) : `<p class='muted'>${t(state, "event_workspace.no_heats")}</p>`}
   `);
 }
 
@@ -321,9 +331,9 @@ function renderWorkspaceScorecardsTab(state, activeEvent, className) {
   const allRows = buildScoreCardRows(state, activeEvent);
   const rows = allRows.filter((row) => String(row.className).trim().toLowerCase() === className.toLowerCase());
   
-  if (!rows.length) return UI.Panel({ title: "Ei tuloskortteja" }, "<p class='muted'>Osallistujia ei ole lisätty luokkaan.</p>");
+  if (!rows.length) return UI.Panel({ title: t(state, "event_workspace.no_scorecards_title") }, `<p class='muted'>${t(state, "event_workspace.no_scorecards_msg")}</p>`);
 
-  return UI.Panel({ kicker: "Vaihe 5", title: `${escapeHtml(className)}: Tuloskortit` }, renderScoreCardList(state, activeEvent, rows, className));
+  return UI.Panel({ kicker: t(state, "event_workspace.step5"), title: t(state, "event_workspace.scorecards_title").replace("{class}", escapeHtml(className)) }, renderScoreCardList(state, activeEvent, rows, className));
 }
 
 function renderWorkspaceResultsTab(state, activeEvent, className) {
@@ -331,7 +341,7 @@ function renderWorkspaceResultsTab(state, activeEvent, className) {
   
   const group = compResults.classGroups.find(g => g.className === className);
   if (!group || group.rows.length === 0) {
-    return UI.Panel({ title: "Ei tuloksia" }, "<p class='muted'>Ei tallennettuja tuloksia tässä luokassa.</p>");
+    return UI.Panel({ title: t(state, "event_workspace.no_results_title") }, `<p class='muted'>${t(state, "event_workspace.no_results_msg")}</p>`);
   }
 
   const rows = group.rows.map((row, index) => ({ ...row, classPosition: index + 1 }));
@@ -339,12 +349,12 @@ function renderWorkspaceResultsTab(state, activeEvent, className) {
 
   const published = isCompetitionResultsPublished(activeEvent);
   const publishBtn = !published 
-    ? UI.Button({ label: "Julkaise kilpailutulokset", action: "publish-competition-results", variant: "primary" })
-    : UI.Button({ label: "Piilota julkaisu", action: "unpublish-competition-results", variant: "danger" });
+    ? UI.Button({ label: t(state, "event_workspace.publish_results"), action: "publish-competition-results", variant: "primary" })
+    : UI.Button({ label: t(state, "event_workspace.hide_results"), action: "unpublish-competition-results", variant: "danger" });
 
-  const statusText = published ? "Tila: Julkaistu (näkyy kaikille)" : "Tila: Luonnos (ei julkinen)";
+  const statusText = published ? t(state, "event_workspace.status_published") : t(state, "event_workspace.status_draft");
 
-  return UI.Panel({ kicker: "Vaihe 6", title: `${escapeHtml(className)}: Tulokset ja sijoitukset` }, `
+  return UI.Panel({ kicker: t(state, "event_workspace.step6"), title: t(state, "event_workspace.results_title").replace("{class}", escapeHtml(className)) }, `
     <div style="margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
       <strong>${statusText}</strong>
       ${publishBtn}
@@ -402,7 +412,7 @@ function renderWorkspaceCompetitorsTab(state, activeEvent, className, eventEntri
     <input type="hidden" name="eventId" value="${escapeHtml(activeEvent.id)}" />
     
     ${UI.Table({
-      headers: ["Nimi", "Maa / Seura", "Kone", "Kilpailunumero"],
+      headers: [t(state, "event_workspace.table_name"), t(state, "event_workspace.table_country_club"), t(state, "event_workspace.table_aircraft"), t(state, "event_workspace.table_racenumber")],
       rows: classRows.map(row => {
         return UI.TableRow({
           className: "pilot-table-row",
@@ -424,14 +434,14 @@ function renderWorkspaceCompetitorsTab(state, activeEvent, className, eventEntri
       })
     })}
     
-    ${classRows.length === 0 ? `<p class="muted" style="padding: 20px; text-align: center;">Ei ilmoittautuneita tässä luokassa.</p>` : ''}
+    ${classRows.length === 0 ? `<p class="muted" style="padding: 20px; text-align: center;">${t(state, "event_workspace.no_competitors")}</p>` : ''}
     
     ${classRows.length > 0 ? `
       <div style="margin-top: 20px; display: flex; justify-content: flex-end;">
-        <button type="submit" class="button primary">Tallenna kilpailunumerot</button>
+        <button type="submit" class="button primary">${t(state, "event_workspace.save_racenumbers")}</button>
       </div>
     ` : ''}
   `;
 
-  return UI.FormPanel({ kicker: "Vaihe 3.5", title: `${escapeHtml(className)}: Kilpailijat`, action: "save-race-numbers" }, formContent);
+  return UI.FormPanel({ kicker: t(state, "event_workspace.step35"), title: t(state, "event_workspace.competitors_title").replace("{class}", escapeHtml(className)), action: "save-race-numbers" }, formContent);
 }

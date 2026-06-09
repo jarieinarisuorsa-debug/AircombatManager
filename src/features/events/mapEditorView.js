@@ -2,6 +2,7 @@ import { escapeHtml, getActiveEvent } from "../../utils/html.js";
 import { normalizeEventInfo } from "../../logic/eventInfo.js";
 import { isAdmin } from "../../users/roles.js";
 import { UI } from "../../ui/engine.js";
+import { t } from "../../utils/i18n.js";
 
 function getZoneCenter(points) {
   if (!points || points.length === 0) return {x: 50, y: 50};
@@ -13,7 +14,7 @@ function getZoneCenter(points) {
 export function renderMapEditorView(state) {
   const event = getActiveEvent(state);
   if (!event || !isAdmin(state)) {
-    return `<p>Ei valittua kilpailua tai puuttuvat oikeudet.</p>`;
+    return `<p>${t(state, "map_editor.no_access")}</p>`;
   }
 
   const info = normalizeEventInfo(event.eventInfo);
@@ -44,7 +45,7 @@ export function renderMapEditorView(state) {
     ? `
       <div style="display: flex; flex-direction: column; align-items: center; width: 100%;">
         <div class="map-container is-admin" data-action="map-click">
-          <img class="event-map-image" src="${escapeHtml(info.mapImageUrl)}" alt="Kartta" />
+          <img class="event-map-image" src="${escapeHtml(info.mapImageUrl)}" alt="${t(state, "map_editor.map_alt")}" />
           ${svgOverlay}
           ${pois.map(poi => {
             const emoji = poi.label.split(' ')[0] || '📍';
@@ -53,19 +54,19 @@ export function renderMapEditorView(state) {
             <div class="map-poi" style="left: ${poi.x}%; top: ${poi.y}%" draggable="true" data-poi-id="${poi.id}">
               <span class="poi-emoji" title="${escapeHtml(poi.label)}" style="font-size: ${scale * 1.5}rem;">${escapeHtml(emoji)}</span>
               <div class="poi-tooltip">${escapeHtml(poi.label)}</div>
-              <button class="map-poi-delete" data-action="remove-map-poi" data-poi-id="${poi.id}" title="Poista">✕</button>
+              <button class="map-poi-delete" data-action="remove-map-poi" data-poi-id="${poi.id}" title="${t(state, "map_editor.delete")}">✕</button>
             </div>
           `}).join("")}
         </div>
-        <p class="muted map-help-text" style="margin-top: 15px;">Klikkaa karttaa lisätäksesi uuden pisteen.</p>
+        <p class="muted map-help-text" style="margin-top: 15px;">${t(state, "map_editor.click_to_add")}</p>
       </div>
     `
     : `
       <label class="event-map-placeholder is-admin-dropzone" style="height: 400px;">
         <div class="dropzone-content">
           <span style="font-size: 3rem;">📥</span>
-          <strong style="display: block; margin-top: 12px; font-size: 1.4rem;">Lisää karttapohja</strong>
-          <span class="muted">Lataa kuva koneeltasi klikkaamalla tästä tai raahaamalla kuva tähän</span>
+          <strong style="display: block; margin-top: 12px; font-size: 1.4rem;">${t(state, "map_editor.add_bg")}</strong>
+          <span class="muted">${t(state, "map_editor.drag_bg")}</span>
         </div>
         <input type="file" id="map-image-upload-inline" accept="image/png, image/jpeg, image/webp" style="display: none;" />
       </label>
@@ -78,14 +79,14 @@ export function renderMapEditorView(state) {
           <div class="stage-progress-row" style="align-items: center; justify-content: space-between;">
             <strong style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 120px;">${escapeHtml(poi.label)}</strong>
             <div style="display: flex; gap: 8px; align-items: center;">
-              <input type="range" min="0.5" max="3" step="0.1" value="${poi.scale || 1}" data-action="scale-map-poi" data-poi-id="${poi.id}" title="Skaalaa emojia" style="width: 80px;">
-              <button class="button small" data-action="remove-map-poi" data-poi-id="${poi.id}" style="color: var(--danger);">Poista</button>
+              <input type="range" min="0.5" max="3" step="0.1" value="${poi.scale || 1}" data-action="scale-map-poi" data-poi-id="${poi.id}" title="${t(state, "map_editor.scale_emoji")}" style="width: 80px;">
+              <button class="button small" data-action="remove-map-poi" data-poi-id="${poi.id}" style="color: var(--danger);">${t(state, "map_editor.delete")}</button>
             </div>
           </div>
         `).join("")}
       </div>
     `
-    : `<p class="muted" style="margin-top: 20px;">Ei lisättyjä merkkejä.</p>`;
+    : `<p class="muted" style="margin-top: 20px;">${t(state, "map_editor.no_pois")}</p>`;
 
   const zoneList = zones.length 
     ? `
@@ -93,38 +94,38 @@ export function renderMapEditorView(state) {
         ${zones.map(zone => `
           <div class="stage-progress-row" style="align-items: center;">
             <strong style="color: ${zone.color?.stroke || '#fff'};">${escapeHtml(zone.label)}</strong>
-            <button class="button small" data-action="remove-map-zone" data-zone-id="${zone.id}" style="color: var(--danger);">Poista</button>
+            <button class="button small" data-action="remove-map-zone" data-zone-id="${zone.id}" style="color: var(--danger);">${t(state, "map_editor.delete")}</button>
           </div>
         `).join("")}
       </div>
     `
-    : `<p class="muted" style="margin-top: 20px;">Ei piirrettyjä alueita.</p>`;
+    : `<p class="muted" style="margin-top: 20px;">${t(state, "map_editor.no_zones")}</p>`;
 
   const controlPanel = UI.Panel({
-    kicker: "Työkalut",
-    title: "Kartan hallinta"
+    kicker: t(state, "map_editor.tools"),
+    title: t(state, "map_editor.mgmt")
   }, `
     <div style="margin-bottom: 15px;">
       <details style="padding: 10px; background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 8px;">
         <summary style="font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px; user-select: none;">
-          🖼️ Vaihda karttakuva
+          ${t(state, "map_editor.change_bg")}
         </summary>
         <div style="display: grid; gap: 10px; margin-top: 15px;">
           <input type="file" id="map-image-upload-inline" accept="image/png, image/jpeg, image/webp" class="file-upload-input" />
-          ${UI.Input({ name: "mapImageUrl", value: info.mapImageUrl, placeholder: "Tai aseta ulkoinen URL-osoite..." })}
-          ${info.mapImageUrl ? `<button class="button small danger" onclick="document.querySelector('input[name=mapImageUrl]').value=''; document.querySelector('input[name=mapImageUrl]').dispatchEvent(new Event('change', {bubbles:true}))">Tyhjennä kartta</button>` : ""}
+          ${UI.Input({ name: "mapImageUrl", value: info.mapImageUrl, placeholder: t(state, "map_editor.url_placeholder") })}
+          ${info.mapImageUrl ? `<button class="button small danger" onclick="document.querySelector('input[name=mapImageUrl]').value=''; document.querySelector('input[name=mapImageUrl]').dispatchEvent(new Event('change', {bubbles:true}))">${t(state, "map_editor.clear_map")}</button>` : ""}
         </div>
       </details>
     </div>
     
     <div style="display: flex; gap: 5px; margin-bottom: 15px; background: rgba(0,0,0,0.2); padding: 4px; border-radius: 8px;">
-      <button class="button small ${mode === 'poi' ? 'primary' : ''}" data-action="set-map-mode" data-mode="poi" style="flex: 1; border: none; font-weight: 600;">📌 Merkit</button>
-      <button class="button small ${mode === 'zone' ? 'primary' : ''}" data-action="set-map-mode" data-mode="zone" style="flex: 1; border: none; font-weight: 600;">🖍️ Alueet</button>
+      <button class="button small ${mode === 'poi' ? 'primary' : ''}" data-action="set-map-mode" data-mode="poi" style="flex: 1; border: none; font-weight: 600;">${t(state, "map_editor.tab_pois")}</button>
+      <button class="button small ${mode === 'zone' ? 'primary' : ''}" data-action="set-map-mode" data-mode="zone" style="flex: 1; border: none; font-weight: 600;">${t(state, "map_editor.tab_zones")}</button>
     </div>
     
     ${mode === "poi" ? `
       <div style="margin-bottom: 15px;">
-        <h5 style="margin: 0 0 8px; color: var(--text-muted);">Emojipaletti</h5>
+        <h5 style="margin: 0 0 8px; color: var(--text-muted);">${t(state, "map_editor.emoji_palette")}</h5>
         <div style="display: flex; flex-wrap: wrap; gap: 6px;">
           ${[...["🚗 Pysäköinti", "⛺ Leirintä", "🛩️ Lentosuunta", "🏁 Kisatoimisto", "🍔 Ravintola", "🆘 Ensiapu", "🚾 WC", "📍 Merkki"], ...(state.settings?.customMapEmojis || [])].map(item => `
             <button class="button small ${window.ACTIVE_PALETTE_EMOJI === item ? 'primary' : 'outline'}" 
@@ -135,43 +136,43 @@ export function renderMapEditorView(state) {
               ${escapeHtml(item.split(' ').slice(1).join(' '))}
             </button>
           `).join("")}
-          <button class="button small dashed" data-action="add-custom-map-emoji" style="padding: 4px 8px;">➕ Uusi oma</button>
+          <button class="button small dashed" data-action="add-custom-map-emoji" style="padding: 4px 8px;">${t(state, "map_editor.new_custom")}</button>
         </div>
-        <p class="muted" style="font-size: 0.8rem; margin-top: 8px;">Valitse yltä merkki ja klikkaa karttaa lisätäksesi sen.</p>
+        <p class="muted" style="font-size: 0.8rem; margin-top: 8px;">${t(state, "map_editor.palette_hint")}</p>
       </div>
 
       <div style="border-top: 1px solid var(--border); padding-top: 15px;">
-        <h5 style="margin: 0 0 10px;">Lisätyt merkit</h5>
+        <h5 style="margin: 0 0 10px;">${t(state, "map_editor.added_pois")}</h5>
         ${poiList}
       </div>
     ` : `
       ${draftPoints.length > 0 ? `
         <div style="padding: 10px; background: rgba(52, 152, 219, 0.1); border: 1px solid #3498db; border-radius: 8px; margin-bottom: 15px;">
-          <strong>Piirretään aluetta...</strong>
-          <p class="muted" style="font-size: 0.8rem; margin: 4px 0;">Klikkaa karttaa lisätäksesi kulmia.</p>
+          <strong>${t(state, "map_editor.drawing")}</strong>
+          <p class="muted" style="font-size: 0.8rem; margin: 4px 0;">${t(state, "map_editor.drawing_hint")}</p>
           <div style="display: flex; gap: 8px; margin-top: 8px;">
-            <button class="button primary small" data-action="finish-zone">Hyväksy alue</button>
-            <button class="button small danger" data-action="cancel-zone">Peruuta</button>
+            <button class="button primary small" data-action="finish-zone">${t(state, "map_editor.accept_zone")}</button>
+            <button class="button small danger" data-action="cancel-zone">${t(state, "map_editor.cancel_zone")}</button>
           </div>
         </div>
       ` : `
-        <p class="muted" style="font-size: 0.85rem; margin-bottom: 15px;">Aloita alueen piirtäminen klikkaamalla karttaa haluamasi alueen reunoista.</p>
+        <p class="muted" style="font-size: 0.85rem; margin-bottom: 15px;">${t(state, "map_editor.start_drawing")}</p>
       `}
       
       <div style="border-top: 1px solid var(--border); padding-top: 15px;">
-        <h5 style="margin: 0 0 10px;">Piirretyt alueet</h5>
+        <h5 style="margin: 0 0 10px;">${t(state, "map_editor.added_zones")}</h5>
         ${zoneList}
       </div>
     `}
 
     <div style="margin-top: 20px;">
-      <a class="button primary" style="width: 100%; justify-content: center;" href="#/eventinfo">✅ Valmis ja palaa</a>
+      <a class="button primary" style="width: 100%; justify-content: center;" href="#/eventinfo">${t(state, "map_editor.done")}</a>
     </div>
   `);
 
   return `
     ${UI.Grid({ columns: "minmax(300px, 1.8fr) minmax(280px, 1fr)", gap: "18px" }, `
-      ${UI.Panel({ kicker: "Kartta", title: "Työalue", className: "map-editor-panel" }, mapContent)}
+      ${UI.Panel({ kicker: t(state, "map_editor.map_alt"), title: t(state, "map_editor.workspace"), className: "map-editor-panel" }, mapContent)}
       ${controlPanel}
     `)}
   `;

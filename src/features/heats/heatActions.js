@@ -1,4 +1,5 @@
 import { buildHeatGroups } from "../../logic/heatBuilder.js";
+import { t } from "../../utils/i18n.js";
 import {
   HEAT_PHASES,
   getClassStageStatus,
@@ -120,7 +121,7 @@ export function cancelLastHeats(className) {
     // Check if any of these heats have traditional results
     const hasResults = state.results && state.results.some((result) => heatIdsToRemove.has(result.heatId));
     if (hasResults) {
-      throw new Error("Näihin heatteihin on jo syötetty tuloksia. Tulokset pitää poistaa ennen arvonnan perumista.");
+      throw new Error(t(state, "heat_actions.results_exist"));
     }
 
     // Remove heats

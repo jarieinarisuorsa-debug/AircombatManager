@@ -1,5 +1,6 @@
 import { escapeHtml } from "../../../utils/html.js";
 import { getScoreCardRules, SCORE_CARD_TEMPLATE_WWI, SCORE_CARD_TEMPLATES } from "../../../logic/scoreCards.js";
+import { t } from "../../../utils/i18n.js";
 
 export function renderScoreCardTabbedEditor(activeEvent, viewRow) {
   const { card, pilotName, aircraftName, className, totals, entry } = viewRow;
@@ -32,7 +33,7 @@ function renderSingleRoundTable(stage, isActive, viewRow, isWWI) {
   const rn = stage.roundNumber;
 
   const wwiRows = isWWI ? `
-    <tr><td colspan="2" style="padding: 12px 15px; background: rgba(88, 183, 255, 0.15); border-left: 4px solid var(--primary); color: var(--accent-strong); font-size: 1.1rem;"><strong>Mallipisteet</strong></td></tr>
+    <tr><td colspan="2" style="padding: 12px 15px; background: rgba(88, 183, 255, 0.15); border-left: 4px solid var(--primary); color: var(--accent-strong); font-size: 1.1rem;"><strong>${t(window.state, "scorecard_editor.model_points")}</strong></td></tr>
   ` + SCORE_CARD_TEMPLATES[SCORE_CARD_TEMPLATE_WWI].modelPointItems.map(item => {
       const round = card.rounds?.find(r => Number(r.roundNumber) === rn);
       const val = round?.modelPoints?.[item.key];
@@ -54,8 +55,8 @@ function renderSingleRoundTable(stage, isActive, viewRow, isWWI) {
                 </label>
               </div>
               <div style="display: flex; gap: 10px; font-size: 0.8rem; padding-left: 5px; text-align: center;">
-                <span style="width: 45px;">kyllä</span>
-                <span style="width: 45px;">ei</span>
+                <span style="width: 45px;">${t(window.state, "scorecard_editor.yes")}</span>
+                <span style="width: 45px;">${t(window.state, "scorecard_editor.no")}</span>
               </div>
             </div>
           </td>
@@ -67,7 +68,7 @@ function renderSingleRoundTable(stage, isActive, viewRow, isWWI) {
       const val = roundScore?.modelPoints !== undefined ? roundScore.modelPoints : "";
       return `
         <tr class="row-summe" style="background: rgba(255, 209, 102, 0.08); box-shadow: inset 0 2px 0 0 rgba(255, 209, 102, 0.3);">
-          <td style="padding-top: 15px; padding-bottom: 15px; color: #ffd166; font-size: 1.1rem; text-shadow: 0 0 8px rgba(255, 209, 102, 0.3);"><strong>Mallipisteet yhteensä</strong></td>
+          <td style="padding-top: 15px; padding-bottom: 15px; color: #ffd166; font-size: 1.1rem; text-shadow: 0 0 8px rgba(255, 209, 102, 0.3);"><strong>${t(window.state, "scorecard_editor.model_points_total")}</strong></td>
           <td style="padding-top: 15px; padding-bottom: 15px;">
             <div class="sum-box-container" style="justify-content: flex-end; padding-right: 5px;">
               <div class="print-box yellow-box" name="r${rn}_modelPoints_display" style="width: 70px; height: 35px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; font-weight: bold;">${val}</div>
@@ -76,21 +77,21 @@ function renderSingleRoundTable(stage, isActive, viewRow, isWWI) {
         </tr>
       `;
   })()
-  + `<tr><td colspan="2" style="padding: 12px 15px; background: rgba(88, 183, 255, 0.15); border-left: 4px solid var(--primary); color: var(--accent-strong); font-size: 1.1rem;"><strong>Lentopisteet</strong></td></tr>`
-  + renderSingleFlightTimeRow("Lentoaika (3sek=1 P)", stage, card, totals)
-  + renderSingleNumberRow("Leikkaukset (100 P)", stage, card, totals, "cuts", "cutPoints")
-  + renderSingleNumberRow("Maamaalit (60 P)", stage, card, totals, "groundTargets", "groundTargetPoints")
-  + renderSingleBooleanRow("Nosto (Takeoff) (50 P)", stage, card, totals, "takeoff", "takeoffPoints", false)
-  + renderSingleBooleanRow("Pakoilu (-50 P)", stage, card, totals, "hasenfuss", "hasenfussPenalty", true)
-  + renderSingleBooleanRow("Turvaraja (-200 P)", stage, card, totals, "safetylineOverflown", "safetylinePenalty", true)
-  + renderSingleBooleanRow("Streamer ehjä (50 P)", stage, card, totals, "streamerOk", "streamerOkPoints", false)
-  + renderSingleBooleanRow("Laskeutuminen merkistä (50 P)", stage, card, totals, "landingAfterEndSignal", "landingAfterEndSignalPoints", false) : "";
+  + `<tr><td colspan="2" style="padding: 12px 15px; background: rgba(88, 183, 255, 0.15); border-left: 4px solid var(--primary); color: var(--accent-strong); font-size: 1.1rem;"><strong>${t(window.state, "scorecard_editor.flight_points")}</strong></td></tr>`
+  + renderSingleFlightTimeRow(t(window.state, "scorecard_editor.flight_time"), stage, card, totals)
+  + renderSingleNumberRow(t(window.state, "scorecard_editor.cuts"), stage, card, totals, "cuts", "cutPoints")
+  + renderSingleNumberRow(t(window.state, "scorecard_editor.ground_targets"), stage, card, totals, "groundTargets", "groundTargetPoints")
+  + renderSingleBooleanRow(t(window.state, "scorecard_editor.takeoff"), stage, card, totals, "takeoff", "takeoffPoints", false)
+  + renderSingleBooleanRow(t(window.state, "scorecard_editor.hasenfuss"), stage, card, totals, "hasenfuss", "hasenfussPenalty", true)
+  + renderSingleBooleanRow(t(window.state, "scorecard_editor.safety_line"), stage, card, totals, "safetylineOverflown", "safetylinePenalty", true)
+  + renderSingleBooleanRow(t(window.state, "scorecard_editor.streamer_ok"), stage, card, totals, "streamerOk", "streamerOkPoints", false)
+  + renderSingleBooleanRow(t(window.state, "scorecard_editor.landing"), stage, card, totals, "landingAfterEndSignal", "landingAfterEndSignalPoints", false) : "";
 
-  const standardRows = !isWWI ? renderSingleFlightTimeRow("Lentoaika (3sek=1 P)", stage, card, totals)
-  + renderSingleNumberRow("Leikkaukset (100 P)", stage, card, totals, "cuts", "cutPoints")
-  + renderSingleBooleanRow("Streamer ehjä (50 P)", stage, card, totals, "streamerOk", "streamerOkPoints", false)
-  + renderSingleBooleanRow("Pakoilu (-50 P)", stage, card, totals, "hasenfuss", "hasenfussPenalty", true)
-  + renderSingleBooleanRow("Turvaraja (-200 P)", stage, card, totals, "safetylineOverflown", "safetylinePenalty", true) : "";
+  const standardRows = !isWWI ? renderSingleFlightTimeRow(t(window.state, "scorecard_editor.flight_time"), stage, card, totals)
+  + renderSingleNumberRow(t(window.state, "scorecard_editor.cuts"), stage, card, totals, "cuts", "cutPoints")
+  + renderSingleBooleanRow(t(window.state, "scorecard_editor.streamer_ok"), stage, card, totals, "streamerOk", "streamerOkPoints", false)
+  + renderSingleBooleanRow(t(window.state, "scorecard_editor.hasenfuss"), stage, card, totals, "hasenfuss", "hasenfussPenalty", true)
+  + renderSingleBooleanRow(t(window.state, "scorecard_editor.safety_line"), stage, card, totals, "safetylineOverflown", "safetylinePenalty", true) : "";
 
   return `
     <div class="tab-content ${isActive ? 'active' : ''}" id="tab-${rn}-${pilotId}">
@@ -104,7 +105,7 @@ function renderSingleRoundTable(stage, isActive, viewRow, isWWI) {
             ${isWWI ? wwiRows : standardRows}
             
             <tr class="row-summe" style="background: rgba(255, 209, 102, 0.08); box-shadow: inset 0 2px 0 0 rgba(255, 209, 102, 0.3);">
-              <td style="padding-top: 15px; padding-bottom: 15px; color: #ffd166; font-size: 1.1rem; text-shadow: 0 0 8px rgba(255, 209, 102, 0.3);"><strong>Lentopisteet yhteensä</strong></td>
+              <td style="padding-top: 15px; padding-bottom: 15px; color: #ffd166; font-size: 1.1rem; text-shadow: 0 0 8px rgba(255, 209, 102, 0.3);"><strong>${t(window.state, "scorecard_editor.flight_points_total")}</strong></td>
               <td style="padding-top: 15px; padding-bottom: 15px;">
                 ${(() => {
                   const round = card.rounds?.find(r => Number(r.roundNumber) === rn);
@@ -121,13 +122,13 @@ function renderSingleRoundTable(stage, isActive, viewRow, isWWI) {
             </tr>
 
             <!-- AIRCRAFT INFO -->
-            ${!isWWI ? renderSingleBooleanRow("2,5-luokka", stage, card, totals, "twoPointFiveClass", "dummy", false, true) : ""}
-            ${renderModelSelectRow("Malli", stage, card, "modelName", pilotAircraft)}
-            ${renderSingleTextLineRow("Moottori / Akku", stage, card, "motorOrBattery")}
-            ${renderSingleTextLineRow("Potkuri", stage, card, "propeller")}
-            ${renderSingleTextLineRow("Kierrosluku / RPM", stage, card, "rpm")}
-            ${renderSignatureRow("Pilotin allekirjoitus", stage, card, "pilotSignature")}
-            ${renderSignatureRow("Tuomarin allekirjoitus", stage, card, "judgeSignature")}
+            ${!isWWI ? renderSingleBooleanRow(t(window.state, "scorecard_editor.25_class"), stage, card, totals, "twoPointFiveClass", "dummy", false, true) : ""}
+            ${renderModelSelectRow(t(window.state, "scorecard_editor.model"), stage, card, "modelName", pilotAircraft)}
+            ${renderSingleTextLineRow(t(window.state, "scorecard_editor.motor_battery"), stage, card, "motorOrBattery")}
+            ${renderSingleTextLineRow(t(window.state, "scorecard_editor.propeller"), stage, card, "propeller")}
+            ${renderSingleTextLineRow(t(window.state, "scorecard_editor.rpm"), stage, card, "rpm")}
+            ${renderSignatureRow(t(window.state, "scorecard_editor.pilot_signature"), stage, card, "pilotSignature")}
+            ${renderSignatureRow(t(window.state, "scorecard_editor.judge_signature"), stage, card, "judgeSignature")}
           </tbody>
         </table>
         
@@ -180,7 +181,7 @@ function renderSingleNumberRow(label, stage, card, totals, field, pointsField) {
       <td>
         <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 4px;">
           <div style="display: flex; gap: 15px; font-size: 0.85rem; padding-left: 2px; font-weight: bold; color: var(--muted);">
-            <span style="width: 60px; text-align: center;">Kpl</span>
+            <span style="width: 60px; text-align: center;">${t(window.state, "scorecard_editor.qty")}</span>
           </div>
           <div style="display: flex; gap: 15px; align-items: center;">
             <input type="number" name="r${rn}_${field}" class="editor-input no-spin" style="width:60px;height:45px;font-size:1.2rem;font-weight:bold;text-align:center; border-radius:6px;" min="0" value="${val}">
@@ -232,8 +233,8 @@ function renderSingleBooleanRow(label, stage, card, totals, field, pointsField, 
             </label>
           </div>
           <div style="display: flex; gap: 10px; font-size: 0.8rem; padding-left: 5px; text-align: center;">
-            <span style="width: 45px;">kyllä</span>
-            <span style="width: 45px;">ei</span>
+            <span style="width: 45px;">${t(window.state, "scorecard_editor.yes")}</span>
+            <span style="width: 45px;">${t(window.state, "scorecard_editor.no")}</span>
           </div>
         </div>
       </td>

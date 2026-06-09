@@ -27,35 +27,37 @@ import { renderMessagesView } from "./features/messages/messagesView.js";
 import { renderAuthView } from "./features/auth/authView.js";
 import { renderAboutView } from "./features/about/aboutView.js";
 
+import { t } from "./utils/i18n.js";
+
 export const ROUTES = {
-  login: { title: "Kirjaudu sisään", render: renderAuthView },
-  dashboard: { title: (state) => (isAdmin(state) ? "Etusivu" : "Etusivu"), render: renderDashboardView },
-  calendar: { title: "Kisakalenteri", render: renderCalendarView },
-  eventinfo: { title: "Kilpailun tiedot", render: renderEventInfoView },
-  entries: { title: "Rakenna kilpailu", render: renderEntriesView },
-  pilots: { title: "Pilotit", render: renderPilotsView },
-  pilot: { title: "Pilottikortti", render: renderPilotCardView },
+  login: { title: (state) => t(state, "auth.login"), render: renderAuthView },
+  dashboard: { title: (state) => isAdmin(state) ? t(state, "nav.home") : t(state, "nav.home"), render: renderDashboardView },
+  calendar: { title: (state) => t(state, "nav.calendar"), render: renderCalendarView },
+  eventinfo: { title: (state) => t(state, "nav.eventinfo"), render: renderEventInfoView },
+  entries: { title: (state) => t(state, "nav.entries"), render: renderEntriesView },
+  pilots: { title: (state) => t(state, "nav.pilots"), render: renderPilotsView },
+  pilot: { title: (state) => t(state, "nav.pilot"), render: renderPilotCardView },
   mypilotcard: { 
     title: (state) => {
       const userEmail = state.auth?.user?.email || state.settings?.userEmail || "";
       let pilot = state.pilots.find(p => p.email && p.email.toLowerCase().trim() === userEmail.toLowerCase().trim());
       if (!pilot && isAdmin(state) && state.pilots.length > 0) pilot = state.pilots[0];
-      return pilot ? pilot.name : "Oma pilottikortti";
+      return pilot ? pilot.name : t(state, "nav.mypilotcard");
     },
     render: renderMyPilotCardView 
   },
-  myevent: { title: "Oma kilpailu", render: renderMyEventView },
-  aircraft: { title: "Koneet", render: renderAircraftView },
-  heats: { title: (state) => (isAdmin(state) ? "Heatit" : "Heat-aikataulu"), render: renderHeatsView },
-  scorecards: { title: "Tuloskortit", render: renderScoreCardsView },
-  scorecard: { title: "Tuloskortin syöttö", render: renderScoreCardEditorView },
-  documents: { title: "Asiakirjat", render: renderDocumentsView },
-  about: { title: "Tietoja ohjelmasta", render: renderAboutView },
-  results: { title: "Kilpailutulokset", render: renderResultsView },
-  standings: { title: "Sarjataulukko", render: renderSeasonStandingsView },
-  settings: { title: "Asetukset", render: renderSettingsView },
-  mapeditor: { title: "Karttaeditori", render: renderMapEditorView },
-  messages: { title: "Viestit", render: renderMessagesView }
+  myevent: { title: (state) => t(state, "nav.myevent"), render: renderMyEventView },
+  aircraft: { title: (state) => t(state, "nav.aircraft"), render: renderAircraftView },
+  heats: { title: (state) => isAdmin(state) ? t(state, "nav.heats") : t(state, "nav.heats_public"), render: renderHeatsView },
+  scorecards: { title: (state) => t(state, "nav.scorecards"), render: renderScoreCardsView },
+  scorecard: { title: (state) => "Tuloskortin syöttö", render: renderScoreCardEditorView },
+  documents: { title: (state) => t(state, "nav.documents"), render: renderDocumentsView },
+  about: { title: (state) => t(state, "nav.about"), render: renderAboutView },
+  results: { title: (state) => t(state, "nav.results"), render: renderResultsView },
+  standings: { title: (state) => t(state, "nav.standings"), render: renderSeasonStandingsView },
+  settings: { title: (state) => t(state, "nav.settings"), render: renderSettingsView },
+  mapeditor: { title: (state) => t(state, "nav.mapeditor"), render: renderMapEditorView },
+  messages: { title: (state) => t(state, "nav.messages"), render: renderMessagesView }
 };
 
 export function getCurrentRoute() {

@@ -2,6 +2,7 @@ import { escapeHtml } from "../../../utils/html.js";
 import { UI } from "../../../ui/engine.js";
 import { calculateScoreCardTotals, SCORE_CARD_TEMPLATE_WWI } from "../../../logic/scoreCards.js";
 import { formatDuration } from "./ScoreCardUtils.js";
+import { t } from "../../../utils/i18n.js";
 
 export function renderScoreCardList(state, activeEvent, rows, targetClass = "") {
   const grouped = groupScoreCardsByHeat(state, activeEvent, rows, targetClass);
@@ -10,10 +11,10 @@ export function renderScoreCardList(state, activeEvent, rows, targetClass = "") 
     <section class="score-card-list no-print">
       <div class="score-card-list-intro">
         <div>
-          <p class="kicker">Tuloskorttilista</p>
-          <h3>${targetClass ? `${escapeHtml(targetClass)} kortit` : "Kaikki tuloskortit"}</h3>
+          <p class="kicker">${t(state, "scorecards_list.kicker")}</p>
+          <h3>${targetClass ? t(state, "scorecards_list.title_class").replace("{class}", escapeHtml(targetClass)) : t(state, "scorecards_list.title_all")}</h3>
         </div>
-        <p class="muted">Avaa vain se kortti, jota haluat täyttää.</p>
+        <p class="muted">${t(state, "scorecards_list.subtitle")}</p>
       </div>
       ${grouped.map((group) => `
         <details class="score-card-list-group" style="margin-bottom: 20px; background: var(--surface-1); border: 2px solid var(--border); border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); overflow: hidden;">
@@ -24,13 +25,13 @@ export function renderScoreCardList(state, activeEvent, rows, targetClass = "") 
             </div>
             <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 8px;">
               <span class="badge badge-info" style="font-size: 0.8rem; padding: 4px 10px; background: rgba(88, 183, 255, 0.15); color: var(--primary); border-radius: 999px; white-space: nowrap;">
-                <strong>${group.rows.length} korttia</strong> · ${group.rows.filter((row) => row.card.updatedAt).length} tallennettu
+                <strong>${t(state, "scorecards_list.cards_count").replace("{count}", group.rows.length)}</strong> · ${t(state, "scorecards_list.saved_count").replace("{count}", group.rows.filter((row) => row.card.updatedAt).length)}
               </span>
-              <span class="button small dashed heat-group-toggle" style="pointer-events: none; padding: 4px 12px; border-radius: 999px; font-size: 0.8rem; white-space: nowrap;">Avaa pilotit ▾</span>
+              <span class="button small dashed heat-group-toggle" style="pointer-events: none; padding: 4px 12px; border-radius: 999px; font-size: 0.8rem; white-space: nowrap;">${t(state, "scorecards_list.open_pilots")}</span>
             </div>
           </summary>
           <div class="score-card-list-rows" style="padding: 20px; border-top: 1px solid var(--border); background: var(--surface); display: grid; gap: 15px;">
-            ${group.rows.map(renderScoreCardSummaryRow).join("")}
+            ${group.rows.map(row => renderScoreCardSummaryRow(state, row)).join("")}
           </div>
         </details>
       `).join("")}
@@ -38,12 +39,12 @@ export function renderScoreCardList(state, activeEvent, rows, targetClass = "") 
   `;
 }
 
-export function renderScoreCardClassButtons(activeEvent, allRows, targetClass) {
+export function renderScoreCardClassButtons(state, activeEvent, allRows, targetClass) {
   const eventClasses = activeEvent?.classes?.length ? activeEvent.classes : [];
   const rowClasses = [...new Set(allRows.map((row) => row.className).filter(Boolean))];
   const classNames = [...new Set([...eventClasses, ...rowClasses])];
 
-  const allButton = `<a class="button small ${targetClass ? "" : "primary"}" href="#/scorecards">Kaikki (${allRows.length})</a>`;
+  const allButton = `<a class="button small ${targetClass ? "" : "primary"}" href="#/scorecards">${t(state, "scorecards_list.btn_all").replace("{count}", allRows.length)}</a>`;
   const classButtons = classNames.map((className) => {
     const count = allRows.filter((row) => String(row.className).trim().toLowerCase() === String(className).trim().toLowerCase()).length;
     const activeClass = targetClass && String(targetClass).trim().toLowerCase() === String(className).trim().toLowerCase();
@@ -80,7 +81,7 @@ function groupScoreCardsByHeat(state, activeEvent, rows, targetClass) {
     relevantHeats.forEach(heat => {
       const heatRows = rows.filter(r => heat.entryIds.includes(r.entry.id));
       if (heatRows.length > 0) {
-        const phaseLabel = heat.phase === 'semifinal' ? 'Semifinaali' : (heat.phase === 'final' ? 'Finaali' : `Alkuerä, kierros ${heat.round}`);
+        const phaseLabel = heat.phase === 'semifinal' ? t(state, "scorecards_list.semifinal") : (heat.phase === 'final' ? t(state, "scorecards_list.final") : t(state, "scorecards_list.qualifying_round").replace("{round}", heat.round));
         groups.push({
           isHeat: true,
           title: `Heat ${heat.className || ''} ${heat.round || ''}-${heat.groupName || ''}`.trim(),
@@ -108,7 +109,7 @@ function groupScoreCardsByHeat(state, activeEvent, rows, targetClass) {
       groups.push({
         isHeat: false,
         title: className,
-        subtitle: groups.length > 0 ? "Ei jaettu heatteihin" : "Luokka",
+        subtitle: groups.length > 0 ? t(state, "scorecards_list.no_heats") : t(state, "scorecards_list.class_label"),
         rows: cRows
       });
     });
@@ -117,7 +118,7 @@ function groupScoreCardsByHeat(state, activeEvent, rows, targetClass) {
   return groups;
 }
 
-function renderScoreCardSummaryRow(row) {
+function renderScoreCardSummaryRow(state, row) {
   const { entry, card, totals } = row;
   const saved = Boolean(card.updatedAt);
   const label = card.templateId === SCORE_CARD_TEMPLATE_WWI ? "WWI" : "Standard";
@@ -130,14 +131,14 @@ function renderScoreCardSummaryRow(row) {
       <div class="score-card-list-main">
         <p class="kicker">${escapeHtml(row.className)} · #${escapeHtml(entry.raceNumber || card.startNumber || "-")} · ${escapeHtml(label)}</p>
         <h4>${escapeHtml(row.pilotName)}</h4>
-        <p class="muted"><strong style="color: var(--primary);">Heatit: ${escapeHtml(row.calculatedFlyingRound || "Ei jaettu")}</strong> · ${escapeHtml(row.aircraftName)} · ${formatDuration(totals.totalFlightSeconds)} · ${totals.totalCuts} cuts</p>
+        <p class="muted"><strong style="color: var(--primary);">${t(state, "scorecards_list.heats_label")}${escapeHtml(row.calculatedFlyingRound || t(state, "scorecards_list.not_assigned"))}</strong> · ${escapeHtml(row.aircraftName)} · ${formatDuration(totals.totalFlightSeconds)} · ${totals.totalCuts} cuts</p>
       </div>
       <div class="score-card-list-status">
-        <span class="status ${saved ? "approved" : "pending"}">${saved ? "Tallennettu" : "Ei tallennettu"}</span>
+        <span class="status ${saved ? "approved" : "pending"}">${saved ? t(state, "scorecard_editor.saved") : t(state, "scorecard_editor.not_saved")}</span>
         <strong>${totals.totalPoints} p</strong>
       </div>
       <div class="score-card-list-actions">
-        <a class="button small primary" href="#/scorecard/${escapeHtml(entry.id)}${backParam}">Avaa kortti</a>
+        <a class="button small primary" href="#/scorecard/${escapeHtml(entry.id)}${backParam}">${t(state, "scorecards_list.open_card")}</a>
       </div>
     </article>
   `;

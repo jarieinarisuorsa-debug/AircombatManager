@@ -7,6 +7,7 @@ import { signInWithPassword, signOut, signUpWithPassword } from "../../services/
 import { updateState, getState } from "../../state/store.js";
 import { showToast } from "../../ui/toast.js";
 import { registerAction } from "../../core/actionRegistry.js";
+import { t } from "../../utils/i18n.js";
 
 export function initAuthActions() {
   registerAction("auth-login", async (event, form, context) => {
@@ -200,7 +201,7 @@ export function initAuthActions() {
       window.location.reload();
     } catch (err) {
       console.error("Account deletion failed:", err);
-      showToast("Tilin poistaminen epäonnistui: " + err.message, "error");
+      showToast(t(getState(), "auth_actions.del_failed") + err.message, "error");
     }
   });
 }
