@@ -42,11 +42,14 @@ export function renderPilotsView(state) {
          ${pilot.club ? `<span class="muted" style="margin-left: 6px;">${escapeHtml(pilot.club)}</span>` : ""}`,
         `${pilotPlanes.length} kpl`,
         `${UI.Flex({ gap: "6px", align: "center" }, `
-          ${activeEvent ? (
-            eventClasses.every(c => eventEntries.some(e => e.pilotId === pilot.id && e.className === c))
-              ? `<span style="font-size: 0.8em; color: var(--success); margin-right: 8px; font-weight: bold; background: rgba(84, 214, 138, 0.15); padding: 4px 8px; border-radius: 6px; border: 1px solid rgba(84, 214, 138, 0.3);">✓ Ilmoitettu</span>`
-              : `<button class="button success small" data-action="enroll-pilot-all-classes" data-pilot-id="${pilot.id}">+ Ilmoita kisaan</button>`
-          ) : ""}
+          ${activeEvent ? `
+            <div style="width: 135px; flex-shrink: 0;">
+              ${eventClasses.every(c => eventEntries.some(e => e.pilotId === pilot.id && e.className === c))
+                ? `<div style="font-size: 0.85em; color: var(--success); font-weight: bold; background: rgba(84, 214, 138, 0.15); padding: 5px 8px; border-radius: 6px; border: 1px solid rgba(84, 214, 138, 0.3); text-align: center; box-sizing: border-box; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;">✓ Ilmoitettu</div>`
+                : `<button class="button success small" data-action="enroll-pilot-all-classes" data-pilot-id="${pilot.id}" style="width: 100%; box-sizing: border-box;">+ Ilmoita kisaan</button>`
+              }
+            </div>` 
+          : ""}
           <button class="button primary small" data-action="open-pilot-card" data-pilot-id="${pilot.id}" style="font-weight: 600;">👤 Pilottikortti</button>
           <button class="button danger small" data-action="delete-pilot" data-pilot-id="${pilot.id}" style="padding: 0 10px; font-size: 1.1rem; background: transparent; border-color: transparent;" title="Poista pilotti">🗑️</button>
         `)}`

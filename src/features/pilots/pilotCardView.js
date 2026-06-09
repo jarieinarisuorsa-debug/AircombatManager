@@ -23,14 +23,8 @@ export function renderPilotCardView(state) {
   const hasWwi = entries.some((e) => e.className === "WWI");
 
   const backButton = activeEvent 
-    ? `<a href="#/entries" class="button small" style="margin-right: 5px;">⬅ Työympäristöön</a><a href="#/pilots" class="button small">Kaikki pilotit</a>`
-    : `<a href="#/pilots" class="button small">⬅ Takaisin</a>`;
-    
-  const pageHeader = UI.PageHeader({
-    kicker: "Pilottikortti",
-    title: pilot.name,
-    headerActions: backButton
-  });
+    ? `<a href="#/entries" class="button small dashed">⬅ Työympäristöön</a><a href="#/pilots" class="button small dashed">Kaikki pilotit</a>`
+    : `<a href="#/pilots" class="button small dashed">⬅ Takaisin</a>`;
 
   const deleteButton = isNew ? "" : UI.Button({ label: "Poista pilotti", action: "delete-pilot", pilotId: pilot.id, variant: "danger small" });
 
@@ -171,11 +165,16 @@ export function renderPilotCardView(state) {
   const tab = window.PILOT_CARD_TAB || 'perustiedot';
 
   const tabNavigation = `
-    <div class="ui-tabs" style="display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 1px solid var(--border); padding-bottom: 10px; overflow-x: auto;">
-      <button type="button" class="button ${tab === 'perustiedot' ? 'primary' : 'dashed'}" data-action="set-pilot-card-tab" data-tab="perustiedot">Perustiedot</button>
-      <button type="button" class="button ${tab === 'ilmoittautuminen' ? 'primary' : 'dashed'}" data-action="set-pilot-card-tab" data-tab="ilmoittautuminen" ${isNew ? 'disabled title="Tallenna uusi pilotti ensin"' : ''}>Ilmoittautuminen</button>
-      <button type="button" class="button ${tab === 'konekortit' ? 'primary' : 'dashed'}" data-action="set-pilot-card-tab" data-tab="konekortit" ${isNew ? 'disabled title="Tallenna uusi pilotti ensin"' : ''}>Konekortit (${pilotPlanes.length})</button>
-      <button type="button" class="button ${tab === 'logbook' ? 'primary' : 'dashed'}" data-action="set-pilot-card-tab" data-tab="logbook" ${isNew ? 'disabled title="Tallenna uusi pilotti ensin"' : ''}>Lentopäiväkirja</button>
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid var(--border); padding-bottom: 10px; flex-wrap: wrap; gap: 10px;">
+      <div class="ui-tabs" style="display: flex; gap: 10px; overflow-x: auto;">
+        <button type="button" class="button ${tab === 'perustiedot' ? 'primary' : 'dashed'}" data-action="set-pilot-card-tab" data-tab="perustiedot">Perustiedot</button>
+        <button type="button" class="button ${tab === 'ilmoittautuminen' ? 'primary' : 'dashed'}" data-action="set-pilot-card-tab" data-tab="ilmoittautuminen" ${isNew ? 'disabled title="Tallenna uusi pilotti ensin"' : ''}>Ilmoittautuminen</button>
+        <button type="button" class="button ${tab === 'konekortit' ? 'primary' : 'dashed'}" data-action="set-pilot-card-tab" data-tab="konekortit" ${isNew ? 'disabled title="Tallenna uusi pilotti ensin"' : ''}>Konekortit (${pilotPlanes.length})</button>
+        <button type="button" class="button ${tab === 'logbook' ? 'primary' : 'dashed'}" data-action="set-pilot-card-tab" data-tab="logbook" ${isNew ? 'disabled title="Tallenna uusi pilotti ensin"' : ''}>Lentopäiväkirja</button>
+      </div>
+      <div style="display: flex; gap: 10px;">
+        ${backButton}
+      </div>
     </div>
   `;
 
@@ -201,7 +200,6 @@ export function renderPilotCardView(state) {
   }
 
   return `
-    ${pageHeader}
     ${tabNavigation}
     ${tabContent}
   `;
