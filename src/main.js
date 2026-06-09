@@ -203,6 +203,13 @@ async function initApp() {
           if (cloudData.scoreCards) state.scoreCards = cloudData.scoreCards;
           if (cloudData.results) state.results = cloudData.results;
           
+          if (cloudData.settings) {
+            state.settings = {
+              ...state.settings,
+              ...cloudData.settings
+            };
+          }
+          
           // Ensure activeEventId is valid or null after sync
           if (!state.events.some(e => e.id === state.activeEventId)) {
             state.activeEventId = state.events.length > 0 ? state.events[0].id : null;
