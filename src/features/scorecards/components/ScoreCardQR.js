@@ -108,8 +108,9 @@ export function renderQRGeneratorModal(card, pilotName) {
 
   setTimeout(() => {
     const canvas = document.getElementById('qrcode-canvas');
-    if (canvas && window.QRCode) {
-      window.QRCode.toCanvas(canvas, payload, {
+    if (canvas && (window.QRCode || typeof QRCode !== 'undefined')) {
+      const qrLib = window.QRCode || QRCode;
+      qrLib.toCanvas(canvas, payload, {
         width: 250,
         margin: 1,
         color: {

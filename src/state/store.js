@@ -35,11 +35,13 @@ export function setState(nextState, reason = "state_update") {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(cachedState));
   
   // Asynchronous cloud sync (Optimistic UI)
-  import("../services/cloudStore.js").then(module => {
-    module.syncCloudFromState(oldState, cachedState).catch(err => {
-      console.error("Cloud sync failed for reason:", reason, err);
-    });
-  }).catch(err => console.error("Failed to load cloudStore for sync:", err));
+  if (!reason.startsWith("init_") && !reason.startsWith("realtime_")) {
+    import("../services/cloudStore.js").then(module => {
+      module.syncCloudFromState(oldState, cachedState).catch(err => {
+        console.error("Cloud sync failed for reason:", reason, err);
+      });
+    }).catch(err => console.error("Failed to load cloudStore for sync:", err));
+  }
   
   return getState();
 }

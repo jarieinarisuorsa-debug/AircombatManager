@@ -43,21 +43,15 @@ function renderSingleRoundTable(stage, isActive, viewRow, isWWI) {
         <tr class="matrix-data-row">
           <td><strong>${item.label} (${item.points} P)</strong></td>
           <td>
-            <div class="boolean-group" style="display: flex; flex-direction: column; align-items: flex-start; gap: 2px;">
-              <div style="display: flex; gap: 10px; align-items: center;">
-                <label class="radio-boolean-label">
-                  <input type="radio" name="r${rn}_model_${item.key}" value="yes" ${isYes ? "checked" : ""}>
-                  <div class="radio-boolean-btn">X</div>
-                </label>
-                <label class="radio-boolean-label">
-                  <input type="radio" name="r${rn}_model_${item.key}" value="no" ${isNo ? "checked" : ""}>
-                  <div class="radio-boolean-btn">X</div>
-                </label>
-              </div>
-              <div style="display: flex; gap: 10px; font-size: 0.8rem; padding-left: 5px; text-align: center;">
-                <span style="width: 45px;">${t(window.state, "scorecard_editor.yes")}</span>
-                <span style="width: 45px;">${t(window.state, "scorecard_editor.no")}</span>
-              </div>
+            <div class="yes-no-row-two" style="width: 100%; max-width: 250px;">
+              <label class="yes-no-btn">
+                <input type="radio" name="r${rn}_model_${item.key}" value="yes" ${isYes ? "checked" : ""}>
+                <span>${t(window.state, "scorecard_editor.yes")}</span>
+              </label>
+              <label class="yes-no-btn">
+                <input type="radio" name="r${rn}_model_${item.key}" value="no" ${isNo ? "checked" : ""}>
+                <span>${t(window.state, "scorecard_editor.no")}</span>
+              </label>
             </div>
           </td>
         </tr>
@@ -70,8 +64,8 @@ function renderSingleRoundTable(stage, isActive, viewRow, isWWI) {
         <tr class="row-summe" style="background: rgba(255, 209, 102, 0.08); box-shadow: inset 0 2px 0 0 rgba(255, 209, 102, 0.3);">
           <td style="padding-top: 15px; padding-bottom: 15px; color: #ffd166; font-size: 1.1rem; text-shadow: 0 0 8px rgba(255, 209, 102, 0.3);"><strong>${t(window.state, "scorecard_editor.model_points_total")}</strong></td>
           <td style="padding-top: 15px; padding-bottom: 15px;">
-            <div class="sum-box-container" style="justify-content: flex-end; padding-right: 5px;">
-              <div class="print-box yellow-box" name="r${rn}_modelPoints_display" style="width: 70px; height: 35px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; font-weight: bold;">${val}</div>
+            <div class="sum-box-container" style="display: flex; width: 100%; padding-right: 5px;">
+              <div class="print-box yellow-box" name="r${rn}_modelPoints_display" style="width: 100%; height: 38px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; font-weight: bold; border-radius: 10px; background: rgba(0, 0, 0, 0.3); border: 1px solid rgba(255, 255, 255, 0.1); box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);">${val}</div>
             </div>
           </td>
         </tr>
@@ -112,8 +106,8 @@ function renderSingleRoundTable(stage, isActive, viewRow, isWWI) {
                   const roundScore = totals?.roundScores?.find(rs => rs.roundNumber === rn)?.score;
                   const val = round && (round.flightSeconds > 0 || round.cuts > 0 || round.takeoff) && roundScore ? roundScore.flightTotal : "";
                   return `
-                    <div class="sum-box-container" style="justify-content: flex-end; padding-right: 5px;">
-                      <div class="print-box yellow-box" name="r${rn}_flightTotal_display" style="width: 70px; height: 35px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; font-weight: bold;">${val}</div>
+                    <div class="sum-box-container" style="display: flex; width: 100%; padding-right: 5px;">
+                      <div class="print-box yellow-box" name="r${rn}_flightTotal_display" style="width: 100%; height: 38px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; font-weight: bold; border-radius: 10px; background: rgba(0, 0, 0, 0.3); border: 1px solid rgba(255, 255, 255, 0.1); box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);">${val}</div>
                       <input type="hidden" name="r${rn}_total" value="${roundScore ? roundScore.total : ""}">
                     </div>
                   `;
@@ -151,15 +145,24 @@ function renderSingleFlightTimeRow(label, stage, card, totals) {
     <tr class="matrix-data-row">
       <td><strong>${label}</strong></td>
       <td>
-        <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 4px;">
-          <div style="display: flex; gap: 15px; font-size: 0.85rem; padding-left: 2px; font-weight: bold; color: var(--muted);">
-            <span style="width: 55px; text-align: center;">Min</span>
-            <span style="width: 55px; text-align: center;">Sek</span>
+        <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 4px; max-width: 100%;">
+          <div style="display: flex; width: 100%; max-width: 270px; font-size: 0.85rem; font-weight: bold; color: var(--muted);">
+            <span style="flex: 1; text-align: center;">Min</span>
+            <span style="width: 10px;"></span>
+            <span style="flex: 1; text-align: center;">Sek</span>
           </div>
-          <div style="display: flex; gap: 15px; align-items: center;">
-            <input type="number" name="r${rn}_flightMinutes" class="editor-input no-spin" style="width:55px;height:45px;font-size:1.2rem;font-weight:bold;text-align:center; border-radius:6px;" min="0" max="9" value="${min}">
+          <div style="display: flex; gap: 6px; align-items: center; max-width: 100%;">
+            <div class="stepper-input" style="flex: 1; min-width: 0;">
+              <button type="button" class="stepper-btn" data-action="step-input" data-target="r${rn}_flightMinutes" data-step="minus">-</button>
+              <input type="number" name="r${rn}_flightMinutes" id="r${rn}_flightMinutes" class="editor-input no-spin" min="0" max="9" value="${min}">
+              <button type="button" class="stepper-btn" data-action="step-input" data-target="r${rn}_flightMinutes" data-step="plus">+</button>
+            </div>
             <span style="font-weight: bold; font-size: 1.2rem; color: var(--muted);">:</span>
-            <input type="number" name="r${rn}_flightSeconds" class="editor-input no-spin" style="width:55px;height:45px;font-size:1.2rem;font-weight:bold;text-align:center; border-radius:6px;" min="0" max="59" value="${sek}">
+            <div class="stepper-input" style="flex: 1; min-width: 0;">
+              <button type="button" class="stepper-btn" data-action="step-input" data-target="r${rn}_flightSeconds" data-step="minus">-</button>
+              <input type="number" name="r${rn}_flightSeconds" id="r${rn}_flightSeconds" class="editor-input no-spin" min="0" max="59" value="${sek}">
+              <button type="button" class="stepper-btn" data-action="step-input" data-target="r${rn}_flightSeconds" data-step="plus">+</button>
+            </div>
           </div>
         </div>
       </td>
@@ -180,11 +183,15 @@ function renderSingleNumberRow(label, stage, card, totals, field, pointsField) {
       <td><strong>${label}</strong></td>
       <td>
         <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 4px;">
-          <div style="display: flex; gap: 15px; font-size: 0.85rem; padding-left: 2px; font-weight: bold; color: var(--muted);">
-            <span style="width: 60px; text-align: center;">${t(window.state, "scorecard_editor.qty")}</span>
+          <div style="display: flex; font-size: 0.85rem; padding-left: 2px; font-weight: bold; color: var(--muted);">
+            <span style="width: 140px; text-align: center;">${t(window.state, "scorecard_editor.qty")}</span>
           </div>
-          <div style="display: flex; gap: 15px; align-items: center;">
-            <input type="number" name="r${rn}_${field}" class="editor-input no-spin" style="width:60px;height:45px;font-size:1.2rem;font-weight:bold;text-align:center; border-radius:6px;" min="0" value="${val}">
+          <div style="display: flex; align-items: center;">
+            <div class="stepper-input" style="width: 140px;">
+              <button type="button" class="stepper-btn" data-action="step-input" data-target="r${rn}_${field}" data-step="minus">-</button>
+              <input type="number" name="r${rn}_${field}" id="r${rn}_${field}" class="editor-input no-spin" min="0" value="${val}">
+              <button type="button" class="stepper-btn" data-action="step-input" data-target="r${rn}_${field}" data-step="plus">+</button>
+            </div>
           </div>
         </div>
       </td>
@@ -221,21 +228,15 @@ function renderSingleBooleanRow(label, stage, card, totals, field, pointsField, 
     <tr class="matrix-data-row">
       <td><strong>${label}</strong></td>
       <td>
-        <div class="boolean-group" style="display: flex; flex-direction: column; align-items: flex-start; gap: 2px;">
-          <div style="display: flex; gap: 10px; align-items: center;">
-            <label class="radio-boolean-label">
-              <input type="radio" name="${inputName}" value="yes" ${isYes ? "checked" : ""}>
-              <div class="radio-boolean-btn">X</div>
-            </label>
-            <label class="radio-boolean-label">
-              <input type="radio" name="${inputName}" value="no" ${isNo ? "checked" : ""}>
-              <div class="radio-boolean-btn">X</div>
-            </label>
-          </div>
-          <div style="display: flex; gap: 10px; font-size: 0.8rem; padding-left: 5px; text-align: center;">
-            <span style="width: 45px;">${t(window.state, "scorecard_editor.yes")}</span>
-            <span style="width: 45px;">${t(window.state, "scorecard_editor.no")}</span>
-          </div>
+        <div class="yes-no-row-two" style="width: 100%; max-width: 250px;">
+          <label class="yes-no-btn">
+            <input type="radio" name="${inputName}" value="yes" ${isYes ? "checked" : ""}>
+            <span>${t(window.state, "scorecard_editor.yes")}</span>
+          </label>
+          <label class="yes-no-btn">
+            <input type="radio" name="${inputName}" value="no" ${isNo ? "checked" : ""}>
+            <span>${t(window.state, "scorecard_editor.no")}</span>
+          </label>
         </div>
       </td>
     </tr>

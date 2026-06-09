@@ -257,20 +257,24 @@ async function initApp() {
         // Kytketään WhatsApp-tyylinen reaaliaikainen viestien kuuntelu
         import("./services/supabaseClient.js").then(m => {
           if (m.supabase) {
-            m.supabase
-              .channel('public:messages')
-              .on('postgres_changes', { event: '*', schema: 'public', table: 'messages' }, () => {
-                // Kun viestitaulussa tapahtuu muutos (uusi viesti / luettu), haetaan tuoreet viestit
-                import("./services/cloudStore.js").then(cloud => {
-                  cloud.fetchMessagesFromCloud().then(msgs => {
-                    updateState(state => {
-                      state.messages = msgs;
-                    }, "realtime_messages");
-                    import("./main.js").then(m => m.updateMessagesDOM()); // Päivittää vain chätin listan menettämättä focusta
+            const existingChannels = m.supabase.getChannels();
+            const channelName = 'public:messages';
+            if (!existingChannels.some(c => c.topic === 'realtime:' + channelName)) {
+              m.supabase
+                .channel(channelName)
+                .on('postgres_changes', { event: '*', schema: 'public', table: 'messages' }, () => {
+                  // Kun viestitaulussa tapahtuu muutos (uusi viesti / luettu), haetaan tuoreet viestit
+                  import("./services/cloudStore.js").then(cloud => {
+                    cloud.fetchMessagesFromCloud().then(msgs => {
+                      updateState(state => {
+                        state.messages = msgs;
+                      }, "realtime_messages");
+                      import("./main.js").then(m => m.updateMessagesDOM()); // Päivittää vain chätin listan menettämättä focusta
+                    });
                   });
-                });
-              })
-              .subscribe();
+                })
+                .subscribe();
+            }
           }
         }).catch(err => console.error("Realtime init failed:", err));
         

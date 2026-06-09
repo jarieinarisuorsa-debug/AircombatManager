@@ -126,6 +126,19 @@ export function registerRegistrationActions() {
 
       reg.status = "approved";
       reg.updatedAt = new Date().toISOString();
+
+      // Lähetetään automaattinen kuittaus viestiseinälle
+      const pilot = state.pilots.find(p => p.id === reg.pilotId);
+      if (pilot) {
+        if (!state.messages) state.messages = [];
+        state.messages.push({
+          id: createId("msg"),
+          senderId: "admin",
+          content: `✅ ${pilot.name}: Ilmoittautumisesi kilpailuluokkiin ${reg.classes.join(', ')} on hyväksytty! Tervetuloa kisoihin! ✈️`,
+          createdAt: new Date().toISOString(),
+          readBy: ["admin"]
+        });
+      }
     });
     renderApp();
     return true;

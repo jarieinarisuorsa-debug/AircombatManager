@@ -108,13 +108,13 @@ export function renderScoreCardForm(activeEvent, row, options = {}) {
   }
 
   const rightActionsHtml = isPilotMode ? `
-    <button type="button" class="button outline" style="flex: 1; padding: 14px 10px; font-size: 1.1rem;" data-action="show-qr-code" data-entry-id="${escapeHtml(entry.id)}" title="Näytä QR-koodi tuomarille">QR-koodi</button>
-    <button type="submit" class="button primary" style="flex: 1; padding: 14px 10px; font-size: 1.1rem; font-weight: bold;">${t(state, "scorecard_editor.save_submit")}</button>
-    <a class="button dashed" style="flex: 1; padding: 14px 10px; font-size: 1.1rem; display: flex; justify-content: center; align-items: center;" href="${backUrl}">${t(state, "common.close")}</a>
+    <button type="button" class="button outline footer-action-btn" data-action="show-qr-code" data-entry-id="${escapeHtml(entry.id)}" title="Näytä QR-koodi tuomarille">QR-koodi</button>
+    <button type="submit" class="button primary footer-action-btn" style="font-weight: bold;">${t(state, "scorecard_editor.save_submit")}</button>
+    <a class="button outline footer-action-btn" style="display: flex; justify-content: center; align-items: center;" href="${backUrl}">${t(state, "common.close")}</a>
   ` : `
-    <button type="submit" class="button primary" style="flex: 1; padding: 14px 20px; font-size: 1.1rem; font-weight: bold;">${t(state, "common.save")}</button>
-    <button type="button" class="button outline" style="flex: 1; padding: 14px 20px; font-size: 1.1rem;" data-action="print-page" title="${t(state, "scorecard_editor.print_tooltip")}">${t(state, "common.print")}</button>
-    <a class="button dashed" style="flex: 1; padding: 14px 20px; font-size: 1.1rem; display: flex; justify-content: center; align-items: center;" href="${backUrl}">${t(state, "common.close")}</a>
+    <button type="button" class="button outline footer-action-btn" data-action="show-qr-code" data-entry-id="${escapeHtml(entry.id)}" title="Näytä QR-koodi tuomarille">QR-koodi</button>
+    <button type="submit" class="button primary footer-action-btn" style="font-weight: bold;">${t(state, "common.save")}</button>
+    <a class="button outline footer-action-btn" style="display: flex; justify-content: center; align-items: center;" href="${backUrl}">${t(state, "common.close")}</a>
   `;
 
   const format = getCompetitionFormatForClass(activeEvent, row.className);
@@ -136,14 +136,14 @@ export function renderScoreCardForm(activeEvent, row, options = {}) {
   `;
 
   const stickyFooter = `
-    <div class="score-card-sticky-footer no-print" style="display: flex; flex-direction: column; gap: 15px;">
-      <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 5px;">
+    <div class="score-card-sticky-footer no-print" style="display: flex; flex-direction: column; gap: 12px; max-width: 600px; margin: 0 auto; width: 100%;">
+      <div style="display: flex; justify-content: center; align-items: center; padding-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.1);">
         <div class="footer-totals" style="display: flex; align-items: center;">
-          <strong style="font-size: 1.5rem; color: #ffd166; text-shadow: 0 0 10px rgba(255, 209, 102, 0.4);">${t(state, "scorecard_editor.total")} <span name="final_sum_display">${totals.totalPoints}</span> p</strong>
+          <strong style="font-size: 1.8rem; color: #ffd166; text-shadow: 0 0 10px rgba(255, 209, 102, 0.4);">${t(state, "scorecard_editor.total")} <span name="final_sum_display">${totals.totalPoints}</span> p</strong>
         </div>
         ${templateSelectHtml}
       </div>
-      <div class="footer-actions" style="display: flex; gap: 10px; width: 100%;">
+      <div class="footer-actions" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; width: 100%;">
         ${rightActionsHtml}
       </div>
     </div>
