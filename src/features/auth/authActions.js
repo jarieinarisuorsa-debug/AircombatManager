@@ -218,6 +218,11 @@ export function initAuthActions() {
 
   registerAction("delete-account-with-password", async (event, form, { renderApp }) => {
     event.preventDefault();
+    
+    if (!window.confirm("VAROITUS: Olet poistamassa käyttäjätilisi ja kaikki siihen liittyvät tietosi pysyvästi! Tätä toimintoa ei voi perua.\n\nHaluatko varmasti jatkaa?")) {
+      return;
+    }
+
     const formData = new FormData(form);
     const password = formData.get("password");
     if (!password) return;
