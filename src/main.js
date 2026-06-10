@@ -313,7 +313,12 @@ async function initApp() {
                 heats: oldState.heats,
                 results: oldState.results,
                 scoreCards: oldState.scoreCards,
-                registrations: oldState.registrations
+                registrations: oldState.registrations,
+                settings: {
+                  systemUpdates: oldState.settings?.systemUpdates,
+                  organizerName: oldState.settings?.organizerName,
+                  publicDisplayMode: oldState.settings?.publicDisplayMode
+                }
               });
               const newStr = JSON.stringify({
                 events: cloudData.events,
@@ -323,7 +328,12 @@ async function initApp() {
                 heats: cloudData.heats,
                 results: cloudData.results,
                 scoreCards: cloudData.scoreCards,
-                registrations: cloudData.registrations
+                registrations: cloudData.registrations,
+                settings: {
+                  systemUpdates: cloudData.settings?.systemUpdates,
+                  organizerName: cloudData.settings?.organizerName,
+                  publicDisplayMode: cloudData.settings?.publicDisplayMode
+                }
               });
               
               if (oldStr !== newStr) {
@@ -336,6 +346,14 @@ async function initApp() {
                   if (cloudData.results) s.results = cloudData.results;
                   if (cloudData.scoreCards) s.scoreCards = cloudData.scoreCards;
                   if (cloudData.registrations) s.registrations = cloudData.registrations;
+                  if (cloudData.settings) {
+                    s.settings = s.settings || {};
+                    if (cloudData.settings.systemUpdates) s.settings.systemUpdates = cloudData.settings.systemUpdates;
+                    if (cloudData.settings.organizerName) s.settings.organizerName = cloudData.settings.organizerName;
+                    if (cloudData.settings.publicDisplayMode !== undefined) s.settings.publicDisplayMode = cloudData.settings.publicDisplayMode;
+                    if (cloudData.settings.organizationLogoData) s.settings.organizationLogoData = cloudData.settings.organizationLogoData;
+                    if (cloudData.settings.whatsappReceivers) s.settings.whatsappReceivers = cloudData.settings.whatsappReceivers;
+                  }
                 }, "auto_sync_background");
                 
                 // Säilytä skrollauskohta päivityksen yli
