@@ -21,7 +21,7 @@ export async function fetchPilotsFromCloud() {
       return privPilot ? { ...pubPilot, ...privPilot } : pubPilot;
     });
 
-    return mergedData;
+    return mergedData.map(mapPilotFromDb);
   } catch (error) {
     console.error("Error fetching pilots from cloud:", error);
     return [];
@@ -54,7 +54,8 @@ export async function savePilotToCloud(pilot) {
     return false;
   }
   
-  const { error } = await supabase.from("pilots").upsert(pilot);
+  const dbData = mapPilotToDb(pilot);
+  const { error } = await supabase.from("pilots").upsert(dbData);
   if (error) {
     console.error("Error saving pilot to cloud:", error);
     return false;
@@ -208,5 +209,35 @@ export function mapEntryToDb(entry) {
     notes: entry.notes,
     created_at: entry.createdAt,
     updated_at: entry.updatedAt
+  };
+}
+
+export function mapPilotFromDb(db) {
+  return {
+    id: db.id,
+    name: db.name,
+    email: db.email,
+    phone: db.phone,
+    country: db.country,
+    club: db.club,
+    license: db.license,
+    address: db.address,
+    avatarData: db.avatarData,
+    createdAt: db.created_at
+  };
+}
+
+export function mapPilotToDb(pilot) {
+  return {
+    id: pilot.id,
+    name: pilot.name,
+    email: pilot.email,
+    phone: pilot.phone,
+    country: pilot.country,
+    club: pilot.club,
+    license: pilot.license,
+    address: pilot.address,
+    avatarData: pilot.avatarData,
+    created_at: pilot.createdAt || new Date().toISOString()
   };
 }
