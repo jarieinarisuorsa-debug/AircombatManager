@@ -1,10 +1,10 @@
 import { registerAction } from "../../core/actionRegistry.js";
-import { updateState } from "../../state/store.js";
+import { updateState, getState } from "../../state/store.js";
 import { isUserAdmin } from "../../users/roles.js";
 import { showToast } from "../../ui/toast.js";
 
 export function initHomeActions() {
-  registerAction("toggle-system-update-form", (event, el, { renderApp, getState }) => {
+  registerAction("toggle-system-update-form", (event, el, { renderApp }) => {
     const state = getState();
     if (!isUserAdmin(state)) return;
     
@@ -16,7 +16,7 @@ export function initHomeActions() {
     renderApp();
   });
 
-  registerAction("save-system-update", (event, form, { renderApp, getState }) => {
+  registerAction("save-system-update", (event, form, { renderApp }) => {
     event.preventDefault();
     const state = getState();
     if (!isUserAdmin(state)) return;
@@ -47,7 +47,7 @@ export function initHomeActions() {
     renderApp();
   });
 
-  registerAction("delete-system-update", (event, button, { renderApp, getState }) => {
+  registerAction("delete-system-update", (event, button, { renderApp }) => {
     const state = getState();
     if (!isUserAdmin(state)) return;
 
