@@ -13,6 +13,7 @@
     linear-gradient(rgba(255, 255, 255, 0.015) 1px, transparent 1px),
     linear-gradient(90deg, rgba(255, 255, 255, 0.015) 1px, transparent 1px);
   background-size: 24px 24px;
+  -webkit-backdrop-filter: blur(16px);
   backdrop-filter: blur(16px);
   display: flex;
   flex-direction: column;
@@ -117,6 +118,7 @@
   border-radius: 24px;
   background: linear-gradient(135deg, rgba(16, 45, 77, 0.78), rgba(8, 20, 37, 0.74));
   box-shadow: var(--shadow);
+  -webkit-backdrop-filter: blur(12px);
   backdrop-filter: blur(12px);
   position: relative;
   overflow: hidden;
@@ -183,6 +185,7 @@
   border-radius: 24px;
   background: linear-gradient(135deg, rgba(16, 45, 77, 0.78), rgba(8, 20, 37, 0.74));
   box-shadow: var(--shadow);
+  -webkit-backdrop-filter: blur(12px);
   backdrop-filter: blur(12px);
   position: relative;
   overflow: hidden;
@@ -198,6 +201,7 @@
   flex-wrap: wrap;
   gap: 10px;
   justify-content: flex-start;
+  -webkit-backdrop-filter: blur(8px);
   backdrop-filter: blur(8px);
 }
 
