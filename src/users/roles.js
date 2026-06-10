@@ -82,7 +82,6 @@ export const PILOT_NAV_ROUTE_KEYS = [
   "myevent",
   "mypilotcard",
   "eventinfo",
-  "heats",
   "calendar",
   "results",
   "messages"
