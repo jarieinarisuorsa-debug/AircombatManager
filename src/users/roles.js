@@ -19,6 +19,7 @@ export const ROLE_LABELS = {
 };
 
 export const ADMIN_ROUTE_KEYS = [
+  "home",
   "calendar",
   "dashboard",
   "eventinfo",
@@ -41,6 +42,7 @@ export const ADMIN_ROUTE_KEYS = [
 ];
 
 export const PILOT_ROUTE_KEYS = [
+  "home",
   "myevent",
   "calendar",
   "eventinfo",
@@ -57,6 +59,7 @@ export const PILOT_ROUTE_KEYS = [
 ];
 
 export const GUEST_ROUTE_KEYS = [
+  "home",
   "calendar",
   "eventinfo",
   "heats",
@@ -68,6 +71,7 @@ export const GUEST_ROUTE_KEYS = [
 ];
 
 export const ADMIN_NAV_ROUTE_KEYS = [
+  "home",
   "calendar",
   "results",
   "entries",
@@ -79,6 +83,7 @@ export const ADMIN_NAV_ROUTE_KEYS = [
 ];
 
 export const PILOT_NAV_ROUTE_KEYS = [
+  "home",
   "myevent",
   "mypilotcard",
   "eventinfo",
@@ -88,6 +93,7 @@ export const PILOT_NAV_ROUTE_KEYS = [
 ];
 
 export const GUEST_NAV_ROUTE_KEYS = [
+  "home",
   "calendar",
   "eventinfo",
   "results"
@@ -95,7 +101,8 @@ export const GUEST_NAV_ROUTE_KEYS = [
 
 export const NAV_LABELS = {
   admin: {
-    dashboard: "Etusivu",
+    home: "Etusivu",
+    dashboard: "Tiedotteet",
     calendar: "Kilpailujen hallinta",
     eventinfo: "Kilpailun tiedot",
     entries: "Rakenna kilpailu",
@@ -109,6 +116,7 @@ export const NAV_LABELS = {
     settings: "Asetukset"
   },
   pilot: {
+    home: "Etusivu",
     myevent: "Oma kilpailu",
     calendar: "Kisakalenteri",
     eventinfo: "Kilpailun tiedot",
@@ -119,6 +127,7 @@ export const NAV_LABELS = {
     messages: "Viestit"
   },
   guest: {
+    home: "Etusivu",
     calendar: "Kisakalenteri",
     eventinfo: "Kilpailun tiedot",
     results: "Kilpailutulokset"
@@ -210,9 +219,7 @@ export function canUseRoute(state, routeKey) {
 }
 
 export function getDefaultRouteForRole(role) {
-  if (role === ROLES.ADMIN) return "calendar";
-  if (role === ROLES.PILOT) return "myevent";
-  return "calendar";
+  return "home";
 }
 
 export function getNavRouteKeys(state) {

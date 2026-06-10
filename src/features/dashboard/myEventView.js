@@ -13,7 +13,7 @@ import { getCompetitionFormatForClass } from "../../logic/competitionFormat.js";
 export function renderMyEventView(state) {
   const userEmail = state.auth?.user?.email || state.settings?.userEmail || "";
   if (!userEmail) {
-    return UI.PageHeader({ kicker: "RC Aircombat", title: t(state, "my_event.login_req_title") }) + 
+    return UI.PageHeader({ kicker: "Aircombat Competition Manager", title: t(state, "my_event.login_req_title") }) + 
            UI.Panel({ title: t(state, "my_event.no_login_panel") }, `
              <p>${t(state, "my_event.login_req")}</p>
              <div style="margin-top: 20px;">
@@ -31,13 +31,13 @@ export function renderMyEventView(state) {
   }
 
   if (!myPilot) {
-    return UI.PageHeader({ kicker: "RC Aircombat", title: t(state, "my_event.no_profile_title") }) + 
+    return UI.PageHeader({ kicker: "Aircombat Competition Manager", title: t(state, "my_event.no_profile_title") }) + 
            UI.Panel({ title: t(state, "my_event.no_profile_panel") }, `<p>${t(state, "my_event.no_profile_msg")}</p>`);
   }
 
   const activeEvent = getActiveEvent(state);
   if (!activeEvent) {
-    return UI.PageHeader({ kicker: isPreview ? t(state, "my_event.admin_preview") : "RC Aircombat", title: t(state, "my_event.no_active_event_title") }) + 
+    return UI.PageHeader({ kicker: isPreview ? t(state, "my_event.admin_preview") : "Aircombat Competition Manager", title: t(state, "my_event.no_active_event_title") }) + 
            UI.Panel({ title: t(state, "my_event.calendar_panel") }, `<p>${t(state, "my_event.no_event_msg")}</p>`);
   }
 

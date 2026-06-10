@@ -206,7 +206,8 @@ export async function syncCloudFromState(oldState, newState) {
       organizerName: newState.settings.organizerName,
       publicDisplayMode: newState.settings.publicDisplayMode,
       organizationLogoData: newState.settings.organizationLogoData,
-      whatsappReceivers: newState.settings.whatsappReceivers
+      whatsappReceivers: newState.settings.whatsappReceivers,
+      systemUpdates: newState.settings.systemUpdates
     };
     
     // We stringify and parse to remove undefined values, ensuring clean JSONB

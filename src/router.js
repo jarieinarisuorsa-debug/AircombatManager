@@ -4,6 +4,7 @@
 // Päivitetty: 2026-06-04
 // ==============================
 
+import { renderHomeView } from "./features/home/homeView.js";
 import { renderDashboardView } from "./features/dashboard/dashboardView.js";
 import { renderCalendarView } from "./features/events/calendarView.js";
 import { renderEventInfoView } from "./features/events/eventInfoView.js";
@@ -31,6 +32,7 @@ import { t } from "./utils/i18n.js";
 
 export const ROUTES = {
   login: { title: (state) => t(state, "auth.login"), render: renderAuthView },
+  home: { title: (state) => t(state, "nav.home"), render: renderHomeView },
   dashboard: { title: (state) => isAdmin(state) ? t(state, "nav.home") : t(state, "nav.home"), render: renderDashboardView },
   calendar: { title: (state) => t(state, "nav.calendar"), render: renderCalendarView },
   eventinfo: { title: (state) => t(state, "nav.eventinfo"), render: renderEventInfoView },
@@ -62,8 +64,8 @@ export const ROUTES = {
 
 export function getCurrentRoute() {
   const hash = location.hash.replace("#/", "");
-  const route = hash.split("/")[0] || "calendar";
-  return ROUTES[route] ? route : "calendar";
+  const route = hash.split("/")[0] || "home";
+  return ROUTES[route] ? route : "home";
 }
 
 export function getRouteParam() {
