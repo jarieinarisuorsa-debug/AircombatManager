@@ -15,9 +15,12 @@
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
+    "@capacitor-community/admob": "^8.0.0",
     "@capacitor/android": "^8.4.0",
     "@capacitor/cli": "^8.4.0",
     "@capacitor/core": "^8.4.0"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "@capacitor/assets": "^3.0.5"
+  }
 }

@@ -114,8 +114,7 @@ export function initPilotActions() {
       const email = state.auth?.user?.email || state.settings?.userEmail;
       if (!email) throw new Error("Ei kirjautunutta käyttäjää.");
       
-      const role = getCurrentRole(state);
-      if (role !== ROLES.PILOT) throw new Error("Vain pilotit voivat luoda pilottikortin.");
+      // Sallitaan kaikkien kirjautuneiden käyttäjien luoda oma pilottikortti
       
       if (state.pilots.some(p => p.email && p.email.toLowerCase() === email.toLowerCase())) {
         return; // Jo olemassa

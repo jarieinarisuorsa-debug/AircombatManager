@@ -49,6 +49,15 @@ export function createClickHandler({ renderApp }) {
 }
 
 function runUiClickAction(action, button, { renderApp }) {
+  if (action === "show-rewarded-ad") {
+    import("../services/adMobService.js").then(m => {
+      m.showRewardedAd(() => {
+        openAlertModal({ message: "Kiitos todella paljon tuestasi! Ohjelman kehitys jatkuu entistä ehompana." });
+      });
+    });
+    return true;
+  }
+
   if (action === "print-class-heats") {
     const targetClass = button.dataset.class;
     location.hash = `#/heats/${targetClass}`;

@@ -14,42 +14,23 @@ export function renderMyPilotCardView(state) {
 
   let pilot = state.pilots.find(p => p.email && p.email.toLowerCase().trim() === userEmail.toLowerCase().trim());
   
-  // Admin preview mode: if an admin switches to public role but has no pilot profile, show the first pilot as a demo.
-  let isPreview = false;
-  if (!pilot && isUserAdmin(state) && state.pilots.length > 0) {
-    pilot = state.pilots[0];
-    isPreview = true;
-  }
-
   if (!pilot) {
-    if (getCurrentRole(state) === ROLES.PILOT) {
-      const createPanel = UI.Panel({
-        kicker: t(state, "my_pilot.welcome"),
-        title: t(state, "my_pilot.create_title")
-      }, `
-        <p style="margin-bottom: 16px;">${t(state, "my_pilot.create_msg1")}</p>
-        <p class="muted" style="margin-bottom: 24px;">${t(state, "my_pilot.create_msg2")}</p>
-        ${UI.Button({ label: t(state, "my_pilot.create_btn"), action: "create-own-pilot-card", variant: "primary" })}
-      `);
-      return UI.PageHeader({
-        kicker: t(state, "my_pilot.pilot_kicker"),
-        title: t(state, "my_pilot.title")
-      }) + UI.SplitLayout(createPanel, "");
-    }
-
-    const notFoundPanel = UI.Panel({
-      kicker: t(state, "my_pilot.auth_kicker"),
-      title: t(state, "pilot.not_found_title")
+    const createPanel = UI.Panel({
+      kicker: t(state, "my_pilot.welcome"),
+      title: t(state, "my_pilot.create_title")
     }, `
-      <p style="margin-bottom: 16px;">${t(state, "my_pilot.not_found_msg").replace("{email}", escapeHtml(userEmail))}</p>
-      <p class="muted" style="margin-bottom: 24px;">${t(state, "my_pilot.not_found_hint")}</p>
-      ${UI.Button({ label: t(state, "my_pilot.switch_email_btn"), action: "auth-logout", variant: "small" })}
+      <p style="margin-bottom: 16px;">${t(state, "my_pilot.create_msg1")}</p>
+      <p class="muted" style="margin-bottom: 24px;">Olet tällä hetkellä kirjautunut sisään tunnuksella <strong>${escapeHtml(userEmail)}</strong>. Voit nyt luoda itsellesi pilottikortin tälle sähköpostille.</p>
+      <div style="display: flex; gap: 10px;">
+        ${UI.Button({ label: t(state, "my_pilot.create_btn"), action: "create-own-pilot-card", variant: "primary" })}
+        ${UI.Button({ label: t(state, "my_pilot.switch_email_btn"), action: "auth-logout", variant: "dashed" })}
+      </div>
     `);
-
+    
     return UI.PageHeader({
-      kicker: t(state, "my_pilot.public_kicker"),
+      kicker: t(state, "my_pilot.pilot_kicker"),
       title: t(state, "my_pilot.title")
-    }) + UI.SplitLayout(notFoundPanel, "");
+    }) + UI.SplitLayout(createPanel, "");
   }
 
   // --- HAE DATA ---
@@ -59,7 +40,7 @@ export function renderMyPilotCardView(state) {
   const hasWw2 = entries.some((e) => e.className === "WWII");
   const hasWwi = entries.some((e) => e.className === "WWI");
 
-  const pageHeader = isPreview ? `<div style="background: rgba(255,165,0,0.2); border: 1px solid orange; color: orange; padding: 10px; border-radius: 6px; margin-bottom: 20px; text-align: center;"><strong>${t(state, "my_pilot.admin_preview_title")}</strong> ${t(state, "my_pilot.admin_preview_msg1").replace("{name}", escapeHtml(pilot.name))}<br><span style="font-size: 0.85rem;">${t(state, "my_pilot.admin_preview_msg2").replace("{email}", escapeHtml(userEmail))}</span></div>` : '';
+  const pageHeader = '';
 
   // --- VÄLILEHTI 1: PERUSTIEDOT ---
   const avatarPanel = UI.Panel({

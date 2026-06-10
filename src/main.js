@@ -198,6 +198,8 @@ async function initApp() {
       if (!state.auth) state.auth = {};
       state.auth.user = user;
     }, "init_auth");
+
+    import("./services/adMobService.js").then(m => m.initializeAdMob());
     
     if (isCloudMode()) {
       import("./services/supabaseClient.js").then(m => {

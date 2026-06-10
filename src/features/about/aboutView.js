@@ -78,10 +78,10 @@ export function renderAboutView(state) {
       
       <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid var(--border);">
         <p style="margin-bottom: 15px;">${t(state, "about.support_desc")}</p>
-        <a href="https://play.google.com/store" target="_blank" class="button primary" style="display: inline-flex; align-items: center; gap: 8px;">
+        <button type="button" class="app-btn primary" data-action="show-rewarded-ad" style="display: inline-flex; align-items: center; gap: 8px;">
           <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line></svg>
           ${t(state, "about.support_btn")}
-        </a>
+        </button>
       </div>
     </div>
   `);
