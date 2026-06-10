@@ -304,6 +304,10 @@
         name TEXT NOT NULL,
         class_name TEXT NOT NULL,
         engine TEXT,
+        engine_model TEXT,
+        battery TEXT,
+        propeller TEXT,
+        model_points JSONB,
         tech_status TEXT DEFAULT 'pending',
         created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
     );

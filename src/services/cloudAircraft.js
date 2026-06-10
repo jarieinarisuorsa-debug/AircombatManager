@@ -69,6 +69,10 @@ export function mapAircraftFromDb(db) {
     name: db.name,
     className: db.class_name,
     engine: db.engine,
+    engineModel: db.engine_model,
+    battery: db.battery,
+    propeller: db.propeller,
+    modelPoints: db.model_points || {},
     techStatus: db.tech_status,
     createdAt: db.created_at
   };
@@ -81,6 +85,10 @@ export function mapAircraftToDb(ac) {
     name: ac.name,
     class_name: ac.className,
     engine: ac.engine,
+    engine_model: ac.engineModel,
+    battery: ac.battery,
+    propeller: ac.propeller,
+    model_points: ac.modelPoints,
     tech_status: ac.techStatus,
     created_at: ac.createdAt
   };

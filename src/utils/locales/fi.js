@@ -305,7 +305,7 @@ export const fi = {
     "my_pilot.auth_kicker": "Tunnistautuminen",
     "my_pilot.not_found_msg": "Sähköpostiosoitteella <strong>{email}</strong> ei löytynyt pilottia rekisteristä.",
     "my_pilot.not_found_hint": "Pyydä kilpailun järjestäjää lisäämään sähköpostiosoitteesi pilottitietoihisi, tai yritä toisella sähköpostiosoitteella.",
-    "my_pilot.switch_email_btn": "Vaihda sähköpostia / Kirjaudu ulos",
+    "my_pilot.switch_email_btn": "Kirjaudu ulos ohjelmasta",
     "my_pilot.public_kicker": "Julkinen",
     "my_pilot.admin_preview_title": "Admin-esikatselu:",
     "my_pilot.admin_preview_msg1": "Katsot näkymää toisena pilottina ({name}).",
