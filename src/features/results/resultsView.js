@@ -283,7 +283,7 @@ function renderWaitingResultsPanel(state, rows) {
 
 export function renderResultsTable(state, rows, showDetails = false, classPositions = false, format = null) {
   const roundColumns = (showDetails || format) ? getVisibleRoundColumns(state, rows, format) : [];
-  const headers = ["#", t(state, "results.pilot"), t(state, "results.country"), t(state, "results.class"), t(state, "results.points"), ...roundColumns, t(state, "results.cuts")];
+  const headers = ["#", "", t(state, "results.pilot"), t(state, "results.country"), t(state, "results.class"), t(state, "results.points"), ...roundColumns, t(state, "results.cuts")];
   if (showDetails) headers.push(t(state, "results.flight_time"), t(state, "results.best_round"), t(state, "results.rounds"));
   headers.push(""); // Tyhjä otsikko painikkeelle
 
@@ -299,13 +299,11 @@ export function renderResultsTable(state, rows, showDetails = false, classPositi
     const roundMap = new Map((row.roundBreakdown || []).map((item) => [item.label, item]));
     const cells = [
       classPositions ? row.classPosition : index + 1,
-      UI.Flex({ gap: "10px" }, `
-        ${avatarHtml}
-        <div>
-          <strong>${escapeHtml(row.pilotName)}</strong>
-          ${row.club ? `<div class="muted" style="font-size: 0.85em; margin-top: 2px;">${escapeHtml(row.club)}</div>` : ""}
-        </div>
-      `),
+      `<div style="display: flex; justify-content: center; align-items: center; width: 32px;">${avatarHtml}</div>`,
+      `<div>
+        <strong>${escapeHtml(row.pilotName)}</strong>
+        ${row.club ? `<div class="muted" style="font-size: 0.85em; margin-top: 2px;">${escapeHtml(row.club)}</div>` : ""}
+      </div>`,
       row.country ? UI.CountryFlag(row.country) : '<span class="muted">-</span>',
       escapeHtml(row.className),
       `<strong>${row.totalScore}</strong>`,

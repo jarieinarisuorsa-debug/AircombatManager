@@ -65,14 +65,7 @@ function runUiClickAction(action, button, { renderApp }) {
 
   if (action === "print-class-heats") {
     const targetClass = button.dataset.class;
-    const oldHash = location.hash;
     location.hash = `#/heats/${targetClass}`;
-    renderApp();
-    window.setTimeout(() => {
-      window.print();
-      location.hash = oldHash;
-      renderApp();
-    }, 200);
     return true;
   }
   if (action === "show-qr-code") {

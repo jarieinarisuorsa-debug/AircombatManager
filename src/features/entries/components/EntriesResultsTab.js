@@ -24,12 +24,19 @@ export function renderWorkspaceResultsTab(state, activeEvent, className) {
 
   const statusText = published ? t(state, "event_workspace.status_published") : t(state, "event_workspace.status_draft");
 
-  return UI.Panel({ kicker: t(state, "event_workspace.step6"), title: t(state, "event_workspace.results_title").replace("{class}", escapeHtml(className)) }, `
-    <div class="ui-form-actions" style="margin-bottom: 20px; align-items: center;">
-      <strong style="margin-right: auto;">${statusText}</strong>
-      ${UI.Button({ label: "Print Scorecards", action: "print-class-scorecards", class: className, variant: "dashed" })}
-      ${publishBtn}
+  const controls = `
+    <div style="margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid var(--border);">
+      <p class="muted" style="margin-bottom: 15px;">Tarkista ja julkaise luokan lopputulokset.</p>
+      <div class="ui-form-actions" style="justify-content: flex-start; margin-top: 0; align-items: center;">
+        ${publishBtn}
+        ${UI.Button({ label: "Print Scorecards", action: "print-class-scorecards", class: className, variant: "dashed" })}
+        <strong style="margin-left: auto; color: ${published ? 'var(--success)' : 'var(--muted)'};">${statusText}</strong>
+      </div>
     </div>
+  `;
+
+  return UI.Panel({ kicker: t(state, "event_workspace.step6"), title: t(state, "event_workspace.results_title").replace("{class}", escapeHtml(className)) }, `
+    ${controls}
     ${tableHtml}
   `);
 }

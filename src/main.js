@@ -93,6 +93,25 @@ document.addEventListener("change", window.__appChangeHandler);
 document.addEventListener("input", window.__appInputHandler);
 document.addEventListener("keydown", window.__appKeydownHandler);
 
+// Print handlers to automatically open and restore <details> elements
+if (!window.__appPrintListenersAdded) {
+  window.addEventListener('beforeprint', () => {
+    document.querySelectorAll('details').forEach(details => {
+      if (!details.hasAttribute('open')) {
+        details.setAttribute('open', '');
+        details.dataset.wasClosedBeforePrint = 'true';
+      }
+    });
+  });
+  window.addEventListener('afterprint', () => {
+    document.querySelectorAll('details[data-was-closed-before-print="true"]').forEach(details => {
+      details.removeAttribute('open');
+      delete details.dataset.wasClosedBeforePrint;
+    });
+  });
+  window.__appPrintListenersAdded = true;
+}
+
 window.__appQrScannedHandler = (e) => {
   const payload = e.detail;
   import("./features/scorecards/components/ScoreCardQR.js").then(qr => {

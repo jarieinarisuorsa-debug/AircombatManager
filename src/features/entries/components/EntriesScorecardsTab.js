@@ -22,9 +22,12 @@ export function renderWorkspaceScorecardsTab(state, activeEvent, className) {
   ` : "";
 
   const controls = `
-    <div class="ui-form-actions" style="margin-bottom: 15px;">
-      ${randomizeBtn}
-      ${scanBtn}
+    <div style="margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid var(--border);">
+      <p class="muted" style="margin-bottom: 15px;">Syötä tulokset käsin tai lue ne QR-koodilla.</p>
+      <div class="ui-form-actions" style="justify-content: flex-start; margin-top: 0;">
+        ${scanBtn}
+        ${randomizeBtn}
+      </div>
     </div>
   `;
 
@@ -34,10 +37,8 @@ export function renderWorkspaceScorecardsTab(state, activeEvent, className) {
     ? renderClassHeatSection(state, activeEvent, state.entries.filter(e => e.eventId === activeEvent.id), className, classHeats, true, "scorecards")
     : "";
 
-  const heatsPanel = heatsHtml ? UI.Panel({ 
-    kicker: "BY HEATS", 
-    title: `${escapeHtml(className)} Scorecards by Heat` 
-  }, heatsHtml) : "";
-
-  return UI.Panel({ kicker: t(state, "event_workspace.step5"), title: t(state, "event_workspace.scorecards_title").replace("{class}", escapeHtml(className)) }, controls + heatsPanel);
+  return UI.Panel({ kicker: t(state, "event_workspace.step5"), title: t(state, "event_workspace.scorecards_title").replace("{class}", escapeHtml(className)) }, `
+    ${controls}
+    ${heatsHtml || `<p class='muted'>Ei arvottuja eriä.</p>`}
+  `);
 }

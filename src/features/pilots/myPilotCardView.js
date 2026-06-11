@@ -20,10 +20,10 @@ export function renderMyPilotCardView(state) {
       title: t(state, "my_pilot.create_title")
     }, `
       <p style="margin-bottom: 16px;">${t(state, "my_pilot.create_msg1")}</p>
-      <p class="muted" style="margin-bottom: 15px;">You are currently logged in as <strong>${escapeHtml(userEmail)}</strong>. You can now create a pilot card for this email.</p>
+      <p class="muted" style="margin-bottom: 15px;">${t(state, "my_pilot.create_email_info").replace("{email}", escapeHtml(userEmail))}</p>
       ${isUserAdmin(state) ? `
         <div style="background: rgba(255, 165, 0, 0.1); border-left: 3px solid orange; padding: 10px; margin-bottom: 20px; font-size: 0.9rem;">
-          <strong>Attention Admin:</strong> If your own pilot card is registered to <em>another email</em>, you won't see it here in the "My pilot card" view. You can edit your own card by opening it from the <a href="#/pilots" style="text-decoration: underline;">Pilots page</a>.
+          ${t(state, "my_pilot.admin_email_warning")}
         </div>
       ` : ""}
       <div style="display: flex; gap: 10px; flex-wrap: wrap;">
@@ -32,10 +32,7 @@ export function renderMyPilotCardView(state) {
       </div>
     `);
     
-    return UI.PageHeader({
-      kicker: t(state, "my_pilot.pilot_kicker"),
-      title: t(state, "my_pilot.title")
-    }) + UI.SplitLayout(createPanel, "");
+    return UI.SplitLayout(createPanel, "");
   }
 
   // --- HAE DATA ---
@@ -79,7 +76,7 @@ export function renderMyPilotCardView(state) {
       ${UI.Input({ label: t(state, "my_pilot.country"), name: "country", value: pilot.country || "", placeholder: "FI" })}
       ${UI.Input({ label: t(state, "my_pilot.club"), name: "club", value: pilot.club || "" })}
       ${UI.Input({ label: t(state, "my_pilot.email"), name: "email", type: "email", value: pilot.email || "", placeholder: "nimi@esimerkki.com", readonly: true })}
-      <p class="muted" style="font-size: 0.8rem; margin-top: -5px; grid-column: span 1;">Sähköposti on sidottu sisäänkirjautumiseesi. Jos haluat vaihtaa sitä, kirjaudu ulos ja kirjaudu sisään uudella sähköpostilla.</p>
+      <p class="muted" style="font-size: 0.8rem; margin-top: -5px; grid-column: span 1;">${t(state, "my_pilot.email_hint")}</p>
       ${UI.Input({ label: t(state, "my_pilot.phone"), name: "phone", value: pilot.phone || "", placeholder: "+358..." })}
       ${UI.Input({ label: t(state, "my_pilot.license"), name: "license", value: pilot.license || "", placeholder: "esim. FIN-1234" })}
       ${UI.Input({ label: t(state, "my_pilot.address"), name: "address", value: pilot.address || "", placeholder: "Katuosoite, Postinumero, Kaupunki" })}
@@ -294,8 +291,8 @@ export function renderMyPilotCardView(state) {
           </div>
         </div>
         <div style="display: flex; gap: 10px;">
-          <a href="#/scorecard/${escapeHtml(row.entry.id)}" class="button dashed" style="flex: 1; text-align: center;">Avaa tuloskortti</a>
-          <button type="button" class="button primary" data-action="show-qr-code" data-entry-id="${escapeHtml(row.entry.id)}" style="flex: 1;">📱 Näytä QR-koodi</button>
+          <a href="#/scorecard/${escapeHtml(row.entry.id)}" class="button dashed" style="flex: 1; text-align: center;">${t(state, "my_pilot.open_scorecard")}</a>
+          <button type="button" class="button primary" data-action="show-qr-code" data-entry-id="${escapeHtml(row.entry.id)}" style="flex: 1;">${t(state, "my_pilot.show_qr")}</button>
         </div>
       </div>
     `).join('') + `</div>`;

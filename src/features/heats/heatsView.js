@@ -89,8 +89,35 @@ export function renderHeatsView(state) {
   });
 
   return `
-    ${pageHeader}
-    ${UI.Grid({ className: "heat-grid", style: "margin-top: 18px;" }, heatsHtml)}
+    <style>
+      .topbar, .sidebar { display: none !important; }
+      .app-shell { display: block !important; }
+      .content { padding: 20px !important; margin: 0 !important; max-width: 100% !important; }
+      
+      @media print {
+        .heats-back-button { display: none !important; }
+        .heat-card, .heat-round-details {
+          border: 1px solid #4a5c70 !important;
+          box-shadow: none !important;
+        }
+        .heat-card table {
+          border: 1px solid #4a5c70 !important;
+        }
+        .heat-card tr {
+          border-bottom: 1px solid #4a5c70 !important;
+        }
+        .heat-card th, .heat-card td {
+          border-color: #4a5c70 !important;
+        }
+      }
+    </style>
+    <div class="heats-back-button" style="margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;">
+      <a href="javascript:history.back()" class="button outline">← Takaisin</a>
+      <button type="button" class="button primary" onclick="window.print()">🖨️ ${t(state, "common.print") || "Tulosta"}</button>
+    </div>
+    <div style="margin-top: 18px;">
+      ${heatsHtml}
+    </div>
   `;
 }
 
@@ -111,33 +138,32 @@ export function renderClassHeatSection(state, activeEvent, entries, className, c
   }
 
   return `
-    <div class="heat-section-title">
-      <h4>${escapeHtml(className)} ${t(state, "heats.heats_suffix")}</h4>
-    </div>
     ${phases.map((phase) => {
       const phaseHeats = classHeats.filter((heat) => getHeatPhase(heat) === phase);
       if (!phaseHeats.length) return "";
 
-      const rounds = [...new Set(phaseHeats.map(h => h.round))].sort((a, b) => a - b);
+      const isOpen = (phase === globalLatestPhase) ? "open" : "";
+      const label = escapeHtml(getPhaseLabel(phase, state));
+      const sectionEntries = entries.filter(e => e.className === className);
+      
+      const latestRoundInPhase = Math.max(...phaseHeats.map(h => h.round));
+      const latestRoundHeats = phaseHeats.filter(h => h.round === latestRoundInPhase);
 
-      return rounds.map(roundNum => {
-        const roundHeats = phaseHeats.filter(h => h.round === roundNum);
-        // Avataan vain jos kyseessä on koko kilpailun ehdoton viimeisin erä
-        const isOpen = (phase === globalLatestPhase && roundNum === globalLatestRound) ? "open" : "";
-        const label = phase === 'qualifying' ? `${escapeHtml(getPhaseLabel(phase, state))} ${roundNum}` : escapeHtml(getPhaseLabel(phase, state));
-
-        return `
-          <details class="heat-round-details" ${isOpen} style="margin-bottom: 15px; border: 1px solid var(--border); border-radius: 12px; overflow: hidden; background: var(--panel);">
-            <summary style="padding: 14px 20px; background: rgba(0, 0, 0, 0.2); cursor: pointer; display: flex; flex-wrap: wrap; gap: 10px; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border);">
-              <span style="font-weight: bold; color: var(--primary); font-size: 1.1rem; text-transform: uppercase; letter-spacing: 0.05em; word-break: break-word;">${label}</span>
-              <strong style="color: var(--muted); font-size: 0.9rem; white-space: nowrap;">${roundHeats.length} ${t(state, "heats.heat_count")}</strong>
-            </summary>
-            <div style="display: flex; flex-wrap: wrap; gap: 10px; padding: 15px;">
-            ${roundHeats.map(h => renderHeatCard(state, activeEvent, entries, h, admin, null, mode)).join("")}
+      return `
+        <details class="heat-round-details" ${isOpen} style="margin-bottom: 15px; border: 1px solid var(--border); border-radius: 12px; overflow: hidden; background: var(--panel);">
+          <summary style="padding: 14px 20px; background: rgba(0, 0, 0, 0.2); cursor: pointer; display: flex; flex-wrap: wrap; gap: 10px; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border);">
+            <div style="display: flex; align-items: baseline; flex-wrap: wrap; gap: 10px;">
+              ${activeEvent && activeEvent.name ? `<span style="font-weight: bold; color: var(--primary); font-size: 1.1rem; text-transform: uppercase; letter-spacing: 0.05em;">${escapeHtml(activeEvent.name)}</span>` : `<span style="font-weight: bold; color: var(--primary); font-size: 1.1rem; text-transform: uppercase; letter-spacing: 0.05em;">${label}</span>`}
+              ${activeEvent && activeEvent.location ? `<span style="color: var(--muted); font-size: 0.9rem;">${escapeHtml(activeEvent.location)}</span>` : ""}
+            </div>
+          </summary>
+          <div style="padding: 15px;">
+            <div class="heat-grid">
+              ${latestRoundHeats.map(h => renderHeatCard(state, activeEvent, entries, h, admin, null, mode)).join("")}
+            </div>
           </div>
-          </details>
-        `;
-      }).join("");
+        </details>
+      `;
     }).join("")}
   `;
 }
@@ -148,21 +174,37 @@ export function renderHeatCard(state, activeEvent, entries, heat, admin, highlig
   const header = `
     <div class="panel-header compact" style="margin-bottom: 10px;">
       <div style="min-width: 0;">
-        <p class="kicker" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${escapeHtml(getPhaseLabel(getHeatPhase(heat), state))} · ${t(state, "heats.round")} ${heat.round}</p>
+        <p class="kicker" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+          ${escapeHtml(getPhaseLabel(getHeatPhase(heat), state))} · ${t(state, "heats.round")} ${heat.round}
+        </p>
         <h3 style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${escapeHtml(formatHeatTitle(heat, state))}</h3>
       </div>
-      ${UI.Badge({ label: heat.status, variant: heat.status })}
     </div>
   `;
 
   const list = `
-    <ol class="pilot-list">
-      ${heat.entryIds.map((entryId) => renderHeatPilotRow(state, activeEvent, heat, entries.find((item) => item.id === entryId), conflicts.has(entryId), admin, highlightPilotId, mode)).join("")}
-    </ol>
+    <div style="overflow-x: auto; margin-top: -10px;">
+      <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.9rem; border: 1px solid var(--border);">
+        <thead>
+          <tr style="border-bottom: 1px solid var(--border); color: var(--muted); font-size: 0.8rem; text-transform: uppercase;">
+            <th style="padding: 8px 4px; width: 40px;">#</th>
+            <th style="padding: 8px 4px; width: 32px;"></th>
+            <th style="padding: 8px 4px; width: 120px;">${t(state, "heats.col_country_club")}</th>
+            <th style="padding: 8px 4px;">${t(state, "heats.col_pilot")}</th>
+            <th style="padding: 8px 4px;">${t(state, "heats.col_aircraft")}</th>
+            <th style="padding: 8px 4px; width: 80px;">${t(state, "heats.col_frequency")}</th>
+            <th style="padding: 8px 4px; text-align: right; width: 80px;"></th>
+          </tr>
+        </thead>
+        <tbody>
+          ${heat.entryIds.map((entryId) => renderHeatPilotRow(state, activeEvent, heat, entries.find((item) => item.id === entryId), conflicts.has(entryId), admin, highlightPilotId, mode)).join("")}
+        </tbody>
+      </table>
+    </div>
   `;
 
   return `
-    <article class="panel heat-card" style="flex: 1 1 300px; max-width: 100%; min-width: 0; padding: 14px; box-sizing: border-box; overflow: hidden; display: flex; flex-direction: column;">
+    <article class="panel heat-card" style="flex: 1 1 300px; max-width: 100%; min-width: 0; padding: 14px; box-sizing: border-box; overflow: hidden; display: flex; flex-direction: column; border: 1px solid var(--border); border-radius: 12px; background: var(--panel);">
       ${header}
       <div style="flex: 1;">${list}</div>
     </article>
@@ -171,7 +213,7 @@ export function renderHeatCard(state, activeEvent, entries, heat, admin, highlig
 
 function renderHeatPilotRow(state, activeEvent, heat, entry, hasConflict, admin, highlightPilotId = null, mode = "heats") {
   if (!entry) return "";
-  const raceNumber = entry.raceNumber ? `#${escapeHtml(entry.raceNumber)} · ` : "";
+  const raceNumber = entry.raceNumber ? `#${escapeHtml(entry.raceNumber)}` : "";
   const card = (state.scoreCards || []).find((c) => c.entryId === entry.id);
   const freq = card?.frequency || "2.4 GHz";
   const pilot = state.pilots.find(p => p.id === entry.pilotId);
@@ -180,8 +222,12 @@ function renderHeatPilotRow(state, activeEvent, heat, entry, hasConflict, admin,
     ? ` ${UI.Badge({ label: `${t(state, "heats.conflict")} ${freq}`, variant: "rejected", style: "padding: 2px 6px; font-size: 0.72rem; display: inline-flex; align-items: center; gap: 2px; min-height: auto;" })}`
     : "";
 
-  const avatarHtml = pilot && (pilot.avatarData || pilot.avatarUrl) ?
-    `<div style="width: 24px; height: 24px; border-radius: 50%; background-image: url('${escapeHtml(pilot.avatarData || pilot.avatarUrl)}'); background-size: cover; background-position: center; border: 1px solid var(--border); display: inline-block; vertical-align: middle; margin-right: 8px;"></div>` : "";
+  const avatarUrl = pilot && ((pilot.avatarData || "").trim() || (pilot.avatarUrl || "").trim());
+  const avatarHtml = avatarUrl ?
+    `<div style="width: 24px; height: 24px; border-radius: 50%; background-image: url('${escapeHtml(avatarUrl)}'); background-size: cover; background-position: center; border: 1px solid var(--border);"></div>` : "";
+
+  const countryHtml = pilot && pilot.country ? UI.CountryFlag(pilot.country) : "";
+  const clubHtml = pilot && pilot.club ? `<span style="font-size: 0.8rem; margin-left: 4px; color: var(--muted);">${escapeHtml(pilot.club)}</span>` : "";
 
   const isHighlighted = highlightPilotId && pilot && pilot.id === highlightPilotId;
   const pilotNameHtml = isHighlighted 
@@ -197,7 +243,7 @@ function renderHeatPilotRow(state, activeEvent, heat, entry, hasConflict, admin,
     if (roundData && roundHasData(roundData)) {
       const score = calculateScoreCardRound(roundData, activeEvent, card.templateId);
       scoreHtml = `
-        <div style="text-align: right; margin-left: 10px; min-width: 45px; flex-shrink: 0;">
+        <div style="text-align: right; min-width: 45px; flex-shrink: 0;">
           <strong style="color: var(--primary); font-size: 1.1rem;">${score.total} p</strong>
           ${roundData.cuts > 0 ? `<div class="muted" style="font-size: 0.8rem; white-space: nowrap;">${roundData.cuts} ${t(state, "heats.cuts_lower")}</div>` : ''}
         </div>
@@ -210,7 +256,7 @@ function renderHeatPilotRow(state, activeEvent, heat, entry, hasConflict, admin,
     if (result) {
       const totalScore = calculateResultScore(result, activeEvent.rules).total;
       scoreHtml = `
-        <div style="text-align: right; margin-left: 10px; min-width: 45px; flex-shrink: 0;">
+        <div style="text-align: right; min-width: 45px; flex-shrink: 0;">
           <strong style="color: var(--primary); font-size: 1.1rem;">${totalScore} p</strong>
           ${result.cuts > 0 ? `<div class="muted" style="font-size: 0.8rem; white-space: nowrap;">${result.cuts} ${t(state, "heats.cuts_lower")}</div>` : ''}
         </div>
@@ -219,30 +265,33 @@ function renderHeatPilotRow(state, activeEvent, heat, entry, hasConflict, admin,
   }
 
   return `
-    <li style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.05);">
-      <div style="display: flex; align-items: center; flex: 1 1 200px; min-width: 0;">
-        ${avatarHtml}
-        <div style="display: flex; flex-direction: column; min-width: 0; padding-right: 10px;">
-          <span style="font-weight: 600; font-size: 1.05rem; letter-spacing: -0.01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: flex; align-items: center; gap: 6px;">
-            <span class="muted" style="font-size: 0.9rem; font-weight: 500;">${raceNumber.replace(" · ", "")}</span>
-            ${pilotNameHtml} ${conflictBadge}
-          </span>
-          <span class="muted" style="font-size: 0.85rem; line-height: 1.3; margin-top: 2px; word-wrap: break-word;">${admin ? `${escapeHtml(entry.className)} · ${escapeHtml(getAircraftName(state, entry.aircraftId))} (${escapeHtml(freq)})` : `${escapeHtml(entry.className)} (${escapeHtml(freq)})`}</span>
+    <tr style="border-bottom: 1px solid var(--border);">
+      <td style="padding: 10px 4px; color: var(--muted); font-weight: 500;">${raceNumber.replace(" · ", "")}</td>
+      <td style="padding: 10px 4px; width: 32px; text-align: center;">${avatarHtml}</td>
+      <td style="padding: 10px 4px; width: 120px; text-align: left;">
+        <div style="display: flex; align-items: center;">
+          <span style="font-size: 1.2rem;">${countryHtml}</span>
+          ${clubHtml}
         </div>
-      </div>
-      <div style="display: flex; align-items: center; justify-content: flex-end; flex: 1 0 auto;">
+      </td>
+      <td style="padding: 10px 4px;">
+        <div style="display: flex; align-items: center; gap: 4px;">
+          <span>${pilotNameHtml} ${conflictBadge}</span>
+        </div>
+      </td>
+      <td style="padding: 10px 4px; color: var(--muted);">${escapeHtml(getAircraftName(state, entry.aircraftId)) || "-"}</td>
+      <td style="padding: 10px 4px; color: var(--muted);">${escapeHtml(freq)}</td>
+      <td style="padding: 10px 4px; text-align: right;">
         ${scoreHtml}
-        ${mode === 'scorecards' ? `
-          <div style="display: flex; flex-direction: column; align-items: flex-end; margin-left: 10px;">
-            <a class="button small ${scoreHtml ? '' : 'primary'}" href="#/scorecard/${escapeHtml(entry.id)}?back=entries">${scoreHtml ? t(state, "common.edit") : t(state, "scorecards_list.open_card")}</a>
-            ${UI.Badge({ 
-              label: scoreHtml ? t(state, "scorecard_editor.saved") : t(state, "scorecard_editor.not_saved"), 
-              variant: scoreHtml ? 'approved' : 'pending',
-              style: "margin-top: 6px; font-size: 0.7rem; padding: 2px 6px; min-height: auto; line-height: 1.2;"
-            })}
+        ${!scoreHtml && mode === 'scorecards' ? `
+          <a class="button small primary" href="#/scorecard/${escapeHtml(entry.id)}?back=entries">${t(state, "scorecards_list.open_card")}</a>
+        ` : ''}
+        ${mode === 'scorecards' && scoreHtml ? `
+          <div style="display: flex; flex-direction: column; align-items: flex-end; margin-top: 4px;">
+            <a class="button small" href="#/scorecard/${escapeHtml(entry.id)}?back=entries">${t(state, "common.edit")}</a>
           </div>
         ` : ''}
-      </div>
-    </li>
+      </td>
+    </tr>
   `;
 }
