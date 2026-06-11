@@ -406,7 +406,7 @@ export function initEntryActions() {
   registerAction("set-workspace-tab", (event, button, { renderApp }) => {
     updateState((state) => {
       state.settings = state.settings || {};
-      state.settings.workspaceActiveTab = button.dataset.tab;
+      state.settings.workspaceActiveTab = button.dataset.tab || button.value;
     }, "set_workspace_tab");
     if (button.dataset.redirect) {
       window.location.hash = button.dataset.redirect;

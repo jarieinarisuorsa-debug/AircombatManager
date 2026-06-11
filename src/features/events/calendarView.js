@@ -96,8 +96,8 @@ function renderBannerMeta(events, activeEvent, nextEvent, admin, state) {
 
 function renderEventForm(state) {
   const formContent = `
-    ${UI.Input({ label: t(state, "calendar.event_name"), name: "name", required: true, placeholder: "Jämi Aircombat 2026" })}
-    ${UI.Input({ label: t(state, "calendar.event_location"), name: "location", required: true, placeholder: "Jämi, Suomi" })}
+    ${UI.Input({ label: t(state, "calendar.event_name"), name: "name", required: true, placeholder: "Aircombat Event 2026" })}
+    ${UI.Input({ label: t(state, "calendar.event_location"), name: "location", required: true, placeholder: "City, Country" })}
     ${UI.Grid({ columns: "1fr 1fr", gap: "10px", className: "form-grid-two" }, `
       ${UI.Input({ label: t(state, "calendar.starts"), name: "date", type: "date", required: true })}
       ${UI.Input({ label: t(state, "calendar.ends"), name: "endDate", type: "date" })}
@@ -159,9 +159,9 @@ function renderEventCard(state, event, activeEventId, admin) {
   else if (event.status === "draft") statusText = t(state, "calendar.status_draft");
 
   const publicActions = `
-    <div style="display: flex; gap: 8px; align-items: center; width: 100%;">
-      ${UI.Button({ label: t(state, "calendar.event_info_arrow"), action: "open-event-info", eventId: event.id, variant: "small primary", style: "flex: 1; width: auto; justify-content: center; padding-left: 4px; padding-right: 4px;" })}
-      ${event.status === "results_published" ? "" : `<a class="button small success" style="flex: 1; width: auto; justify-content: center; text-align: center; padding-left: 4px; padding-right: 4px;" href="#/mypilotcard">${t(state, "calendar.register")}</a>`}
+    <div style="display: flex; gap: 8px; width: 100%;" class="public-actions-row">
+      ${UI.Button({ label: t(state, "calendar.event_info_arrow"), action: "open-event-info", eventId: event.id, variant: "primary", style: "flex: 1; justify-content: center;" })}
+      ${event.status === "results_published" ? "" : `<a class="button success" style="flex: 1; justify-content: center; text-align: center;" href="#/mypilotcard">${t(state, "calendar.register")}</a>`}
     </div>
   `;
 

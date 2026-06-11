@@ -29,8 +29,8 @@ export const DEFAULT_STATE = {
   auth: { user: null },
   activeEventId: null,
   settings: {
+    language: "en",
     organizerName: "",
-    publicDisplayMode: false,
     currentRole: "admin",
     theme: "dark",
     pilotViewMode: "grid",

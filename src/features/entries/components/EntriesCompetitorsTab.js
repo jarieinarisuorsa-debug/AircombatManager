@@ -77,7 +77,7 @@ export function renderWorkspaceCompetitorsTab(state, activeEvent, className, eve
     
     ${classRows.length > 0 ? `
       <div class="ui-form-actions">
-        ${UI.Button({ type: "button", action: "auto-number-inputs", label: "Numeroi aakkosjärjestyksessä", variant: "primary", saveLabel: t(state, "event_workspace.save_racenumbers") })}
+        ${UI.Button({ type: "button", action: "auto-number-inputs", label: t(state, "event_workspace.auto_number_alphabetical"), variant: "primary", saveLabel: t(state, "event_workspace.save_racenumbers") })}
       </div>
     ` : ''}
   `;

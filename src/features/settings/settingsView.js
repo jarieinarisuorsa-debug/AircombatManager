@@ -9,13 +9,24 @@ export function renderSettingsView(state) {
 
   const headerSubtitle = `<p class="muted" style="margin-bottom: 20px;">${t(state, "settings.subtitle")}</p>`;
   const tabNav = `
-    <nav class="sub-nav no-print" style="margin-bottom: 20px; display: flex; flex-wrap: wrap; gap: 8px;">
-      <button type="button" class="button ${tab === 'jarjestaja' ? 'primary' : 'dashed'}" data-action="set-settings-tab" data-tab="jarjestaja">${t(state, "settings.tab_organizer")}</button>
-      <button type="button" class="button ${tab === 'oikeudet' ? 'primary' : 'dashed'}" data-action="set-settings-tab" data-tab="oikeudet">${t(state, "settings.tab_permissions")}</button>
-      <button type="button" class="button ${tab === 'ulkoasu' ? 'primary' : 'dashed'}" data-action="set-settings-tab" data-tab="ulkoasu">${t(state, "settings.tab_branding")}</button>
-      <button type="button" class="button ${tab === 'ilmoitukset' ? 'primary' : 'dashed'}" data-action="set-settings-tab" data-tab="ilmoitukset">${t(state, "settings.tab_notifications")}</button>
-      <button type="button" class="button ${tab === 'varmuuskopiot' ? 'primary' : 'dashed'}" data-action="set-settings-tab" data-tab="varmuuskopiot">${t(state, "settings.tab_backups")}</button>
-    </nav>
+    <div class="ui-tabs-container">
+      <nav class="sub-nav no-print desktop-only" style="margin-bottom: 20px; display: flex; flex-wrap: wrap; gap: 8px;">
+        <button type="button" class="button ${tab === 'jarjestaja' ? 'primary' : 'dashed'}" data-action="set-settings-tab" data-tab="jarjestaja">${t(state, "settings.tab_organizer")}</button>
+        <button type="button" class="button ${tab === 'oikeudet' ? 'primary' : 'dashed'}" data-action="set-settings-tab" data-tab="oikeudet">${t(state, "settings.tab_permissions")}</button>
+        <button type="button" class="button ${tab === 'ulkoasu' ? 'primary' : 'dashed'}" data-action="set-settings-tab" data-tab="ulkoasu">${t(state, "settings.tab_branding")}</button>
+        <button type="button" class="button ${tab === 'ilmoitukset' ? 'primary' : 'dashed'}" data-action="set-settings-tab" data-tab="ilmoitukset">${t(state, "settings.tab_notifications")}</button>
+        <button type="button" class="button ${tab === 'varmuuskopiot' ? 'primary' : 'dashed'}" data-action="set-settings-tab" data-tab="varmuuskopiot">${t(state, "settings.tab_backups")}</button>
+      </nav>
+      <div class="ui-tabs-mobile mobile-only no-print" style="margin-bottom: 20px;">
+        <select class="tab-select" data-action="set-settings-tab">
+          <option value="jarjestaja" ${tab === 'jarjestaja' ? 'selected' : ''}>${t(state, "settings.tab_organizer")}</option>
+          <option value="oikeudet" ${tab === 'oikeudet' ? 'selected' : ''}>${t(state, "settings.tab_permissions")}</option>
+          <option value="ulkoasu" ${tab === 'ulkoasu' ? 'selected' : ''}>${t(state, "settings.tab_branding")}</option>
+          <option value="ilmoitukset" ${tab === 'ilmoitukset' ? 'selected' : ''}>${t(state, "settings.tab_notifications")}</option>
+          <option value="varmuuskopiot" ${tab === 'varmuuskopiot' ? 'selected' : ''}>${t(state, "settings.tab_backups")}</option>
+        </select>
+      </div>
+    </div>
   `;
 
   let content = "";
@@ -24,7 +35,6 @@ export function renderSettingsView(state) {
     const formContent = `
       ${UI.Input({ label: t(state, "settings.organizer_name"), name: "organizerName", value: state.settings.organizerName || "", placeholder: t(state, "settings.organizer_name_placeholder") })}
       <label class="check-row" style="margin-bottom: 20px;"><input type="checkbox" name="competitionMode" ${state.settings.competitionMode ? "checked" : ""} /> ${t(state, "settings.competition_mode")}</label>
-      <label class="check-row" style="margin-bottom: 20px;"><input type="checkbox" name="publicDisplayMode" ${state.settings.publicDisplayMode ? "checked" : ""} /> ${t(state, "settings.public_display_mode")}</label>
       ${UI.Button({ label: t(state, "settings.save_settings"), type: "submit", variant: "primary" })}
     `;
     content = UI.FormPanel({ kicker: t(state, "settings.settings_kicker"), title: t(state, "settings.tab_organizer"), action: "save-settings" }, formContent);
@@ -68,8 +78,8 @@ export function renderSettingsView(state) {
     `).join("");
 
     const tableHtml = permissions.length > 0 ? `
-      <div style="max-height: 400px; overflow-y: auto; border: 1px solid var(--border); border-radius: 8px; margin-bottom: 20px;">
-        <table style="width: 100%; border-collapse: collapse; margin: 0;">
+      <div style="max-height: 400px; overflow: auto; border: 1px solid var(--border); border-radius: 8px; margin-bottom: 20px;">
+        <table style="width: 100%; border-collapse: collapse; margin: 0; min-width: 500px;">
           <thead style="position: sticky; top: 0; z-index: 10;">
             <tr style="border-bottom: 2px solid var(--border); text-align: left;">
               <th style="padding: 10px; background: var(--bg);">${t(state, "settings.email")}</th>
@@ -88,10 +98,10 @@ export function renderSettingsView(state) {
       <form class="stack" style="background: var(--surface); padding: 15px; border-radius: 8px; border: 1px solid var(--border); margin-bottom: 25px;" data-action="add-permission">
         <h4 style="margin: 0 0 10px 0;">${t(state, "settings.add_new_user")}</h4>
         <div style="display: flex; gap: 10px; align-items: flex-end; flex-wrap: wrap;">
-          <div style="flex: 1; min-width: 200px;">
+          <div style="flex: 1; min-width: 250px;">
             ${UI.Input({ label: t(state, "settings.email"), name: "email", type: "email", required: true, placeholder: t(state, "settings.email_placeholder") })}
           </div>
-          <div style="width: 200px;">
+          <div style="flex: 1; min-width: 200px;">
             <label class="ui-label">${t(state, "settings.role")}</label>
             <select name="role" class="ui-input" required>
               <option value="admin">${t(state, "settings.role_admin")}</option>
@@ -159,8 +169,9 @@ export function renderSettingsView(state) {
     `).join("");
 
     const tableHtml = receivers.length > 0 ? `
-      <table style="width: 100%; border-collapse: collapse; margin-bottom: 25px;">
-        <thead>
+      <div style="overflow-x: auto; margin-bottom: 25px; border: 1px solid var(--border); border-radius: 8px;">
+        <table style="width: 100%; border-collapse: collapse; min-width: 600px;">
+          <thead>
           <tr style="border-bottom: 2px solid var(--border); text-align: left;">
             <th style="padding: 10px;">${t(state, "settings.name")}</th>
             <th style="padding: 10px;">${t(state, "settings.phone")}</th>
@@ -168,10 +179,9 @@ export function renderSettingsView(state) {
             <th style="padding: 10px;"></th>
           </tr>
         </thead>
-        <tbody>
-          ${receiverRows}
-        </tbody>
-      </table>
+          </tbody>
+        </table>
+      </div>
     ` : `<p class="muted" style="margin-bottom: 25px;">${t(state, "settings.no_receivers")}</p>`;
 
     const formContent = `
@@ -190,13 +200,13 @@ export function renderSettingsView(state) {
       <form class="stack" style="background: var(--surface); padding: 15px; border-radius: 8px; border: 1px solid var(--border);" data-action="add-whatsapp-receiver">
         <h4 style="margin: 0 0 10px 0;">${t(state, "settings.add_receiver")}</h4>
         <div style="display: flex; gap: 10px; align-items: flex-start; flex-wrap: wrap;">
-          <div style="flex: 1; min-width: 150px;">
-            ${UI.Input({ label: t(state, "settings.person_name"), name: "name", required: true, placeholder: "esim. Matti" })}
+          <div style="flex: 1; min-width: 250px;">
+            ${UI.Input({ label: t(state, "settings.person_name"), name: "name", required: true, placeholder: t(state, "settings.person_name_placeholder") })}
           </div>
-          <div style="flex: 1; min-width: 150px;">
+          <div style="flex: 1; min-width: 250px;">
             ${UI.Input({ label: t(state, "settings.whatsapp_number"), name: "phone", required: true, placeholder: "+358401234567" })}
           </div>
-          <div style="flex: 1; min-width: 150px;">
+          <div style="flex: 1; min-width: 250px;">
             ${UI.Input({ label: t(state, "settings.api_key"), name: "apikey", required: true, placeholder: "1234567" })}
           </div>
         </div>

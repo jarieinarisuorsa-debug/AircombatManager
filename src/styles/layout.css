@@ -387,6 +387,10 @@
     background: var(--accent);
     color: #fff;
   }
+  .nav a.active .nav-icon {
+    color: #fff;
+    filter: none;
+  }
 }
 
 /* ----------------------------------

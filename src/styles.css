@@ -474,51 +474,7 @@ th {
     grid-template-columns: 1fr;
   }
 
-  /* Responsive Tables as Cards for Mobile */
-  .ui-table-container table {
-    min-width: 0 !important;
-  }
-  .ui-table-container thead {
-    display: none;
-  }
-  .ui-table-container tr {
-    display: flex;
-    flex-direction: column;
-    margin-bottom: 16px;
-    border: 1px solid var(--border) !important;
-    border-radius: 16px;
-    background: rgba(255, 255, 255, 0.02);
-    padding: 12px;
-  }
-  .ui-table-container td {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: flex-start;
-    padding: 8px 4px !important;
-    border-bottom: 1px solid rgba(130, 180, 255, 0.05) !important;
-    width: 100%;
-    white-space: normal;
-  }
-  .ui-table-container td:last-child {
-    border-bottom: none !important;
-    padding-bottom: 0 !important;
-    flex-direction: column;
-    align-items: stretch;
-    gap: 8px;
-    margin-top: 8px;
-  }
-  .ui-table-container td:last-child > div {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    gap: 8px;
-  }
-  .ui-table-container td:last-child .button {
-    width: 100%;
-    justify-content: center;
-    margin: 0;
-  }
+
 
   .print-option-row {
     flex-direction: column;
@@ -762,6 +718,39 @@ th {
 .blur-sensitive:focus-within {
   filter: none;
   user-select: auto;
+}
+
+/* Responsive Select Dropdowns */
+.tab-select {
+  width: 100%;
+  padding: 14px 18px;
+  font-size: 1.05rem;
+  font-weight: 600;
+  border-radius: 12px;
+  border: 1px solid rgba(130, 180, 255, 0.4);
+  background: var(--surface);
+  color: var(--text);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%2382b4ff%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpolyline%20points%3D%226%209%2012%2015%2018%209%22%3E%3C%2Fpolyline%3E%3C%2Fsvg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  background-size: 20px auto;
+  transition: all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.tab-select:hover {
+  border-color: rgba(130, 180, 255, 0.7);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2), 0 0 12px rgba(88, 183, 255, 0.15);
+  transform: translateY(-1px);
+}
+
+.tab-select:focus,
+.tab-select:active {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(88, 183, 255, 0.25);
 }
 
 /* Landing Mode overrides */

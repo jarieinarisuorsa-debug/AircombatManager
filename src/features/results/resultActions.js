@@ -150,7 +150,7 @@ export function initResultActions() {
   });
 
   registerAction("set-results-tab", (event, button, { renderApp }) => {
-    window.RESULTS_TAB = button.dataset.tab;
+    window.RESULTS_TAB = button.dataset.tab || button.value;
     renderApp();
     return true;
   });

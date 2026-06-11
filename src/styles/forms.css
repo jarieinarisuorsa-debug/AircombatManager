@@ -47,9 +47,16 @@ select {
   cursor: pointer;
 }
 
-select option {
+select option,
+select optgroup {
   background: var(--bg);
   color: var(--text);
+}
+
+select optgroup {
+  color: var(--muted);
+  font-weight: 700;
+  font-style: normal;
 }
 
 textarea {

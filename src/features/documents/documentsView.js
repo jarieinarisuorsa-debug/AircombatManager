@@ -83,7 +83,7 @@ export function renderDocumentsView(state) {
     </p>
   ` : `
     <p class="muted no-print" style="margin-top: 0; margin-bottom: 20px;">
-      Kilpailun asiakirjat. Valitse kilpailu kisakalenterista nähdäksesi kilpailukohtaiset listaukset.
+      ${t(state, "documents.intro_empty")}
     </p>
   `;
 
@@ -182,8 +182,8 @@ function renderScoreCardPrintOptions(state, activeEvent) {
 
       ${activeEvent ? `
       <div style="margin-top: 10px; padding-top: 15px; border-top: 1px solid var(--border);">
-        <p class="muted" style="margin: 0 0 10px 0; font-size: 0.9rem;">Voit myös tulostaa kaikki ohjelmaan luodut sähköiset tuloskortit yhdellä kertaa, valmiiksi esitäytettyinä!</p>
-        <button type="button" class="button primary" data-action="print-all-filled-scorecards" style="width: 100%; justify-content: center;">Tulosta esitäytetyt kortit (Kaikki luokat)</button>
+        <p class="muted" style="margin: 0 0 10px 0; font-size: 0.9rem;">${t(state, "documents.print_all_desc")}</p>
+        <button type="button" class="button primary" data-action="print-all-filled-scorecards" style="width: 100%; justify-content: center;">${t(state, "documents.print_all_btn")}</button>
       </div>
       ` : ''}
     </div>

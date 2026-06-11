@@ -9,7 +9,7 @@ export const translations = {
 export function t(state, key) {
   let lang = state?.settings?.language;
   if (!lang) {
-    lang = localStorage.getItem("app_language") || "fi";
+    lang = localStorage.getItem("app_language") || "en";
   }
   return translations[lang]?.[key] || key;
 }
@@ -17,7 +17,7 @@ export function t(state, key) {
 export function getCurrentLanguage(state) {
   let lang = state?.settings?.language;
   if (!lang) {
-    lang = localStorage.getItem("app_language") || "fi";
+    lang = localStorage.getItem("app_language") || "en";
   }
   return lang;
 }

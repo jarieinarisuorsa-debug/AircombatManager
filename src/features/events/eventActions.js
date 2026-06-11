@@ -465,13 +465,31 @@ export function initEventActions() {
     return true;
   });
 
-  registerAction("open-event-workspace-tab", (event, button, { renderApp }) => {
-    requireAdmin(getState());
-    setActiveEvent(button.dataset.eventId);
+  registerAction("set-workspace-tab", (event, button, { renderApp }) => {
+    const tabValue = button.dataset.tab || button.value;
+    if (tabValue === "toggle_combat_mode") {
+      updateState((state) => {
+        state.settings = state.settings || {};
+        state.settings.competitionMode = !state.settings.competitionMode;
+      }, "toggle_combat_mode");
+      renderApp();
+      return true;
+    }
+
+    if (tabValue.startsWith("class_")) {
+      const className = tabValue.replace("class_", "");
+      updateState((state) => {
+        state.settings = state.settings || {};
+        state.settings.workspaceActiveClassName = className;
+      }, "switch_workspace_class");
+      renderApp();
+      return true;
+    }
+
     updateState((state) => {
       state.settings = state.settings || {};
-      state.settings.workspaceActiveTab = button.dataset.tab;
-    }, "set_workspace_tab_from_calendar");
+      state.settings.workspaceActiveTab = tabValue;
+    }, "set_workspace_tab");
     location.hash = "#/entries";
     renderApp();
     return true;
@@ -593,7 +611,7 @@ export function initEventActions() {
   });
 
   registerAction("set-event-info-tab", (event, button, { renderApp }) => {
-    window.EVENT_INFO_TAB = button.dataset.tab;
+    window.EVENT_INFO_TAB = button.dataset.tab || button.value;
     updateState(state => {
       state.settings = state.settings || {};
       state.settings.eventInfoEditMode = null;

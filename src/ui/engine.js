@@ -143,7 +143,7 @@ export const UI = {
   TableContainer: ({ content = "", style = "" } = {}) => {
     const attrs = renderAttrs({
       class: "ui-table-container pilot-table-container",
-      style
+      style: `width: 100%; max-width: 100%; overflow-x: hidden; ${style}`
     });
     return `
       <div ${attrs}>
@@ -170,12 +170,15 @@ export const UI = {
     `;
   },
 
-  TableRow: ({ cells = [], className = "pilot-table-row", dataAttrs = {}, style = "border-bottom: 1px solid var(--border);" }) => {
+  TableRow: ({ cells = [], headers = [], className = "pilot-table-row", dataAttrs = {}, style = "border-bottom: 1px solid var(--border);" }) => {
     const dataObj = Object.fromEntries(
       Object.entries(dataAttrs).map(([k, v]) => [`data-${k.replace(/[A-Z]/g, m => "-" + m.toLowerCase())}`, v])
     );
     const attrs = renderAttrs({ class: className, style, ...dataObj });
-    const tds = cells.map(c => `<td style="padding: 10px 8px;">${c}</td>`).join("");
+    const tds = cells.map((c, i) => {
+      const labelAttr = headers[i] ? ` data-label="${escapeHtml(headers[i])}"` : "";
+      return `<td style="padding: 10px 8px;"${labelAttr}>${c}</td>`;
+    }).join("");
     return `<tr ${attrs}>${tds}</tr>`;
   },
 

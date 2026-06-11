@@ -612,12 +612,13 @@ export const en = {
     "event_workspace.hide_results": "Hide publication",
     "event_workspace.status_published": "Status: Published (visible to all)",
     "event_workspace.status_draft": "Status: Draft (not public)",
-    "event_workspace.step6": "Phase 6",
+    "event_workspace.step6": "PHASE 6",
     "event_workspace.results_title": "{class}: Results and standings",
-
-    "event_workspace.table_racenumber": "Race number",
+    "event_workspace.results_desc": "Review and publish final results for this class.",
+    "event_workspace.no_results_title": "Results not calculated",
     "event_workspace.no_competitors": "No participants in this class.",
     "event_workspace.save_racenumbers": "Save race numbers",
+    "event_workspace.auto_number_alphabetical": "Number alphabetically",
     "event_workspace.step35": "Phase 3.5",
     "event_workspace.competitors_title": "{class}: Competitors",
 
@@ -638,6 +639,7 @@ export const en = {
 
     // Pilot Card
     "pilot.not_found_title": "Pilot not found",
+    "pilot.save_first": "Save new pilot first",
     "pilot.not_found_msg": "This pilot does not exist or has been deleted.",
     "pilot.back_to_list": "Back to pilot list",
     "pilot.back_to_event": "⬅ Back to event",
@@ -714,7 +716,7 @@ export const en = {
     "calendar.set_active": "Set Active",
     "calendar.build_event": "Build Event ➡",
     "calendar.event_info": "Event Info",
-    "calendar.event_info_arrow": "Open Event Info ➡",
+    "calendar.event_info_arrow": "Open Event Info",
     "calendar.results": "Results",
     "calendar.delete_event": "Delete Event",
     "calendar.status_ended": "Ended (Results)",
@@ -826,6 +828,7 @@ export const en = {
     "event_workspace.tab_results": "Results",
     "event_workspace.tab_combat_mode_on": "Activate Combat Mode",
     "event_workspace.tab_combat_mode_off": "Deactivate Combat Mode",
+    "event_workspace.tab_group_mode": "Mode",
     "event_workspace.kicker_build": "Build Event",
     "event_workspace.no_active_event": "No active event",
     "event_workspace.open_from_calendar": "Open an event from the calendar.",
@@ -969,7 +972,7 @@ export const en = {
     "settings.tab_debug": "Development / Debug",
     "settings.organizer_name": "Organizer Name",
     "settings.organizer_name_placeholder": "Club / Organizer",
-    "settings.public_display_mode": "Public Display Mode (removes editing buttons)",
+
     "settings.competition_mode": "Activate Competition Mode (syncs every 30s instead of 30min)",
     "settings.save_settings": "Save Settings",
     "settings.settings_kicker": "Settings",
@@ -1006,6 +1009,7 @@ export const en = {
     "settings.whatsapp_step4": "Enter your key and phone number below.",
     "settings.add_receiver": "Add new receiver",
     "settings.person_name": "Person Name",
+    "settings.person_name_placeholder": "e.g. John",
     "settings.whatsapp_number": "WhatsApp Number",
     "settings.add_to_list": "Add to list",
     "settings.automation_kicker": "Automation",
@@ -1036,6 +1040,9 @@ export const en = {
     "messages.toggle_theme": "Toggle light/dark mode (Sun Mode)",
 
     // Documents
+    "documents.intro_empty": "Competition documents. Select a competition from the calendar to view event-specific listings.",
+    "documents.print_all_desc": "You can also print all electronic scorecards created in the system at once, pre-filled!",
+    "documents.print_all_btn": "Print pre-filled scorecards (All classes)",
     "documents.no_active_event": "No active event",
     "documents.no_active_event_desc": "Open a competition from the calendar to print documents.",
     "documents.print_intro": "Print paper documents for the competition:",

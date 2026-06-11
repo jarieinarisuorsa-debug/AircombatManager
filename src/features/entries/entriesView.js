@@ -37,19 +37,43 @@ export function renderEntriesView(state) {
 
   const isCombatMode = state.settings?.competitionMode;
   const tabNav = `
-    <nav class="sub-nav no-print" style="margin-bottom: 20px; display: flex; flex-wrap: wrap; gap: 8px; align-items: center;">
-      <button type="button" class="button ${tab === 'ilmoittautumiset' ? 'primary' : 'dashed'}" data-action="set-workspace-tab" data-tab="ilmoittautumiset">${t(state, "event_workspace.tab_registrations")}</button>
-      <button type="button" class="button ${tab === 'luokka' ? 'primary' : 'dashed'}" data-action="set-workspace-tab" data-tab="luokka">${t(state, "event_workspace.tab_class")}</button>
-      <button type="button" class="button ${tab === 'rakenne' ? 'primary' : 'dashed'}" data-action="set-workspace-tab" data-tab="rakenne">${t(state, "event_workspace.tab_format")}</button>
-      <button type="button" class="button ${tab === 'osallistujat' ? 'primary' : 'dashed'}" data-action="set-workspace-tab" data-tab="osallistujat">${t(state, "event_workspace.tab_all_pilots")}</button>
-      <button type="button" class="button ${tab === 'kilpailijat' ? 'primary' : 'dashed'}" data-action="set-workspace-tab" data-tab="kilpailijat">${t(state, "event_workspace.tab_competitors")}</button>
-      <button type="button" class="button ${isCombatMode ? 'danger' : 'primary'}" data-action="toggle-combat-mode" style="box-shadow: 0 0 10px ${isCombatMode ? 'rgba(255,50,50,0.5)' : 'rgba(88, 183, 255, 0.5)'}; font-weight: bold;">
-        ${isCombatMode ? t(state, "event_workspace.tab_combat_mode_off") : t(state, "event_workspace.tab_combat_mode_on")}
-      </button>
-      <button type="button" class="button ${tab === 'heatit' ? 'primary' : 'dashed'}" data-action="set-workspace-tab" data-tab="heatit">${t(state, "event_workspace.tab_heats")}</button>
-      <button type="button" class="button ${tab === 'tuloskortit' ? 'primary' : 'dashed'}" data-action="set-workspace-tab" data-tab="tuloskortit">${t(state, "event_workspace.tab_scorecards")}</button>
-      <button type="button" class="button ${tab === 'tulokset' ? 'primary' : 'dashed'}" data-action="set-workspace-tab" data-tab="tulokset">${t(state, "event_workspace.tab_results")}</button>
-    </nav>
+    <div class="ui-tabs-container">
+      <nav class="sub-nav no-print desktop-only" style="margin-bottom: 20px; display: flex; flex-wrap: wrap; gap: 8px; align-items: center;">
+        <button type="button" class="button ${tab === 'ilmoittautumiset' ? 'primary' : 'dashed'}" data-action="set-workspace-tab" data-tab="ilmoittautumiset">${t(state, "event_workspace.tab_registrations")}</button>
+        <button type="button" class="button ${tab === 'luokka' ? 'primary' : 'dashed'}" data-action="set-workspace-tab" data-tab="luokka">${t(state, "event_workspace.tab_class")}</button>
+        <button type="button" class="button ${tab === 'rakenne' ? 'primary' : 'dashed'}" data-action="set-workspace-tab" data-tab="rakenne">${t(state, "event_workspace.tab_format")}</button>
+        <button type="button" class="button ${tab === 'osallistujat' ? 'primary' : 'dashed'}" data-action="set-workspace-tab" data-tab="osallistujat">${t(state, "event_workspace.tab_all_pilots")}</button>
+        <button type="button" class="button ${tab === 'kilpailijat' ? 'primary' : 'dashed'}" data-action="set-workspace-tab" data-tab="kilpailijat">${t(state, "event_workspace.tab_competitors")}</button>
+        <button type="button" class="button ${isCombatMode ? 'danger' : 'primary'}" data-action="toggle-combat-mode" style="box-shadow: 0 0 10px ${isCombatMode ? 'rgba(255,50,50,0.5)' : 'rgba(88, 183, 255, 0.5)'}; font-weight: bold;">
+          ${isCombatMode ? t(state, "event_workspace.tab_combat_mode_off") : t(state, "event_workspace.tab_combat_mode_on")}
+        </button>
+        <button type="button" class="button ${tab === 'heatit' ? 'primary' : 'dashed'}" data-action="set-workspace-tab" data-tab="heatit">${t(state, "event_workspace.tab_heats")}</button>
+        <button type="button" class="button ${tab === 'tuloskortit' ? 'primary' : 'dashed'}" data-action="set-workspace-tab" data-tab="tuloskortit">${t(state, "event_workspace.tab_scorecards")}</button>
+        <button type="button" class="button ${tab === 'tulokset' ? 'primary' : 'dashed'}" data-action="set-workspace-tab" data-tab="tulokset">${t(state, "event_workspace.tab_results")}</button>
+      </nav>
+      <div class="ui-tabs-mobile mobile-only no-print" style="margin-bottom: 20px;">
+        <select class="tab-select" data-action="set-workspace-tab" style="width: 100%;">
+          <optgroup label="${t(state, "event_workspace.tab_registrations")}">
+            <option value="ilmoittautumiset" ${tab === 'ilmoittautumiset' ? 'selected' : ''}>${t(state, "event_workspace.tab_registrations")}</option>
+            <option value="luokka" ${tab === 'luokka' ? 'selected' : ''}>${t(state, "event_workspace.tab_class")}</option>
+            <option value="rakenne" ${tab === 'rakenne' ? 'selected' : ''}>${t(state, "event_workspace.tab_format")}</option>
+            <option value="osallistujat" ${tab === 'osallistujat' ? 'selected' : ''}>${t(state, "event_workspace.tab_all_pilots")}</option>
+            <option value="kilpailijat" ${tab === 'kilpailijat' ? 'selected' : ''}>${t(state, "event_workspace.tab_competitors")}</option>
+          </optgroup>
+          <optgroup label="${t(state, "event_workspace.tab_heats")}">
+            <option value="heatit" ${tab === 'heatit' ? 'selected' : ''}>${t(state, "event_workspace.tab_heats")}</option>
+            <option value="tuloskortit" ${tab === 'tuloskortit' ? 'selected' : ''}>${t(state, "event_workspace.tab_scorecards")}</option>
+            <option value="tulokset" ${tab === 'tulokset' ? 'selected' : ''}>${t(state, "event_workspace.tab_results")}</option>
+          </optgroup>
+          <optgroup label="${t(state, "event_workspace.tab_class")}">
+            ${classNames.map(c => `<option value="class_${escapeHtml(c)}">${escapeHtml(c)}</option>`).join("")}
+          </optgroup>
+          <optgroup label="${t(state, "event_workspace.tab_group_mode") || 'Tila/Mode'}">
+            <option value="toggle_combat_mode">${isCombatMode ? '🛑 ' + t(state, "event_workspace.tab_combat_mode_off") : '⚔️ ' + t(state, "event_workspace.tab_combat_mode_on")}</option>
+          </optgroup>
+        </select>
+      </div>
+    </div>
   `;
 
   let content = "";

@@ -204,7 +204,6 @@ export async function syncCloudFromState(oldState, newState) {
     // Only pick settings that we want to be global and synced
     const globalSettings = {
       organizerName: newState.settings.organizerName,
-      publicDisplayMode: newState.settings.publicDisplayMode,
       organizationLogoData: newState.settings.organizationLogoData,
       whatsappReceivers: newState.settings.whatsappReceivers,
       systemUpdates: newState.settings.systemUpdates

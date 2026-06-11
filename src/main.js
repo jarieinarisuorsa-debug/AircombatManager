@@ -352,7 +352,6 @@ async function initApp() {
                 settings: {
                   systemUpdates: oldState.settings?.systemUpdates,
                   organizerName: oldState.settings?.organizerName,
-                  publicDisplayMode: oldState.settings?.publicDisplayMode,
                   competitionMode: oldState.settings?.competitionMode
                 }
               });
@@ -368,7 +367,6 @@ async function initApp() {
                 settings: {
                   systemUpdates: cloudData.settings?.systemUpdates,
                   organizerName: cloudData.settings?.organizerName,
-                  publicDisplayMode: cloudData.settings?.publicDisplayMode,
                   competitionMode: cloudData.settings?.competitionMode
                 }
               });
@@ -387,7 +385,6 @@ async function initApp() {
                     s.settings = s.settings || {};
                     if (cloudData.settings.systemUpdates) s.settings.systemUpdates = cloudData.settings.systemUpdates;
                     if (cloudData.settings.organizerName) s.settings.organizerName = cloudData.settings.organizerName;
-                    if (cloudData.settings.publicDisplayMode !== undefined) s.settings.publicDisplayMode = cloudData.settings.publicDisplayMode;
                     if (cloudData.settings.competitionMode !== undefined) s.settings.competitionMode = cloudData.settings.competitionMode;
                     if (cloudData.settings.organizationLogoData) s.settings.organizationLogoData = cloudData.settings.organizationLogoData;
                     if (cloudData.settings.whatsappReceivers) s.settings.whatsappReceivers = cloudData.settings.whatsappReceivers;

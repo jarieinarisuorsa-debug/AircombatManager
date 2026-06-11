@@ -73,6 +73,15 @@ export function initPilotActions() {
     return true;
   });
 
+  registerAction("cancel-pilot-edit", (event, button, { renderApp }) => {
+    if (button.dataset.pilotId === "new") {
+      location.hash = "#/pilots";
+    } else {
+      renderApp();
+    }
+    return true;
+  });
+
   registerAction("toggle-add-pilot-form", () => {
     const container = document.getElementById("add-pilot-form-container");
     if (!container) return true;
@@ -102,13 +111,13 @@ export function initPilotActions() {
   });
 
   registerAction("set-pilot-card-tab", (event, button, { renderApp }) => {
-    window.PILOT_CARD_TAB = button.dataset.tab;
+    window.PILOT_CARD_TAB = button.dataset.tab || button.value;
     renderApp();
     return true;
   });
 
   registerAction("set-my-pilot-tab", (event, button, { renderApp }) => {
-    window.MY_PILOT_CARD_TAB = button.dataset.tab;
+    window.MY_PILOT_CARD_TAB = button.dataset.tab || button.value;
     renderApp();
     return true;
   });
@@ -131,9 +140,9 @@ export function initPilotActions() {
       const newPilotId = createId("pilot");
       state.pilots.push({
         id: newPilotId,
-        name: "Uusi Pilotti",
+        name: "New Pilot",
         email: email,
-        country: "FI",
+        country: "",
         club: "",
         license: "",
         phone: ""
@@ -146,7 +155,7 @@ export function initPilotActions() {
   });
 
   registerAction("set-logbook-tab", (event, button, { renderApp }) => {
-    window.LOGBOOK_TAB = button.dataset.tab;
+    window.LOGBOOK_TAB = button.dataset.tab || button.value;
     renderApp();
     return true;
   });

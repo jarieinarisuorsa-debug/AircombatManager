@@ -587,17 +587,20 @@ export const fi = {
     "event_workspace.scorecards_title": "{class}: Tuloskortit",
 
     "event_workspace.no_results_title": "Ei tuloksia",
+    "event_workspace.no_results_title": "Tuloksia ei ole laskettu",
     "event_workspace.no_results_msg": "Ei tallennettuja tuloksia tässä luokassa.",
     "event_workspace.publish_results": "Julkaise kilpailutulokset",
     "event_workspace.hide_results": "Piilota julkaisu",
     "event_workspace.status_published": "Tila: Julkaistu (näkyy kaikille)",
     "event_workspace.status_draft": "Tila: Luonnos (ei julkinen)",
-    "event_workspace.step6": "Vaihe 6",
+    "event_workspace.step6": "VAIHE 6",
     "event_workspace.results_title": "{class}: Tulokset ja sijoitukset",
+    "event_workspace.results_desc": "Tarkista ja julkaise luokan lopputulokset.",
 
     "event_workspace.table_racenumber": "Kilpailunumero",
     "event_workspace.no_competitors": "Ei ilmoittautuneita tässä luokassa.",
     "event_workspace.save_racenumbers": "Tallenna kilpailunumerot",
+    "event_workspace.auto_number_alphabetical": "Numeroi aakkosjärjestyksessä",
     "event_workspace.step35": "Vaihe 3.5",
     "event_workspace.competitors_title": "{class}: Kilpailijat",
 
@@ -618,6 +621,7 @@ export const fi = {
 
     // Pilottikortti
     "pilot.not_found_title": "Pilottia ei löytynyt",
+    "pilot.save_first": "Tallenna uusi pilotti ensin",
     "pilot.not_found_msg": "Tätä pilottia ei ole olemassa tai se on poistettu.",
     "pilot.back_to_list": "Takaisin pilottilistalle",
     "pilot.back_to_event": "⬅ Rakenna kilpailuun",
@@ -694,7 +698,7 @@ export const fi = {
     "calendar.set_active": "Aseta aktiiviseksi",
     "calendar.build_event": "Rakenna kilpailu ➡",
     "calendar.event_info": "Kilpailun tiedot",
-    "calendar.event_info_arrow": "Avaa kilpailun tiedot ➡",
+    "calendar.event_info_arrow": "Avaa kilpailun tiedot",
     "calendar.results": "Tulokset",
     "calendar.delete_event": "Poista kilpailu",
     "calendar.status_ended": "Päättynyt (Tulokset)",
@@ -824,6 +828,7 @@ export const fi = {
     "event_workspace.tab_results": "Tulokset",
     "event_workspace.tab_combat_mode_on": "Aktivoi Combat Moodi",
     "event_workspace.tab_combat_mode_off": "Deaktivoi Combat Moodi",
+    "event_workspace.tab_group_mode": "Tila",
     "event_workspace.kicker_build": "Rakenna kilpailu",
     "event_workspace.no_active_event": "Ei aktiivista kisaa",
     "event_workspace.open_from_calendar": "Avaa kilpailu kisakalenterista.",
@@ -967,7 +972,7 @@ export const fi = {
     "settings.tab_debug": "Kehitys / debug",
     "settings.organizer_name": "Järjestäjän nimi",
     "settings.organizer_name_placeholder": "Seura / järjestäjä",
-    "settings.public_display_mode": "Julkinen näyttötila (piilottaa muokkauspainikkeet)",
+
     "settings.competition_mode": "Aktivoi kilpailumoodi (taustapäivitys 30 sekunnin välein, normaalisti 30 min)",
     "settings.save_settings": "Tallenna asetukset",
     "settings.settings_kicker": "Asetukset",
@@ -1004,6 +1009,7 @@ export const fi = {
     "settings.whatsapp_step4": "Syötä avaimesi ja puhelinnumerosi alle.",
     "settings.add_receiver": "Lisää uusi vastaanottaja",
     "settings.person_name": "Henkilön nimi",
+    "settings.person_name_placeholder": "esim. Matti",
     "settings.whatsapp_number": "WhatsApp-numero",
     "settings.add_to_list": "Lisää listalle",
     "settings.automation_kicker": "Automaatio",
@@ -1034,6 +1040,9 @@ export const fi = {
     "messages.toggle_theme": "Vaihda valoisuustilaa (Aurinkotila)",
 
     // Documents
+    "documents.intro_empty": "Kilpailun asiakirjat. Valitse kilpailu kisakalenterista nähdäksesi kilpailukohtaiset listaukset.",
+    "documents.print_all_desc": "Voit myös tulostaa kaikki ohjelmaan luodut sähköiset tuloskortit yhdellä kertaa, valmiiksi esitäytettyinä!",
+    "documents.print_all_btn": "Tulosta esitäytetyt kortit (Kaikki luokat)",
     "documents.no_active_event": "Ei aktiivista kisaa",
     "documents.no_active_event_desc": "Avaa kilpailu kisakalenterista, jotta voit tulostaa asiakirjoja.",
     "documents.print_intro": "Tulosta kilpailupaikan paperidokumentit kisaan:",

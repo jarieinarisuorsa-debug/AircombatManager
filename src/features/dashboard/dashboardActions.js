@@ -11,17 +11,16 @@ export function initDashboardActions() {
     return true;
   });
 
-  registerAction('set-my-event-tab', (event, button, { renderApp }) => {
-    window.MY_EVENT_TAB = button.dataset.tab;
+  registerAction("set-my-event-tab", (event, button, { renderApp }) => {
+    window.MY_EVENT_TAB = button.dataset.tab || button.value;
     renderApp();
     return true;
   });
 
-  registerAction('set-admin-dashboard-tab', (event, button, { updateState }) => {
-    updateState(state => {
+  registerAction("set-admin-dashboard-class-tab", (event, button, { updateState }) => {
+    updateState((state) => {
       state.settings = state.settings || {};
-      state.settings.adminDashboardClassTab = button.dataset.tab;
-    });
-    return true;
+      state.settings.adminDashboardClassTab = button.dataset.tab || button.value;
+    }, "set_admin_dashboard_class_tab");
   });
 }

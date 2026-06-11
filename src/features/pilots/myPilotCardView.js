@@ -332,13 +332,25 @@ export function renderMyPilotCardView(state) {
 
   // --- RAKENNA VÄLILEHDET ---
   const tabNavigation = `
-    <div class="ui-tabs" style="display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 1px solid var(--border); padding-bottom: 10px; overflow-x: auto;">
-      <button type="button" class="button ${tab === 'perustiedot' ? 'primary' : 'dashed'}" data-action="set-my-pilot-tab" data-tab="perustiedot">${t(state, "my_pilot.tab_basic")}</button>
-      <button type="button" class="button ${tab === 'ilmoittautuminen' ? 'primary' : 'dashed'}" data-action="set-my-pilot-tab" data-tab="ilmoittautuminen">${t(state, "my_pilot.tab_reg")}</button>
-      <button type="button" class="button ${tab === 'konekortit' ? 'primary' : 'dashed'}" data-action="set-my-pilot-tab" data-tab="konekortit">${t(state, "my_pilot.tab_ac").replace("{count}", pilotPlanes.length)}</button>
-      <button type="button" class="button ${tab === 'kilpailu' ? 'primary' : 'dashed'}" data-action="set-my-pilot-tab" data-tab="kilpailu">${t(state, "my_pilot.tab_comp")}</button>
-      <button type="button" class="button ${tab === 'logbook' ? 'primary' : 'dashed'}" data-action="set-my-pilot-tab" data-tab="logbook">${t(state, "my_pilot.tab_logbook")}</button>
-      <button type="button" class="button ${tab === 'poista' ? 'danger' : 'dashed danger'}" data-action="set-my-pilot-tab" data-tab="poista">${t(state, "my_pilot.del_acc_btn") || "Poista tili"}</button>
+    <div class="ui-tabs-container">
+      <div class="ui-tabs desktop-only" style="display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 1px solid var(--border); padding-bottom: 10px; overflow-x: auto;">
+        <button type="button" class="button ${tab === 'perustiedot' ? 'primary' : 'dashed'}" data-action="set-my-pilot-tab" data-tab="perustiedot">${t(state, "my_pilot.tab_basic")}</button>
+        <button type="button" class="button ${tab === 'ilmoittautuminen' ? 'primary' : 'dashed'}" data-action="set-my-pilot-tab" data-tab="ilmoittautuminen">${t(state, "my_pilot.tab_reg")}</button>
+        <button type="button" class="button ${tab === 'konekortit' ? 'primary' : 'dashed'}" data-action="set-my-pilot-tab" data-tab="konekortit">${t(state, "my_pilot.tab_ac").replace("{count}", pilotPlanes.length)}</button>
+        <button type="button" class="button ${tab === 'kilpailu' ? 'primary' : 'dashed'}" data-action="set-my-pilot-tab" data-tab="kilpailu">${t(state, "my_pilot.tab_comp")}</button>
+        <button type="button" class="button ${tab === 'logbook' ? 'primary' : 'dashed'}" data-action="set-my-pilot-tab" data-tab="logbook">${t(state, "my_pilot.tab_logbook")}</button>
+        <button type="button" class="button ${tab === 'poista' ? 'danger' : 'dashed danger'}" data-action="set-my-pilot-tab" data-tab="poista">${t(state, "my_pilot.del_acc_btn") || "Poista tili"}</button>
+      </div>
+      <div class="ui-tabs-mobile mobile-only" style="margin-bottom: 20px;">
+        <select class="tab-select" data-action="set-my-pilot-tab">
+          <option value="perustiedot" ${tab === 'perustiedot' ? 'selected' : ''}>${t(state, "my_pilot.tab_basic")}</option>
+          <option value="ilmoittautuminen" ${tab === 'ilmoittautuminen' ? 'selected' : ''}>${t(state, "my_pilot.tab_reg")}</option>
+          <option value="konekortit" ${tab === 'konekortit' ? 'selected' : ''}>${t(state, "my_pilot.tab_ac").replace("{count}", pilotPlanes.length)}</option>
+          <option value="kilpailu" ${tab === 'kilpailu' ? 'selected' : ''}>${t(state, "my_pilot.tab_comp")}</option>
+          <option value="logbook" ${tab === 'logbook' ? 'selected' : ''}>${t(state, "my_pilot.tab_logbook")}</option>
+          <option value="poista" ${tab === 'poista' ? 'selected' : ''}>${t(state, "my_pilot.del_acc_btn") || "Poista tili"}</option>
+        </select>
+      </div>
     </div>
   `;
 

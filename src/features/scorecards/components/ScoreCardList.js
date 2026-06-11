@@ -45,10 +45,22 @@ export function renderScoreCardClassButtons(state, activeEvent, allRows, targetC
     return `<a class="button small ${activeClass ? "primary" : ""}" href="#/scorecards/${encodeURIComponent(className)}">${escapeHtml(className)} (${count})</a>`;
   }).join("");
 
+  const options = `<option value="#/scorecards" ${targetClass ? "" : "selected"}>${t(state, "scorecards_list.btn_all").replace("{count}", allRows.length)}</option>` + 
+    classNames.map((className) => {
+      const count = allRows.filter((row) => String(row.className).trim().toLowerCase() === String(className).trim().toLowerCase()).length;
+      const activeClass = targetClass && String(targetClass).trim().toLowerCase() === String(className).trim().toLowerCase();
+      return `<option value="#/scorecards/${encodeURIComponent(className)}" ${activeClass ? "selected" : ""}>${escapeHtml(className)} (${count})</option>`;
+    }).join("");
+
   return `
-    <div class="score-card-class-buttons">
+    <div class="score-card-class-buttons desktop-only">
       ${allButton}
       ${classButtons}
+    </div>
+    <div class="score-card-class-buttons-mobile mobile-only" style="margin-bottom: 20px;">
+      <select class="tab-select" onchange="window.location.hash = this.value">
+        ${options}
+      </select>
     </div>
   `;
 }

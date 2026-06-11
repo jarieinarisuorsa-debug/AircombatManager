@@ -15,17 +15,16 @@ export function renderBuildGuideView(state) {
         gap: 12px;
         margin-bottom: 40px;
         justify-content: center;
-        background: rgba(255, 255, 255, 0.02);
+        background: var(--panel);
         padding: 24px;
         border-radius: 20px;
-        border: 1px solid rgba(255, 255, 255, 0.05);
-        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255,255,255,0.05);
-        backdrop-filter: blur(10px);
+        border: 1px solid var(--border);
+        box-shadow: var(--shadow);
       }
       .guide-tab-btn {
-        background: linear-gradient(145deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02));
-        border: 1px solid rgba(255,255,255,0.1);
-        color: #e2e8f0;
+        background: var(--bg);
+        border: 1px solid var(--border);
+        color: var(--text);
         padding: 10px 20px;
         border-radius: 12px;
         font-weight: 600;
@@ -40,21 +39,21 @@ export function renderBuildGuideView(state) {
       }
       .guide-tab-btn:hover {
         transform: translateY(-3px) scale(1.02);
-        background: linear-gradient(145deg, rgba(255,255,255,0.15), rgba(255,255,255,0.05));
-        border-color: rgba(255,255,255,0.2);
-        box-shadow: 0 10px 24px rgba(0,0,0,0.25), 0 0 20px rgba(255,255,255,0.05);
-        color: #fff;
+        background: var(--panel-strong);
+        border-color: var(--accent);
+        box-shadow: 0 10px 24px rgba(0,0,0,0.15);
+        color: var(--text);
       }
       .guide-tab-btn.active {
-        background: linear-gradient(135deg, var(--primary, #3b82f6), #1d4ed8);
+        background: linear-gradient(135deg, var(--accent), var(--accent-strong));
         color: #ffffff;
         border-color: transparent;
-        box-shadow: 0 8px 25px rgba(59, 130, 246, 0.5), inset 0 2px 4px rgba(255,255,255,0.2);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
         text-shadow: 0 1px 2px rgba(0,0,0,0.2);
       }
       .guide-tab-btn.active:hover {
         transform: translateY(-3px) scale(1.02);
-        box-shadow: 0 12px 30px rgba(59, 130, 246, 0.6), inset 0 2px 4px rgba(255,255,255,0.2);
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
       }
       .guide-tab-icon {
         opacity: 0.7;
@@ -70,25 +69,25 @@ export function renderBuildGuideView(state) {
         margin-bottom: 50px;
       }
       .guide-step-card {
-        background: rgba(255, 255, 255, 0.03);
-        border: 1px solid rgba(255, 255, 255, 0.05);
-        border-left: 4px solid var(--surface-4, #475569);
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-left: 4px solid var(--muted);
         padding: 20px 24px;
         border-radius: 0 16px 16px 0;
         transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
         display: flex;
         flex-direction: column;
         justify-content: center;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
       }
       .guide-step-card:hover {
-        background: rgba(255, 255, 255, 0.06);
-        border-left-color: var(--primary, #3b82f6);
+        background: var(--panel-strong);
+        border-left-color: var(--accent);
         transform: translateX(6px);
-        box-shadow: -2px 8px 20px rgba(0,0,0,0.15);
+        box-shadow: -2px 8px 20px rgba(0,0,0,0.1);
       }
       .guide-step-text {
-        color: #e2e8f0;
+        color: var(--text);
         line-height: 1.6;
         font-size: 1.05rem;
       }
@@ -101,25 +100,25 @@ export function renderBuildGuideView(state) {
         text-decoration: none;
         padding: 16px 36px;
         border-radius: 30px;
-        background: linear-gradient(135deg, var(--surface-3, #334155), var(--surface-2, #1e293b));
-        color: #fff;
+        background: var(--panel-strong);
+        color: var(--text);
         font-weight: 700;
         font-size: 1.1rem;
-        border: 1px solid rgba(255,255,255,0.1);
-        box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        border: 1px solid var(--border);
+        box-shadow: 0 6px 20px rgba(0,0,0,0.15);
         transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
         letter-spacing: 0.02em;
       }
       .guide-back-btn:hover {
         transform: translateY(-4px) scale(1.02);
-        background: linear-gradient(135deg, var(--surface-4, #475569), var(--surface-3, #334155));
-        box-shadow: 0 12px 30px rgba(0,0,0,0.4);
-        border-color: rgba(255,255,255,0.2);
-        color: #fff;
+        background: var(--bg);
+        box-shadow: 0 12px 30px rgba(0,0,0,0.2);
+        border-color: var(--accent);
+        color: var(--text);
       }
       .guide-back-btn:active {
         transform: translateY(0) scale(0.98);
-        box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
       }
     </style>
   `;
@@ -142,7 +141,7 @@ export function renderBuildGuideView(state) {
   const guidePanel = UI.Panel({ title: t(state, "about.guide_title") }, `
     ${styles}
     <div style="padding: 10px 20px 30px; text-align: left;">
-      <p style="margin-bottom: 30px; font-size: 1.15rem; color: #cbd5e1; line-height: 1.7; text-align: center; max-width: 700px; margin-left: auto; margin-right: auto;">
+      <p style="margin-bottom: 30px; font-size: 1.15rem; color: var(--muted); line-height: 1.7; text-align: center; max-width: 700px; margin-left: auto; margin-right: auto;">
         ${t(state, "about.build_desc")}
       </p>
       

@@ -130,10 +130,7 @@ export function renderTachometerView(state) {
     </style>
   `;
 
-  const pageHeader = UI.PageHeader({
-    kicker: t(state, "nav.tools", "Tools"),
-    title: t(state, "tachometer.title", "Acoustic Tachometer")
-  });
+
 
   const panelContent = `
     ${styles}
@@ -278,8 +275,7 @@ export function renderTachometerView(state) {
   }, 50);
 
   return `
-    ${pageHeader}
-    <div style="max-width: 800px; margin: 0 auto; padding-bottom: 50px;">
+    <div style="max-width: 800px; margin: 0 auto; padding-bottom: 50px; padding-top: 20px;">
       ${UI.Panel({ title: t(state, "tachometer.panel_title", "Measure RPM") }, panelContent)}
     </div>
   `;

@@ -8,7 +8,7 @@ import { t } from "../../utils/i18n.js";
 export function renderPilotCardView(state) {
   const pilotId = getRouteParam();
   const isNew = pilotId === "new";
-  const pilot = isNew ? { id: "new", name: "", country: "FI", club: "", email: "", phone: "", license: "", address: "" } : state.pilots.find(p => p.id === pilotId);
+  const pilot = isNew ? { id: "new", name: "", country: "", club: "", email: "", phone: "", license: "", address: "" } : state.pilots.find(p => p.id === pilotId);
   
   if (!pilot) {
     return UI.Panel({ title: t(state, "pilot.not_found_title") }, `
@@ -68,9 +68,9 @@ export function renderPilotCardView(state) {
               ${UI.Select({ label: t(state, "aircraft.power"), name: "engine", value: plane.engine, options: ["Combustion", "Electric", "Other"] })}
             `)}
             ${UI.Grid({ columns: "1fr 1fr 1fr", gap: "10px", style: "margin-top: 10px;" }, `
-              ${UI.Input({ label: t(state, "aircraft.engine_model"), name: "engineModel", placeholder: "esim. O.S. 15", value: plane.engineModel || "" })}
-              ${UI.Input({ label: t(state, "aircraft.battery"), name: "battery", placeholder: "esim. 3S 1300mAh", value: plane.battery || "" })}
-              ${UI.Input({ label: t(state, "aircraft.propeller"), name: "propeller", placeholder: "esim. 8x4", value: plane.propeller || "" })}
+              ${UI.Input({ label: t(state, "aircraft.engine_model"), name: "engineModel", placeholder: "e.g. O.S. 15", value: plane.engineModel || "" })}
+              ${UI.Input({ label: t(state, "aircraft.battery"), name: "battery", placeholder: "e.g. 3S 1300mAh", value: plane.battery || "" })}
+              ${UI.Input({ label: t(state, "aircraft.propeller"), name: "propeller", placeholder: "e.g. 8x4", value: plane.propeller || "" })}
             `)}
             ${renderScaleCheckboxes(plane.modelPoints)}
           `)}
@@ -108,15 +108,15 @@ export function renderPilotCardView(state) {
   }, `
     <input type="hidden" name="pilotId" value="${escapeHtml(pilot.id)}" />
     ${UI.Grid({ columns: "1fr", gap: "10px" }, `
-      ${UI.Input({ label: t(state, "aircraft.name"), name: "name", required: true, placeholder: "esim. Fokker Dr.I" })}
+      ${UI.Input({ label: t(state, "aircraft.name"), name: "name", required: true, placeholder: "e.g. Fokker Dr.I" })}
       ${UI.Grid({ columns: "1fr 1fr", gap: "10px" }, `
         ${UI.Select({ label: t(state, "aircraft.class"), name: "className", options: ["WWII", "WWI", "EPA"] })}
         ${UI.Select({ label: t(state, "aircraft.power"), name: "engine", options: ["Combustion", "Electric", "Other"] })}
       `)}
       ${UI.Grid({ columns: "1fr 1fr 1fr", gap: "10px", style: "margin-top: 10px;" }, `
-        ${UI.Input({ label: t(state, "aircraft.engine_model"), name: "engineModel", placeholder: "esim. O.S. 15" })}
-        ${UI.Input({ label: t(state, "aircraft.battery"), name: "battery", placeholder: "esim. 3S 1300mAh" })}
-        ${UI.Input({ label: t(state, "aircraft.propeller"), name: "propeller", placeholder: "esim. 8x4" })}
+        ${UI.Input({ label: t(state, "aircraft.engine_model"), name: "engineModel", placeholder: "e.g. O.S. 15" })}
+        ${UI.Input({ label: t(state, "aircraft.battery"), name: "battery", placeholder: "e.g. 3S 1300mAh" })}
+        ${UI.Input({ label: t(state, "aircraft.propeller"), name: "propeller", placeholder: "e.g. 8x4" })}
       `)}
       ${renderScaleCheckboxes()}
     `)}
@@ -150,16 +150,19 @@ export function renderPilotCardView(state) {
     <input type="hidden" name="pilotId" value="${escapeHtml(pilot.id)}" />
     ${UI.Grid({ columns: "1fr 1fr", gap: "10px" }, `
       ${UI.Input({ label: t(state, "pilot.name"), name: "name", value: pilot.name || "", required: true })}
-      ${UI.Input({ label: t(state, "pilot.country"), name: "country", value: pilot.country || "", placeholder: "FI" })}
+      ${UI.Input({ label: t(state, "pilot.country"), name: "country", value: pilot.country || "", placeholder: "e.g. SE, DE" })}
       ${UI.Input({ label: t(state, "pilot.club"), name: "club", value: pilot.club || "" })}
-      ${UI.Input({ label: t(state, "pilot.email"), name: "email", type: "email", value: pilot.email || "", placeholder: "nimi@esimerkki.com", className: "blur-sensitive" })}
-      ${UI.Input({ label: t(state, "pilot.phone"), name: "phone", value: pilot.phone || "", placeholder: "+358...", className: "blur-sensitive" })}
-      ${UI.Input({ label: t(state, "pilot.license"), name: "license", value: pilot.license || "", placeholder: "esim. FIN-1234" })}
-      ${UI.Input({ label: t(state, "pilot.address"), name: "address", value: pilot.address || "", placeholder: "Katuosoite, Postinumero, Kaupunki" })}
+      ${UI.Input({ label: t(state, "pilot.email"), name: "email", type: "email", value: pilot.email || "", placeholder: "name@example.com", className: "blur-sensitive" })}
+      ${UI.Input({ label: t(state, "pilot.phone"), name: "phone", value: pilot.phone || "", placeholder: "+123...", className: "blur-sensitive" })}
+      ${UI.Input({ label: t(state, "pilot.license"), name: "license", value: pilot.license || "", placeholder: "e.g. ABC-1234" })}
+      ${UI.Input({ label: t(state, "pilot.address"), name: "address", value: pilot.address || "", placeholder: "Street Address, Zip, City" })}
     `)}
     <div class="ui-form-actions" style="display: flex; justify-content: space-between; align-items: center; margin-top: 20px;">
       ${deleteButton}
-      ${UI.Button({ label: isNew ? t(state, "pilot.save_new") : t(state, "pilot.save_details"), type: "submit", variant: "primary small" })}
+      <div style="display: flex; gap: 10px;">
+        ${UI.Button({ label: t(state, "common.cancel"), type: "button", action: "cancel-pilot-edit", pilotId: pilot.id, variant: "outline small" })}
+        ${UI.Button({ label: isNew ? t(state, "pilot.save_new") : t(state, "pilot.save_details"), type: "submit", variant: "primary small" })}
+      </div>
     </div>
   `);
 
@@ -167,11 +170,21 @@ export function renderPilotCardView(state) {
 
   const tabNavigation = `
     <div class="no-print" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid var(--border); padding-bottom: 10px; flex-wrap: wrap; gap: 10px;">
-      <div class="ui-tabs" style="display: flex; gap: 10px; overflow-x: auto;">
-        <button type="button" class="button ${tab === 'perustiedot' ? 'primary' : 'dashed'}" data-action="set-pilot-card-tab" data-tab="perustiedot">${t(state, "pilot.tab_basics")}</button>
-        <button type="button" class="button ${tab === 'ilmoittautuminen' ? 'primary' : 'dashed'}" data-action="set-pilot-card-tab" data-tab="ilmoittautuminen" ${isNew ? 'disabled title="Tallenna uusi pilotti ensin"' : ''}>${t(state, "pilot.registration")}</button>
-        <button type="button" class="button ${tab === 'konekortit' ? 'primary' : 'dashed'}" data-action="set-pilot-card-tab" data-tab="konekortit" ${isNew ? 'disabled title="Tallenna uusi pilotti ensin"' : ''}>${t(state, "pilot.aircraft_cards")} (${pilotPlanes.length})</button>
-        <button type="button" class="button ${tab === 'logbook' ? 'primary' : 'dashed'}" data-action="set-pilot-card-tab" data-tab="logbook" ${isNew ? 'disabled title="Tallenna uusi pilotti ensin"' : ''}>${t(state, "pilot.tab_logbook")}</button>
+      <div class="ui-tabs-container">
+        <div class="ui-tabs desktop-only" style="display: flex; gap: 10px; overflow-x: auto;">
+          <button type="button" class="button ${tab === 'perustiedot' ? 'primary' : 'dashed'}" data-action="set-pilot-card-tab" data-tab="perustiedot">${t(state, "pilot.tab_basics")}</button>
+          <button type="button" class="button ${tab === 'ilmoittautuminen' ? 'primary' : 'dashed'}" data-action="set-pilot-card-tab" data-tab="ilmoittautuminen" ${isNew ? `disabled title="${t(state, "pilot.save_first")}"` : ''}>${t(state, "pilot.registration")}</button>
+          <button type="button" class="button ${tab === 'konekortit' ? 'primary' : 'dashed'}" data-action="set-pilot-card-tab" data-tab="konekortit" ${isNew ? `disabled title="${t(state, "pilot.save_first")}"` : ''}>${t(state, "pilot.aircraft_cards")} (${pilotPlanes.length})</button>
+          <button type="button" class="button ${tab === 'logbook' ? 'primary' : 'dashed'}" data-action="set-pilot-card-tab" data-tab="logbook" ${isNew ? `disabled title="${t(state, "pilot.save_first")}"` : ''}>${t(state, "pilot.tab_logbook")}</button>
+        </div>
+        <div class="ui-tabs-mobile mobile-only">
+          <select class="tab-select" data-action="set-pilot-card-tab">
+            <option value="perustiedot" ${tab === 'perustiedot' ? 'selected' : ''}>${t(state, "pilot.tab_basics")}</option>
+            <option value="ilmoittautuminen" ${tab === 'ilmoittautuminen' ? 'selected' : ''} ${isNew ? 'disabled' : ''}>${t(state, "pilot.registration")}</option>
+            <option value="konekortit" ${tab === 'konekortit' ? 'selected' : ''} ${isNew ? 'disabled' : ''}>${t(state, "pilot.aircraft_cards")} (${pilotPlanes.length})</option>
+            <option value="logbook" ${tab === 'logbook' ? 'selected' : ''} ${isNew ? 'disabled' : ''}>${t(state, "pilot.tab_logbook")}</option>
+          </select>
+        </div>
       </div>
       <div style="display: flex; gap: 10px;">
         ${backButton}

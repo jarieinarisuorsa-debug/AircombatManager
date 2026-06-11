@@ -174,12 +174,23 @@ export function renderMyEventView(state) {
   const tab = window.MY_EVENT_TAB || 'yhteenveto';
   
   const tabNavigation = `
-    <div class="ui-tabs" style="display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 1px solid var(--border); padding-bottom: 10px; overflow-x: auto;">
-      <button type="button" class="button ${tab === 'yhteenveto' ? 'primary' : 'dashed'}" data-action="set-my-event-tab" data-tab="yhteenveto">${t(state, "my_event.tab_summary")}</button>
-      <button type="button" class="button ${tab === 'heatit' ? 'primary' : 'dashed'}" data-action="set-my-event-tab" data-tab="heatit">${t(state, "my_event.tab_heats")}</button>
-      <button type="button" class="button ${tab === 'tuloskortit' ? 'primary' : 'dashed'}" data-action="set-my-event-tab" data-tab="tuloskortit">${t(state, "my_event.tab_cards")}</button>
-      <button type="button" class="button ${tab === 'sekuntikello' ? 'primary' : 'dashed'}" data-action="set-my-event-tab" data-tab="sekuntikello">${t(state, "my_event.tab_stopwatch")}</button>
-      <button type="button" class="button ${tab === 'tulokset' ? 'primary' : 'dashed'}" data-action="set-my-event-tab" data-tab="tulokset">${t(state, "my_event.tab_results")}</button>
+    <div class="ui-tabs-container">
+      <div class="ui-tabs desktop-only" style="display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 1px solid var(--border); padding-bottom: 10px; overflow-x: auto;">
+        <button type="button" class="button ${tab === 'yhteenveto' ? 'primary' : 'dashed'}" data-action="set-my-event-tab" data-tab="yhteenveto">${t(state, "my_event.tab_summary")}</button>
+        <button type="button" class="button ${tab === 'heatit' ? 'primary' : 'dashed'}" data-action="set-my-event-tab" data-tab="heatit">${t(state, "my_event.tab_heats")}</button>
+        <button type="button" class="button ${tab === 'tuloskortit' ? 'primary' : 'dashed'}" data-action="set-my-event-tab" data-tab="tuloskortit">${t(state, "my_event.tab_cards")}</button>
+        <button type="button" class="button ${tab === 'sekuntikello' ? 'primary' : 'dashed'}" data-action="set-my-event-tab" data-tab="sekuntikello">${t(state, "my_event.tab_stopwatch")}</button>
+        <button type="button" class="button ${tab === 'tulokset' ? 'primary' : 'dashed'}" data-action="set-my-event-tab" data-tab="tulokset">${t(state, "my_event.tab_results")}</button>
+      </div>
+      <div class="ui-tabs-mobile mobile-only" style="margin-bottom: 20px;">
+        <select class="tab-select" data-action="set-my-event-tab">
+          <option value="yhteenveto" ${tab === 'yhteenveto' ? 'selected' : ''}>${t(state, "my_event.tab_summary")}</option>
+          <option value="heatit" ${tab === 'heatit' ? 'selected' : ''}>${t(state, "my_event.tab_heats")}</option>
+          <option value="tuloskortit" ${tab === 'tuloskortit' ? 'selected' : ''}>${t(state, "my_event.tab_cards")}</option>
+          <option value="sekuntikello" ${tab === 'sekuntikello' ? 'selected' : ''}>${t(state, "my_event.tab_stopwatch")}</option>
+          <option value="tulokset" ${tab === 'tulokset' ? 'selected' : ''}>${t(state, "my_event.tab_results")}</option>
+        </select>
+      </div>
     </div>
   `;
 

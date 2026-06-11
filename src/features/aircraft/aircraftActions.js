@@ -107,7 +107,7 @@ export function initAircraftActions() {
   });
 
   registerAction("set-aircraft-tab", (event, button, { renderApp }) => {
-    window.AIRCRAFT_TAB = button.dataset.tab;
+    window.AIRCRAFT_TAB = button.dataset.tab || button.value;
     renderApp();
     return true;
   });

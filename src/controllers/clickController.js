@@ -240,13 +240,13 @@ function runUiClickAction(action, button, { renderApp }) {
   }
 
   if (action === "set-document-tab") {
-    window.DOCUMENT_TAB = button.dataset.tab;
+    window.DOCUMENT_TAB = button.dataset.tab || button.value;
     renderApp();
     return true;
   }
 
   if (action === "switch-scorecard-tab") {
-    const targetId = button.dataset.tabTarget;
+    const targetId = button.dataset.tabTarget || button.value;
     const container = button.closest(".scorecard-tab-container");
     if (container && targetId) {
       container.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));

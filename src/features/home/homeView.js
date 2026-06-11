@@ -76,8 +76,7 @@ export function renderHomeView(state) {
 
   const updatesPanel = UI.Panel({ 
     title: t(state, "home.system_updates"), 
-    className: "full-width-panel",
-    style: "background: transparent; border: none; padding: 0;" 
+    className: "full-width-panel"
   }, formHtml + updatesHtml);
 
   return `

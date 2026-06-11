@@ -326,7 +326,7 @@ export function renderResultsTable(state, rows, showDetails = false, classPositi
       </div>
     `);
 
-    return UI.TableRow({ cells });
+    return UI.TableRow({ cells, headers });
   });
 
   return UI.TableContainer({

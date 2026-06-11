@@ -43,9 +43,7 @@ export function saveSettings(data, form) {
   updateState((state) => {
     requireAdmin(state);
     state.settings.organizerName = String(data.organizerName || "").trim();
-    if (form.elements.publicDisplayMode) {
-      state.settings.publicDisplayMode = Boolean(form.elements.publicDisplayMode.checked);
-    }
+
     if (form.elements.competitionMode) {
       state.settings.competitionMode = Boolean(form.elements.competitionMode.checked);
     }
@@ -302,7 +300,7 @@ export function initSettingsActions() {
   });
 
   registerAction("set-settings-tab", (event, button, { renderApp }) => {
-    setSettingsTab(button.dataset.tab);
+    setSettingsTab(button.dataset.tab || button.value);
     renderApp();
     return true;
   });
