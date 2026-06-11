@@ -23,8 +23,8 @@ export async function showRewardedAd(onRewardCallback) {
   
   try {
     const { AdMob } = window.Capacitor.Plugins;
-    // Googlen virallinen testimainoksen yksikkötunnus (Rewarded Video)
-    const adId = "ca-app-pub-3940256099942544/5224354917";
+    // Oikea mainosyksikön tunnus:
+    const adId = "ca-app-pub-9256662190629396/7845036273";
     
     // Tyhjennetään mahdolliset vanhat kuuntelijat
     await AdMob.removeAllListeners();
@@ -54,8 +54,8 @@ export async function showRewardedAd(onRewardCallback) {
     });
 
     console.log("Loading rewarded ad...");
-    // Valmistellaan mainos. Kun se on valmis, 'onRewardedVideoAdLoaded' liipaisin laukeaa.
-    await AdMob.prepareRewardVideoAd({ adId: adId, isTesting: true });
+    // Valmistellaan mainos (testitila pois päältä, virallinen mainos käyttöön)
+    await AdMob.prepareRewardVideoAd({ adId: adId, isTesting: false });
     
   } catch (err) {
     console.error("Failed to show rewarded ad", err);

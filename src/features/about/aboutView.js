@@ -97,13 +97,44 @@ export function renderAboutView(state) {
       
       <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid var(--border);">
         <p style="margin-bottom: 15px;">${t(state, "about.support_desc")}</p>
-        <button type="button" class="app-btn primary" data-action="show-rewarded-ad" style="display: inline-flex; align-items: center; gap: 8px;">
+        
+        <!-- Mobiili: Palkkiomainos -->
+        <button type="button" id="rewarded-ad-btn" class="app-btn primary" data-action="show-rewarded-ad" style="display: inline-flex; align-items: center; gap: 8px; margin-bottom: 15px;">
           <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line></svg>
           ${t(state, "about.support_btn")}
         </button>
+
+        <!-- Web/PWA: Google AdSense Placeholder -->
+        <div id="adsense-container" style="min-height: 100px; background: rgba(255,255,255,0.02); border: 1px dashed rgba(255,255,255,0.1); border-radius: 8px; padding: 10px; margin-top: 15px;">
+          <ins class="adsbygoogle"
+               style="display:block; text-align:center;"
+               data-ad-layout="in-article"
+               data-ad-format="fluid"
+               data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
+               data-ad-slot="YYYYYYYYYY"></ins>
+        </div>
       </div>
     </div>
   `);
+
+  // Piilotetaan mobiilipainike selaimessa ja näytetään AdSense vain selaimessa
+  setTimeout(() => {
+    const isNative = window.Capacitor && window.Capacitor.isNativePlatform();
+    const btn = document.getElementById("rewarded-ad-btn");
+    const adsense = document.getElementById("adsense-container");
+    
+    if (isNative) {
+      if (adsense) adsense.style.display = 'none';
+    } else {
+      if (btn) btn.style.display = 'none';
+      try {
+        (window.adsbygoogle = window.adsbygoogle || []).push({});
+      } catch (e) {
+        console.warn("AdSense ei latautunut:", e);
+      }
+    }
+  }, 100);
+
 
   const qrCodePanel = UI.Panel({ title: t(state, "about.qr_title") }, `
     <div style="padding: 10px;">
