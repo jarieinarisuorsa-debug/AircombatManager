@@ -19,7 +19,7 @@ export function renderEntriesView(state) {
       kicker: t(state, "event_workspace.kicker_build"),
       title: t(state, "event_workspace.no_active_event"),
       subtitle: t(state, "event_workspace.open_from_calendar"),
-      headerActions: UI.Button({ label: "Luo uusi kilpailu", action: "open-calendar-and-event-form", variant: "primary" })
+      headerActions: UI.Button({ label: "Create new event", action: "open-calendar-and-event-form", variant: "primary" })
     });
   }
 

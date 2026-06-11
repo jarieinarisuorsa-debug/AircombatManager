@@ -54,7 +54,7 @@ export function renderAdminDashboard(state) {
       title: t(state, "dashboard.no_active_event"),
       subtitle: t(state, "dashboard.no_event_desc"),
       headerActions: `
-        ${UI.Button({ label: "Luo uusi kilpailu", action: "open-calendar-and-event-form", variant: "primary" })}
+        ${UI.Button({ label: "Create new event", action: "open-calendar-and-event-form", variant: "primary" })}
       `
     });
     return `
