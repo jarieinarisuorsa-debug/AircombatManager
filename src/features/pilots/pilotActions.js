@@ -1,4 +1,4 @@
-import { createId, updateState, getState } from "../../state/store.js";
+import { createId, updateState, getState, isDemo } from "../../state/store.js";
 import { t } from "../../utils/i18n.js";
 import { requireAdmin, requirePilotAccess, getCurrentRole, ROLES } from "../../users/roles.js";
 import { requireText } from "../../utils/formValues.js";
@@ -11,6 +11,10 @@ export function addPilot(data) {
   let newPilotId;
   updateState((state) => {
     requireAdmin(state);
+    if (isDemo && state.pilots.filter(p => !String(p.id).startsWith("demo-")).length >= 1) {
+      throw new Error("Demo-versiossa voit luoda vain yhden oman kokeiluprofiilin.");
+    }
+    
     newPilotId = createId("pilot");
     state.pilots.push({
       id: newPilotId,
@@ -118,6 +122,10 @@ export function initPilotActions() {
       
       if (state.pilots.some(p => p.email && p.email.toLowerCase() === email.toLowerCase())) {
         return; // Jo olemassa
+      }
+
+      if (isDemo && state.pilots.filter(p => !String(p.id).startsWith("demo-")).length >= 1) {
+        throw new Error("Demo-versiossa voit luoda vain yhden oman kokeiluprofiilin.");
       }
 
       const newPilotId = createId("pilot");

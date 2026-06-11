@@ -38,7 +38,9 @@ export const ADMIN_ROUTE_KEYS = [
   "mypilotcard",
   "standings",
   "messages",
-  "about"
+  "about",
+  "buildguide",
+  "tachometer"
 ];
 
 export const PILOT_ROUTE_KEYS = [
@@ -55,7 +57,9 @@ export const PILOT_ROUTE_KEYS = [
   "results",
   "standings",
   "messages",
-  "about"
+  "about",
+  "buildguide",
+  "tachometer"
 ];
 
 export const GUEST_ROUTE_KEYS = [
@@ -67,7 +71,8 @@ export const GUEST_ROUTE_KEYS = [
   "results",
   "standings",
   "login",
-  "about"
+  "about",
+  "buildguide"
 ];
 
 export const ADMIN_NAV_ROUTE_KEYS = [
@@ -79,6 +84,7 @@ export const ADMIN_NAV_ROUTE_KEYS = [
   "aircraft",
   "documents",
   "messages",
+  "tachometer",
   "settings"
 ];
 
@@ -89,7 +95,8 @@ export const PILOT_NAV_ROUTE_KEYS = [
   "eventinfo",
   "calendar",
   "results",
-  "messages"
+  "messages",
+  "tachometer"
 ];
 
 export const GUEST_NAV_ROUTE_KEYS = [
@@ -135,6 +142,8 @@ export const NAV_LABELS = {
 };
 
 export function isUserAdmin(state) {
+  if (localStorage.getItem("activeSystem") === "demo") return true;
+
   const email = state?.auth?.user?.email || state?.settings?.userEmail || "";
   if (!email) return false;
 
@@ -214,7 +223,7 @@ export function getAllowedRouteKeys(state) {
 }
 
 export function canUseRoute(state, routeKey) {
-  if (routeKey === "login") return true;
+  if (routeKey === "landing" || routeKey === "environments") return true;
   return getAllowedRouteKeys(state).includes(routeKey);
 }
 

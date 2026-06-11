@@ -8,8 +8,11 @@ import { DEFAULT_STATE, DEFAULT_RULES } from "../data/defaultState.js";
 import { migrateScoreCard } from "../logic/scoreCards.js";
 import { normalizeCompetitionFormat, normalizeClassFormats, HEAT_PHASES } from "../logic/competitionFormat.js";
 import { normalizeEventInfo } from "../logic/eventInfo.js";
+import { DEMO_PILOTS, DEMO_AIRCRAFT } from "../data/demoPilots.js";
 
-const STORAGE_KEY = "aircombatCompetitionManager.state.v1";
+const activeSystem = localStorage.getItem("activeSystem") || "finland";
+export const isDemo = activeSystem === "demo";
+const STORAGE_KEY = isDemo ? "aircombatCompetitionManager.state.v1.demo2" : "aircombatCompetitionManager.state.v1";
 
 let cachedState = loadState();
 
@@ -35,7 +38,7 @@ export function setState(nextState, reason = "state_update") {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(cachedState));
   
   // Asynchronous cloud sync (Optimistic UI)
-  if (!reason.startsWith("init_") && !reason.startsWith("realtime_")) {
+  if (!isDemo && !reason.startsWith("init_") && !reason.startsWith("realtime_")) {
     import("../services/cloudStore.js").then(module => {
       module.syncCloudFromState(oldState, cachedState).catch(err => {
         console.error("Cloud sync failed for reason:", reason, err);
@@ -79,10 +82,39 @@ export function createId(prefix = "id") {
 function loadState() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return structuredClone(DEFAULT_STATE);
-    return migrateState(JSON.parse(raw));
+    let stateObj;
+    if (!raw) {
+      stateObj = structuredClone(DEFAULT_STATE);
+    } else {
+      stateObj = migrateState(JSON.parse(raw));
+    }
+    
+    // Auto-populate Demo Pilots if missing
+    if (isDemo) {
+      if (!stateObj.pilots) stateObj.pilots = [];
+      if (!stateObj.aircraft) stateObj.aircraft = [];
+      let updated = false;
+      
+      const hasDemoPilots = stateObj.pilots.some(p => p.id && String(p.id).startsWith("demo-"));
+      if (!hasDemoPilots) {
+        stateObj.pilots.push(...structuredClone(DEMO_PILOTS));
+        updated = true;
+      }
+      
+      const hasDemoAircraft = stateObj.aircraft.some(a => a.id && String(a.id).startsWith("demo-"));
+      if (!hasDemoAircraft) {
+        stateObj.aircraft.push(...structuredClone(DEMO_AIRCRAFT));
+        updated = true;
+      }
+      
+      if (updated) {
+        try { localStorage.setItem(STORAGE_KEY, JSON.stringify(stateObj)); } catch (e) {}
+      }
+    }
+    
+    return stateObj;
   } catch (error) {
-    console.warn("State load failed, using defaults", error);
+    console.error("Failed to load local state. Using default.", error);
     return structuredClone(DEFAULT_STATE);
   }
 }
@@ -104,8 +136,23 @@ function migrateState(input) {
       ...(parsed.settings || {})
     },
     events: Array.isArray(parsed.events) ? parsed.events.map(migrateEvent) : base.events,
-    pilots: Array.isArray(parsed.pilots) ? parsed.pilots : base.pilots,
-    aircraft: Array.isArray(parsed.aircraft) ? parsed.aircraft.map(migrateAircraft) : base.aircraft,
+    pilots: Array.isArray(parsed.pilots) ? parsed.pilots.map(p => {
+      if (isDemo && p.id && String(p.id).startsWith("demo-") && p.country === "SWE") {
+        return { ...p, country: "SE" };
+      }
+      return p;
+    }) : base.pilots,
+    aircraft: Array.isArray(parsed.aircraft) ? parsed.aircraft.map(a => {
+      const migrated = migrateAircraft(a);
+      const isAllFalse = !migrated.modelPoints || Object.values(migrated.modelPoints).every(v => v === false);
+      if (isDemo && migrated.id && String(migrated.id).startsWith("demo-") && migrated.className === "WWI" && isAllFalse) {
+        const demoA = DEMO_AIRCRAFT.find(da => da.id === migrated.id);
+        if (demoA && demoA.modelPoints) {
+          migrated.modelPoints = { ...demoA.modelPoints };
+        }
+      }
+      return migrated;
+    }) : base.aircraft,
     entries: Array.isArray(parsed.entries) ? parsed.entries.map(migrateEntry) : base.entries,
     heats: Array.isArray(parsed.heats) ? parsed.heats.map(migrateHeat) : base.heats,
     results: Array.isArray(parsed.results) ? parsed.results : base.results,

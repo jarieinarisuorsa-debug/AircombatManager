@@ -17,7 +17,7 @@ export function renderMyEventView(state) {
            UI.Panel({ title: t(state, "my_event.no_login_panel") }, `
              <p>${t(state, "my_event.login_req")}</p>
              <div style="margin-top: 20px;">
-               <a href="#/login" class="button primary">${t(state, "my_event.go_to_login")}</a>
+               <a href="#/landing/login" class="button primary">${t(state, "my_event.go_to_login")}</a>
              </div>
            `);
   }

@@ -43,14 +43,6 @@ export function renderPilotsView(state) {
          ${pilot.club ? `<span class="muted" style="margin-left: 6px;">${escapeHtml(pilot.club)}</span>` : ""}`,
         `${pilotPlanes.length} ${t(state, "pilots.qty")}`,
         `${UI.Flex({ gap: "6px", align: "center" }, `
-          ${activeEvent ? `
-            <div style="width: 135px; flex-shrink: 0;">
-              ${eventClasses.every(c => eventEntries.some(e => e.pilotId === pilot.id && e.className === c))
-                ? `<div style="font-size: 0.85em; color: var(--success); font-weight: bold; background: rgba(84, 214, 138, 0.15); padding: 5px 8px; border-radius: 6px; border: 1px solid rgba(84, 214, 138, 0.3); text-align: center; box-sizing: border-box; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;">${t(state, "pilots.enrolled")}</div>`
-                : `<button class="button success small" data-action="enroll-pilot-all-classes" data-pilot-id="${pilot.id}" style="width: 100%; box-sizing: border-box;">${t(state, "pilots.enroll_to_event")}</button>`
-              }
-            </div>` 
-          : ""}
           <button class="button primary small" data-action="open-pilot-card" data-pilot-id="${pilot.id}" style="font-weight: 600;">${t(state, "pilots.pilot_card")}</button>
           <button class="button danger small" data-action="delete-pilot" data-pilot-id="${pilot.id}" style="padding: 0 10px; font-size: 1.1rem; background: transparent; border-color: transparent;" title="${t(state, "pilots.delete_pilot")}">🗑️</button>
         `)}`
@@ -61,7 +53,7 @@ export function renderPilotsView(state) {
 
 
   const searchContainer = UI.Flex({ justify: "flex-start", align: "center", wrap: "wrap", gap: "15px", className: "pilot-search-container", style: "margin-bottom: 20px;" }, `
-    <div class="search-input-wrapper" style="flex: 1; min-width: 200px; max-width: 300px; display: flex;">
+    <div class="search-input-wrapper" style="width: 300px; max-width: 100%; display: flex;">
       <input type="search" id="pilot-search" value="${escapeHtml(state.settings?.pilotSearchQuery || "")}" placeholder="${t(state, "pilots.search_placeholder")}" autocomplete="off" style="flex: 1; width: 100%; min-height: 34px; padding: 6px 12px 6px 36px; border-radius: 8px;" />
     </div>
     ${UI.Select({ 

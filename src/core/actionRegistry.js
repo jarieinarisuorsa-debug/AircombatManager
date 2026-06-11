@@ -1,9 +1,8 @@
 export const actionRegistry = new Map();
 
 export function registerAction(actionName, handler) {
-  if (actionRegistry.has(actionName)) {
-    console.warn(`Action "${actionName}" is already registered. Overwriting.`);
-  }
+  // Hiljennetään varoitus, koska Vite HMR lataa main.js usein uudelleen
+  // ja se aiheuttaa turhan pitkän varoituslistan konsoliin.
   actionRegistry.set(actionName, handler);
 }
 

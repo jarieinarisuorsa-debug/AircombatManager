@@ -6,7 +6,12 @@ import { t } from "../../../utils/i18n.js";
 import { formatHeatTitle } from "../../../logic/competitionFormat.js";
 
 export function renderScoreCardList(state, activeEvent, rows, targetClass = "") {
-  const grouped = groupScoreCardsByHeat(state, activeEvent, rows, targetClass);
+  // Sort rows alphabetically by pilot name
+  const sortedRows = [...rows].sort((a, b) => {
+    const nameA = String(a.pilotName || a.entry?.pilotName || "").toLowerCase();
+    const nameB = String(b.pilotName || b.entry?.pilotName || "").toLowerCase();
+    return nameA.localeCompare(nameB, 'fi');
+  });
 
   return `
     <section class="score-card-list no-print">
@@ -17,25 +22,13 @@ export function renderScoreCardList(state, activeEvent, rows, targetClass = "") 
         </div>
         <p class="muted">${t(state, "scorecards_list.subtitle")}</p>
       </div>
-      ${grouped.map((group) => `
-        <details class="score-card-list-group" style="margin-bottom: 20px; background: var(--surface-1); border: 2px solid var(--border); border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); overflow: hidden;">
-          <summary style="padding: 18px 20px; cursor: pointer; list-style: none; display: flex; justify-content: space-between; align-items: center; user-select: none; background: rgba(88, 183, 255, 0.03);">
-            <div style="flex: 1;">
-              <div class="kicker" style="color: var(--primary); font-size: 0.75rem; font-weight: 900; letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 4px;">${escapeHtml(group.subtitle)}</div>
-              <h3 style="margin: 0; font-size: 1.4rem; color: var(--text);">${escapeHtml(group.title)}</h3>
-            </div>
-            <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 8px;">
-              <span class="badge badge-info" style="font-size: 0.8rem; padding: 4px 10px; background: rgba(88, 183, 255, 0.15); color: var(--primary); border-radius: 999px; white-space: nowrap;">
-                <strong>${t(state, "scorecards_list.cards_count").replace("{count}", group.rows.length)}</strong> · ${t(state, "scorecards_list.saved_count").replace("{count}", group.rows.filter((row) => row.card.updatedAt).length)}
-              </span>
-              <span class="button small dashed heat-group-toggle" style="pointer-events: none; padding: 4px 12px; border-radius: 999px; font-size: 0.8rem; white-space: nowrap;">${t(state, "scorecards_list.open_pilots")}</span>
-            </div>
-          </summary>
-          <div class="score-card-list-rows" style="padding: 20px; border-top: 1px solid var(--border); background: var(--surface); display: grid; gap: 15px;">
-            ${group.rows.map(row => renderScoreCardSummaryRow(state, row)).join("")}
-          </div>
-        </details>
-      `).join("")}
+      
+      <div class="score-card-list-rows" style="padding: 20px; border: 2px solid var(--border); background: var(--surface-1); border-radius: 12px; display: grid; gap: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+        ${sortedRows.length > 0 
+          ? sortedRows.map(row => renderScoreCardSummaryRow(state, row, activeEvent)).join("")
+          : `<div class="muted" style="text-align: center; padding: 20px;">${t(state, "scorecards.empty_msg") || "Ei tuloskortteja"}</div>`
+        }
+      </div>
     </section>
   `;
 }
@@ -60,70 +53,17 @@ export function renderScoreCardClassButtons(state, activeEvent, allRows, targetC
   `;
 }
 
-function groupScoreCardsByHeat(state, activeEvent, rows, targetClass) {
-  const groups = [];
-  const heats = (state.heats || []).filter(h => h.eventId === activeEvent.id);
+import { getScoreCardStructureStages } from "../../../logic/scoreCards.js";
 
-  // If a target class is selected, only process heats for that class
-  const relevantHeats = targetClass 
-    ? heats.filter(h => h.className && h.className.toLowerCase() === targetClass.toLowerCase())
-    : heats;
-
-  if (relevantHeats.length > 0) {
-    // Sort heats logically
-    relevantHeats.sort((a, b) => {
-      const pA = a.phase === 'qualifying' ? 1 : (a.phase === 'semifinal' ? 2 : 3);
-      const pB = b.phase === 'qualifying' ? 1 : (b.phase === 'semifinal' ? 2 : 3);
-      if (pA !== pB) return pA - pB;
-      if (a.round !== b.round) return a.round - b.round;
-      return String(a.groupName).localeCompare(String(b.groupName), 'fi', {numeric: true});
-    });
-
-    relevantHeats.forEach(heat => {
-      const heatRows = rows.filter(r => heat.entryIds.includes(r.entry.id));
-      if (heatRows.length > 0) {
-        const phaseLabel = heat.phase === 'semifinal' ? t(state, "scorecards_list.semifinal") : (heat.phase === 'final' ? t(state, "scorecards_list.final") : t(state, "scorecards_list.qualifying_round").replace("{round}", heat.round));
-        groups.push({
-          isHeat: true,
-          title: formatHeatTitle(heat, state),
-          subtitle: phaseLabel,
-          rows: heatRows
-        });
-      }
-    });
-  }
-
-  // Find rows that aren't in ANY of the displayed heat groups
-  const displayedEntryIds = new Set(groups.flatMap(g => g.rows.map(r => r.entry.id)));
-  const unassignedRows = rows.filter(r => !displayedEntryIds.has(r.entry.id));
-
-  // If there are unassigned rows OR if there were no heats at all, group them by class
-  if (unassignedRows.length > 0) {
-    const classGroups = new Map();
-    unassignedRows.forEach(r => {
-      const className = r.className || "Yleinen";
-      if (!classGroups.has(className)) classGroups.set(className, []);
-      classGroups.get(className).push(r);
-    });
-
-    Array.from(classGroups.entries()).forEach(([className, cRows]) => {
-      groups.push({
-        isHeat: false,
-        title: className,
-        subtitle: groups.length > 0 ? t(state, "scorecards_list.no_heats") : t(state, "scorecards_list.class_label"),
-        rows: cRows
-      });
-    });
-  }
-
-  return groups;
-}
-
-function renderScoreCardSummaryRow(state, row) {
-  const { entry, card, totals } = row;
-  const saved = Boolean(card.updatedAt);
+function renderScoreCardSummaryRow(state, row, activeEvent) {
+  const { entry, card, totals, aircraft } = row;
   const label = card.templateId === SCORE_CARD_TEMPLATE_WWI ? "WWI" : "Standard";
   
+  let displayPoints = totals.totalPoints;
+  let displayCuts = totals.totalCuts;
+  let displayFlightSeconds = totals.totalFlightSeconds;
+  let isSaved = Boolean(card.updatedAt);
+
   const currentPath = window.location.hash.replace("#/", "").split("?")[0];
   const backParam = currentPath && currentPath !== "scorecards" ? `?back=${currentPath}` : "";
 
@@ -132,11 +72,11 @@ function renderScoreCardSummaryRow(state, row) {
       <div class="score-card-list-main">
         <p class="kicker">${escapeHtml(row.className)} · #${escapeHtml(entry.raceNumber || card.startNumber || "-")} · ${escapeHtml(label)}</p>
         <h4>${escapeHtml(row.pilotName)}</h4>
-        <p class="muted"><strong style="color: var(--primary);">${t(state, "scorecards_list.heats_label")}${escapeHtml(row.calculatedFlyingRound || t(state, "scorecards_list.not_assigned"))}</strong> · ${escapeHtml(row.aircraftName)} · ${formatDuration(totals.totalFlightSeconds)} · ${totals.totalCuts} cuts</p>
+        <p class="muted"><strong style="color: var(--primary);">${t(state, "scorecards_list.heats_label")}${escapeHtml(row.calculatedFlyingRound || t(state, "scorecards_list.not_assigned"))}</strong> · ${escapeHtml(row.aircraftName)} · ${formatDuration(displayFlightSeconds)} · ${displayCuts} cuts</p>
       </div>
       <div class="score-card-list-status">
-        <span class="status ${saved ? "approved" : "pending"}">${saved ? t(state, "scorecard_editor.saved") : t(state, "scorecard_editor.not_saved")}</span>
-        <strong>${totals.totalPoints} p</strong>
+        <span class="status ${isSaved ? "approved" : "pending"}">${isSaved ? t(state, "scorecard_editor.saved") : t(state, "scorecard_editor.not_saved")}</span>
+        <strong>${displayPoints} p</strong>
       </div>
       <div class="score-card-list-actions">
         <a class="button small primary" href="#/scorecard/${escapeHtml(entry.id)}${backParam}">${t(state, "scorecards_list.open_card")}</a>

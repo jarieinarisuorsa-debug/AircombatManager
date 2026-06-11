@@ -23,6 +23,7 @@ export function renderSettingsView(state) {
   if (tab === "jarjestaja") {
     const formContent = `
       ${UI.Input({ label: t(state, "settings.organizer_name"), name: "organizerName", value: state.settings.organizerName || "", placeholder: t(state, "settings.organizer_name_placeholder") })}
+      <label class="check-row" style="margin-bottom: 20px;"><input type="checkbox" name="competitionMode" ${state.settings.competitionMode ? "checked" : ""} /> ${t(state, "settings.competition_mode")}</label>
       <label class="check-row" style="margin-bottom: 20px;"><input type="checkbox" name="publicDisplayMode" ${state.settings.publicDisplayMode ? "checked" : ""} /> ${t(state, "settings.public_display_mode")}</label>
       ${UI.Button({ label: t(state, "settings.save_settings"), type: "submit", variant: "primary" })}
     `;

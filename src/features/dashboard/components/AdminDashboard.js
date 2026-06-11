@@ -54,7 +54,7 @@ export function renderAdminDashboard(state) {
       title: t(state, "dashboard.no_active_event"),
       subtitle: t(state, "dashboard.no_event_desc"),
       headerActions: `
-        <a class="button primary" href="#/calendar">${t(state, "dashboard.open_calendar")}</a>
+        ${UI.Button({ label: "Luo uusi kilpailu", action: "open-calendar-and-event-form", variant: "primary" })}
       `
     });
     return `
@@ -191,7 +191,7 @@ export function renderAdminDashboard(state) {
               : `<button class="button primary disabled" style="flex: 1; justify-content: center;" disabled>${t(state, "dashboard.need_more_pilots")}</button>`
             }
             <a href="#/heats" class="button outline" style="flex: 1; justify-content: center;">${t(state, "dashboard.show_heats")}</a>
-            <a href="#/scorecards" class="button outline" style="flex: 1; justify-content: center;">${t(state, "dashboard.scorecards_btn").replace("{n}", classScorecardsCount)}</a>
+            <button type="button" class="button outline" data-action="set-workspace-tab" data-tab="tuloskortit" data-redirect="#/entries" style="flex: 1; justify-content: center;">${t(state, "dashboard.scorecards_btn").replace("{n}", classScorecardsCount)}</button>
             <a href="#/results" class="button outline" style="flex: 1; justify-content: center;">${t(state, "dashboard.print")}</a>
           </div>
         </div>

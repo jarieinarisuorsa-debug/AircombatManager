@@ -321,8 +321,12 @@ export function renderResultsTable(state, rows, showDetails = false, classPositi
       cells.push(`${row.totalFlightSeconds}s`, `${row.bestHeatScore} p`, row.resultCount);
     }
     
-    // Tuloskorttipainike rivin loppuun
-    cells.push(`<a class="button small dashed" href="#/scorecard/${escapeHtml(row.entryId)}">${t(state, "results.scorecard")}</a>`);
+    // Tulostuspainike (Pöytäkirja) rivin loppuun
+    cells.push(`
+      <div style="display: flex; gap: 4px; justify-content: flex-end;">
+        ${UI.Button({ label: "Pöytäkirja", action: "print-pilot-scorecard", entryId: escapeHtml(row.entryId), variant: "small dashed" })}
+      </div>
+    `);
 
     return UI.TableRow({ cells });
   });

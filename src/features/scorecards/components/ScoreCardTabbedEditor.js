@@ -1,5 +1,5 @@
 import { escapeHtml } from "../../../utils/html.js";
-import { getScoreCardRules, SCORE_CARD_TEMPLATE_WWI, SCORE_CARD_TEMPLATES } from "../../../logic/scoreCards.js";
+import { getScoreCardRules, SCORE_CARD_TEMPLATE_WWI, SCORE_CARD_TEMPLATES, roundHasData } from "../../../logic/scoreCards.js";
 import { t } from "../../../utils/i18n.js";
 
 export function renderScoreCardTabbedEditor(activeEvent, viewRow) {
@@ -10,6 +10,17 @@ export function renderScoreCardTabbedEditor(activeEvent, viewRow) {
   
   const pilotId = entry.id;
 
+  // Etsi viimeisin kierros, jolle on luotu Heat
+  let activeTabIndex = 0;
+  for (let i = stages.length - 1; i >= 0; i--) {
+    const stage = stages[i];
+    const hasHeat = (viewRow.pilotHeats || []).some(h => h.phase === stage.heatPhase && h.round === stage.heatRound);
+    if (hasHeat) {
+      activeTabIndex = i;
+      break;
+    }
+  }
+
   return `
     <div class="scorecard-tab-container">
       
@@ -18,7 +29,7 @@ export function renderScoreCardTabbedEditor(activeEvent, viewRow) {
           const heat = (viewRow.pilotHeats || []).find(h => h.phase === stage.heatPhase && h.round === stage.heatRound);
           const heatInfo = heat ? `<div style="font-size: 0.8rem; color: var(--primary); font-weight: bold; margin-top: 2px; letter-spacing: 0.05em;">Heat ${escapeHtml(heat.groupName)}</div>` : '';
           return `
-          <button type="button" class="tab-btn ${i === 0 ? 'active' : ''}" data-action="switch-scorecard-tab" data-tab-target="tab-${stage.roundNumber}-${pilotId}" style="display: flex; flex-direction: column; align-items: center; justify-content: center; line-height: 1.2; padding-top: 8px; padding-bottom: 8px;">
+          <button type="button" class="tab-btn ${i === activeTabIndex ? 'active' : ''}" data-action="switch-scorecard-tab" data-tab-target="tab-${stage.roundNumber}-${pilotId}" style="display: flex; flex-direction: column; align-items: center; justify-content: center; line-height: 1.2; padding-top: 8px; padding-bottom: 8px;">
             <div>${escapeHtml(stage.label)}</div>
             ${heatInfo}
           </button>
@@ -26,7 +37,7 @@ export function renderScoreCardTabbedEditor(activeEvent, viewRow) {
         }).join("")}
       </div>
 
-      ${stages.map((stage, i) => renderSingleRoundTable(stage, i === 0, viewRow, isWWI)).join("")}
+      ${stages.map((stage, i) => renderSingleRoundTable(stage, i === activeTabIndex, viewRow, isWWI)).join("")}
       
     </div>
   `;
@@ -109,7 +120,7 @@ function renderSingleRoundTable(stage, isActive, viewRow, isWWI) {
                 ${(() => {
                   const round = card.rounds?.find(r => Number(r.roundNumber) === rn);
                   const roundScore = totals?.roundScores?.find(rs => rs.roundNumber === rn)?.score;
-                  const val = round && (round.flightSeconds > 0 || round.cuts > 0 || round.takeoff) && roundScore ? roundScore.flightTotal : "";
+                  const val = round && roundHasData(round) && roundScore ? roundScore.flightTotal : "";
                   return `
                     <div class="sum-box-container" style="display: flex; width: 100%; padding-right: 5px;">
                       <div class="print-box yellow-box" name="r${rn}_flightTotal_display" style="width: 100%; height: 38px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; font-weight: bold; border-radius: 10px; background: rgba(0, 0, 0, 0.3); border: 1px solid rgba(255, 255, 255, 0.1); box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);">${val}</div>
@@ -131,6 +142,15 @@ function renderSingleRoundTable(stage, isActive, viewRow, isWWI) {
           </tbody>
         </table>
         
+        <div style="text-align: center; padding: 25px 0 15px 0; border-top: 1px solid rgba(255,255,255,0.05); margin-top: 10px;">
+          <strong style="font-size: 1.8rem; color: #ffd166; text-shadow: 0 0 10px rgba(255, 209, 102, 0.4);">
+            Erän pisteet: <span name="r${rn}_total_display">${(() => {
+              const roundScore = totals?.roundScores?.find(rs => rs.roundNumber === rn)?.score;
+              return roundScore ? roundScore.total : 0;
+            })()}</span> p
+          </strong>
+        </div>
+
         <div class="tab-save-footer" style="display: none;"></div>
       </div>
     </div>
@@ -141,7 +161,7 @@ function renderSingleFlightTimeRow(label, stage, card, totals) {
   const rn = stage.roundNumber;
   const round = card.rounds?.find(r => Number(r.roundNumber) === rn);
   const roundScore = totals?.roundScores?.find(rs => rs.roundNumber === rn)?.score;
-  const hasData = round && (round.flightMinutes > 0 || round.flightSeconds > 0 || round.cuts > 0 || round.takeoff);
+  const hasData = round && roundHasData(round);
   const min = hasData ? (round.flightMinutes || 0) : "";
   const sek = hasData ? (round.flightSeconds || 0) : "";
   const points = hasData && roundScore?.flightPoints !== undefined ? roundScore.flightPoints : "";
@@ -179,7 +199,7 @@ function renderSingleNumberRow(label, stage, card, totals, field, pointsField) {
   const rn = stage.roundNumber;
   const round = card.rounds?.find(r => Number(r.roundNumber) === rn);
   const roundScore = totals?.roundScores?.find(rs => rs.roundNumber === rn)?.score;
-  const hasData = round && (round[field] > 0 || round.flightSeconds > 0 || round.takeoff);
+  const hasData = round && roundHasData(round);
   const val = hasData ? (round[field] || 0) : "";
   const points = hasData && roundScore?.[pointsField] !== undefined ? roundScore[pointsField] : "";
   
@@ -217,7 +237,7 @@ function renderSingleBooleanRow(label, stage, card, totals, field, pointsField, 
   } else {
       const round = card.rounds?.find(r => Number(r.roundNumber) === rn);
       roundScore = totals?.roundScores?.find(rs => rs.roundNumber === rn)?.score;
-      if (round && (round.flightSeconds > 0 || round.cuts > 0 || round[field] !== undefined || round.takeoff)) {
+      if (round && roundHasData(round)) {
           val = round[field];
           if (roundScore?.[pointsField] !== undefined) {
               points = isPenalty && roundScore[pointsField] > 0 ? `-${roundScore[pointsField]}` : roundScore[pointsField];

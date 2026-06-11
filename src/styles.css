@@ -763,3 +763,26 @@ th {
   filter: none;
   user-select: auto;
 }
+
+/* Landing Mode overrides */
+body.landing-mode .app-shell {
+  display: block !important;
+}
+
+body.landing-mode .sidebar {
+  display: none !important;
+}
+
+body.landing-mode .topbar {
+  display: none !important;
+}
+
+body.landing-mode .content {
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+body.landing-mode #app {
+  padding: 0;
+  margin: 0;
+}

@@ -1,4 +1,4 @@
-import { createId, updateState } from "../../state/store.js";
+import { createId, updateState, isDemo } from "../../state/store.js";
 import { requireAdmin, requirePilotAccess } from "../../users/roles.js";
 import { registerAction } from "../../core/actionRegistry.js";
 import { normalizeClassName } from "../../logic/participants.js";
@@ -53,7 +53,81 @@ export function registerRegistrationActions() {
           updatedAt: new Date().toISOString()
         });
       }
+
+      if (isDemo) {
+        const demoPilotIds = ["demo-p1", "demo-p2", "demo-p3", "demo-p4", "demo-p5", "demo-p6"];
+        demoPilotIds.forEach((pId, idx) => {
+          const isAlreadyReg = state.registrations.some(r => r.eventId === eventId && r.pilotId === pId);
+          if (!isAlreadyReg) {
+            const pPlanes = state.aircraft ? state.aircraft.filter(a => a.pilotId === pId) : [];
+            const ww2Plane = pPlanes.find(a => a.className === "WWII" || a.className === "WW2");
+            const ww1Plane = pPlanes.find(a => a.className === "WWI");
+            const demoClasses = [];
+            if (ww2Plane) demoClasses.push("WWII");
+            if (ww1Plane) demoClasses.push("WWI");
+
+            if (demoClasses.length > 0) {
+              const isPending = idx < 3;
+              state.registrations.push({
+                id: createId("reg"),
+                eventId,
+                pilotId: pId,
+                email: "",
+                classes: demoClasses,
+                paymentIntent: "pay_on_site",
+                status: isPending ? "pending" : "approved",
+                createdAt: new Date().toISOString(),
+                updatedAt: new Date().toISOString()
+              });
+
+              if (!isPending) {
+                if (ww2Plane) {
+                  state.entries.push({
+                    id: createId("entry"),
+                    eventId,
+                    pilotId: pId,
+                    aircraftId: ww2Plane.id,
+                    className: "WWII",
+                    raceNumber: String(idx + 1),
+                    paymentStatus: "paid",
+                    checkInStatus: "checked_in",
+                    technicalInspection: "approved",
+                    notes: "Demoilmoittautuminen",
+                    paid: true,
+                    checkedIn: true,
+                    createdAt: new Date().toISOString(),
+                    updatedAt: new Date().toISOString()
+                  });
+                }
+                if (ww1Plane) {
+                  state.entries.push({
+                    id: createId("entry"),
+                    eventId,
+                    pilotId: pId,
+                    aircraftId: ww1Plane.id,
+                    className: "WWI",
+                    raceNumber: String(idx + 1),
+                    paymentStatus: "paid",
+                    checkInStatus: "checked_in",
+                    technicalInspection: "approved",
+                    notes: "Demoilmoittautuminen",
+                    paid: true,
+                    checkedIn: true,
+                    createdAt: new Date().toISOString(),
+                    updatedAt: new Date().toISOString()
+                  });
+                }
+              }
+            }
+          }
+        });
+      }
+
     }, "submit_registration");
+    
+    if (isDemo) {
+      alert("Ilmoittautumisesi on vastaanotettu! Automatiikka lisäsi kilpailuun juuri samalla sekunnilla myös 6 muuta demopilottia!");
+    }
     
     renderApp();
     return true;

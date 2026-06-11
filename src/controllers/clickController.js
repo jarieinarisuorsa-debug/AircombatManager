@@ -24,6 +24,10 @@ export function createClickHandler({ renderApp }) {
     const button = event.target.closest("[data-action]");
     if (!button || ["FORM", "SELECT", "INPUT", "TEXTAREA"].includes(button.tagName)) return;
 
+    if (button.tagName === "A" && button.getAttribute("href") === "#") {
+      event.preventDefault();
+    }
+
     // Prevent triggering parent actions (like row clicks) when interacting with form fields
     const formElement = event.target.closest("select, input, textarea");
     if (formElement && formElement !== button) return;
@@ -58,11 +62,17 @@ function runUiClickAction(action, button, { renderApp }) {
     return true;
   }
 
+
   if (action === "print-class-heats") {
     const targetClass = button.dataset.class;
+    const oldHash = location.hash;
     location.hash = `#/heats/${targetClass}`;
     renderApp();
-    window.print();
+    window.setTimeout(() => {
+      window.print();
+      location.hash = oldHash;
+      renderApp();
+    }, 200);
     return true;
   }
   if (action === "show-qr-code") {
@@ -113,6 +123,11 @@ function runUiClickAction(action, button, { renderApp }) {
       window._currentQrScanner.stop().catch(e => console.error(e));
       window._currentQrScanner = null;
     }
+    document.getElementById("modal-container").innerHTML = "";
+    return true;
+  }
+
+  if (action === "close-modal") {
     document.getElementById("modal-container").innerHTML = "";
     return true;
   }

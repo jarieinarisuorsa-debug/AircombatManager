@@ -154,4 +154,26 @@ export function initResultActions() {
     renderApp();
     return true;
   });
+
+  registerAction("print-class-scorecards", (event, button, { renderApp }) => {
+    window.PRINT_CLASS_FILLED_SCORECARDS = button.dataset.class;
+    renderApp();
+    setTimeout(() => {
+      window.print();
+      window.PRINT_CLASS_FILLED_SCORECARDS = null;
+      renderApp();
+    }, 500);
+    return true;
+  });
+
+  registerAction("print-pilot-scorecard", (event, button, { renderApp }) => {
+    window.PRINT_PILOT_SCORECARD_ENTRY_ID = button.dataset.entryId;
+    renderApp();
+    setTimeout(() => {
+      window.print();
+      window.PRINT_PILOT_SCORECARD_ENTRY_ID = null;
+      renderApp();
+    }, 500);
+    return true;
+  });
 }

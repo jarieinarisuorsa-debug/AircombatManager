@@ -52,10 +52,9 @@ export function renderAuthView() {
     ${termsModal}
     <div class="auth-container" style="max-width: 400px; margin: 40px auto; padding: 20px;">
       <div style="text-align: center; margin-bottom: 30px;">
-        <h2 style="margin-bottom: 10px; margin-top: 20px;">Aircombat Manager</h2>
-        <p style="color: var(--text-muted); font-size: 0.95rem;">
+        <h2 style="color: var(--text); font-size: 1.4rem; margin: 0 0 10px 0; font-weight: 600;">
           ${titleText}
-        </p>
+        </h2>
       </div>
 
       ${UI.FormPanel({
@@ -64,11 +63,6 @@ export function renderAuthView() {
         autocomplete: "on",
         style: "position: relative; padding-top: 40px;"
       }, `
-        <div style="position: absolute; top: 15px; right: 15px;">
-          <button type="button" class="app-btn icon-btn" data-action="toggle-language" title="Vaihda kieli / Change language" style="background: rgba(255,255,255,0.1); border-radius: 6px; padding: 4px 10px; font-weight: bold; border: 1px solid var(--border); font-size: 0.85rem;">
-            🌐 ${state.settings?.language === 'en' ? 'FI' : 'EN'}
-          </button>
-        </div>
         ${!isUpdate ? `
         <div style="margin-bottom: 20px;">
           ${UI.Input({
@@ -130,17 +124,11 @@ export function renderAuthView() {
               ${t(state, "auth.no_account")}
             </button>
           `}
+          <a href="#/landing" class="button" style="display: flex; align-items: center; justify-content: center; gap: 5px; width: 100%; box-sizing: border-box; margin-top: 15px; font-weight: 500;">
+            ← ${state.settings?.language === 'en' ? 'Back' : 'Takaisin'}
+          </a>
         </div>
 
-        ${(mode === 'login' && !isCloud) ? `
-        <div style="margin-top: 20px; font-size: 0.85rem; color: var(--text-muted); text-align: left; background: var(--surface-hover); padding: 15px; border-radius: 6px;">
-          <p style="margin: 0 0 10px 0;"><strong>${t(state, "auth.local_mock")}</strong></p>
-          <ol style="margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 8px;">
-            <li><strong>${t(state, "auth.mock_admin")}</strong> ${t(state, "auth.mock_admin_email")}<br><span style="font-size: 0.8rem;">${t(state, "auth.mock_admin_desc")}</span></li>
-            <li><strong>${t(state, "auth.mock_pilot")}</strong> ${t(state, "auth.mock_pilot_email")}<br><span style="font-size: 0.8rem;">${t(state, "auth.mock_pilot_desc")}</span></li>
-            <li><strong>${t(state, "auth.mock_guest")}</strong> ${t(state, "auth.mock_guest_email")}<br><span style="font-size: 0.8rem;">${t(state, "auth.mock_guest_desc")}</span></li>
-          </ol>
-        </div>` : ''}
       `)}
     </div>
   `;

@@ -155,16 +155,18 @@ export const UI = {
   Table: ({ headers = [], rows = [], className = "pilot-table", style = "width: 100%; border-collapse: collapse; font-size: 0.9rem;" } = {}) => {
     const ths = headers.map(h => `<th style="padding: 8px;">${escapeHtml(h)}</th>`).join("");
     return `
-      <table class="${className}" style="${escapeHtml(style)}">
-        <thead>
-          <tr style="border-bottom: 2px solid var(--border); text-align: left;">
-            ${ths}
-          </tr>
-        </thead>
-        <tbody>
-          ${rows.join("")}
-        </tbody>
-      </table>
+      <div class="ui-table-wrapper" style="width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch;">
+        <table class="${className}" style="${escapeHtml(style)}">
+          <thead>
+            <tr style="border-bottom: 2px solid var(--border); text-align: left;">
+              ${ths}
+            </tr>
+          </thead>
+          <tbody>
+            ${rows.join("")}
+          </tbody>
+        </table>
+      </div>
     `;
   },
 

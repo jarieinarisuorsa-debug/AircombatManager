@@ -295,6 +295,38 @@ function markResultsDraft(event) {
 }
 
 export function initEntryActions() {
+  registerAction("auto-number-inputs", (event, button) => {
+    const form = button.closest("form");
+    if (!form) return;
+    
+    const tbody = form.querySelector("tbody");
+    if (!tbody) return;
+    
+    const rows = Array.from(tbody.querySelectorAll("tr"));
+    
+    rows.sort((a, b) => {
+      const nameA = a.querySelector("span[style*='font-weight: 500']")?.textContent.trim() || "";
+      const nameB = b.querySelector("span[style*='font-weight: 500']")?.textContent.trim() || "";
+      return nameA.localeCompare(nameB, "fi");
+    });
+    
+    let num = 1;
+    rows.forEach(row => {
+      tbody.appendChild(row); // Re-append in sorted order
+      const input = row.querySelector("input[name^='raceNumber_']");
+      if (input) input.value = num++;
+    });
+
+    // Transform button to Save button
+    button.textContent = button.dataset.saveLabel || "Tallenna kilpailunumerot";
+    button.type = "submit";
+    button.classList.add("primary");
+    button.classList.remove("secondary");
+    button.removeAttribute("data-action");
+    
+    return true;
+  });
+
   registerAction("toggle-class-entry", (event, button, { renderApp }) => {
     toggleClassEntry({ pilotId: button.dataset.pilotId, targetClass: button.dataset.class });
     renderApp();
@@ -376,7 +408,11 @@ export function initEntryActions() {
       state.settings = state.settings || {};
       state.settings.workspaceActiveTab = button.dataset.tab;
     }, "set_workspace_tab");
-    renderApp();
+    if (button.dataset.redirect) {
+      window.location.hash = button.dataset.redirect;
+    } else {
+      renderApp();
+    }
     return true;
   });
 

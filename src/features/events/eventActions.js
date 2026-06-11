@@ -1,7 +1,7 @@
 import { DEFAULT_RULES } from "../../data/defaultState.js";
 import { DEFAULT_COMPETITION_FORMAT, normalizeCompetitionFormat } from "../../logic/competitionFormat.js";
 import { DEFAULT_EVENT_INFO, normalizeEventInfo } from "../../logic/eventInfo.js";
-import { createId, updateState, getState } from "../../state/store.js";
+import { createId, updateState, getState, isDemo } from "../../state/store.js";
 import { requireAdmin } from "../../users/roles.js";
 import { requireText } from "../../utils/formValues.js";
 import { openConfirmModal } from "../../core/confirmActions.js";
@@ -10,10 +10,13 @@ import { registerAction } from "../../core/actionRegistry.js";
 import { setActiveEvent } from "../settings/settingsActions.js";
 import { registerWeatherActions } from "./weatherWidget.js";
 import { t } from "../../utils/i18n.js";
-
+import { showToast } from "../../ui/toast.js";
 export function addEvent(data) {
   updateState((state) => {
     requireAdmin(state);
+    if (isDemo && state.events.length >= 1) {
+      throw new Error("Demo-versiossa voit perustaa vain yhden kilpailun.");
+    }
     const event = {
       id: createId("event"),
       name: requireText(data.name, "Kilpailun nimi puuttuu."),
@@ -37,6 +40,79 @@ export function addEvent(data) {
     };
     state.events.push(event);
     state.activeEventId = event.id;
+
+    if (isDemo) {
+      const demoPilotIds = ["demo-p1", "demo-p2", "demo-p3", "demo-p4", "demo-p5", "demo-p6"];
+      state.registrations = state.registrations || [];
+      state.entries = state.entries || [];
+      demoPilotIds.forEach((pId, idx) => {
+        const pPlanes = state.aircraft ? state.aircraft.filter(a => a.pilotId === pId) : [];
+        const ww2Plane = pPlanes.find(a => a.className === "WWII");
+        const ww1Plane = pPlanes.find(a => a.className === "WWI");
+        
+        const classes = [];
+        if (ww2Plane) classes.push("WWII");
+        if (ww1Plane) classes.push("WWI");
+        
+        if (classes.length > 0) {
+          const isPending = idx < 3; // Ensimmäiset 3 odottavat hyväksyntää
+          state.registrations.push({
+            id: createId("reg"),
+            eventId: event.id,
+            pilotId: pId,
+            classes: classes,
+            status: isPending ? "pending" : "approved",
+            paymentIntent: "pay_on_site",
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString()
+          });
+          
+          if (!isPending) {
+            if (ww2Plane) {
+               state.entries.push({
+                 id: createId("entry"),
+                 eventId: event.id,
+                 pilotId: pId,
+                 aircraftId: ww2Plane.id,
+                 className: "WWII",
+                 raceNumber: String(idx + 1),
+                 paymentStatus: "paid",
+                 checkInStatus: "checked_in",
+                 technicalInspection: "approved",
+                 notes: "Demoilmoittautuminen",
+                 paid: true,
+                 checkedIn: true,
+                 createdAt: new Date().toISOString(),
+                 updatedAt: new Date().toISOString()
+               });
+            }
+            if (ww1Plane) {
+               state.entries.push({
+                 id: createId("entry"),
+                 eventId: event.id,
+                 pilotId: pId,
+                 aircraftId: ww1Plane.id,
+                 className: "WWI",
+                 raceNumber: String(idx + 1),
+                 paymentStatus: "paid",
+                 checkInStatus: "checked_in",
+                 technicalInspection: "approved",
+                 notes: "Demoilmoittautuminen",
+                 paid: true,
+                 checkedIn: true,
+                 createdAt: new Date().toISOString(),
+                 updatedAt: new Date().toISOString()
+               });
+            }
+          }
+        }
+      });
+      const count = state.registrations.filter(r => r.eventId === event.id).length;
+      setTimeout(() => {
+        showToast("Demo auto-populate suoritettiin. Lisätyt ilmoittautumiset: " + count, "success");
+      }, 50);
+    }
+
   }, "add_event");
 }
 
@@ -315,6 +391,16 @@ export function initEventActions() {
   registerAction("set-active-event", (event, button, { renderApp }) => {
     setActiveEvent(button.dataset.eventId);
     location.hash = "";
+    renderApp();
+    return true;
+  });
+
+  registerAction("open-calendar-and-event-form", (event, button, { renderApp }) => {
+    updateState(state => { 
+      state.settings = state.settings || {};
+      state.settings.eventFormOpen = true; 
+    }, "open_event_form");
+    location.hash = "#/calendar";
     renderApp();
     return true;
   });

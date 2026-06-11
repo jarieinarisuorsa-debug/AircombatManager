@@ -30,11 +30,11 @@ export function renderScoreCardEditorView(state) {
   if (!row) {
     return UI.Panel({ title: t(state, "scorecard_editor.not_found_title") }, `
       <p class="muted">${t(state, "scorecard_editor.not_found_msg")}</p>
-      <a class="button primary" href="${isAdmin(state) ? '#/scorecards' : '#/myevent'}">${t(state, "scorecard_editor.go_back")}</a>
+      <a class="button primary" href="#" data-action="set-workspace-tab" data-tab="tuloskortit" data-redirect="#/entries">${t(state, "scorecard_editor.go_back")}</a>
     `);
   }
 
-  const backUrl = isAdmin(state) ? "#/scorecards" : "#/myevent";
+  const backUrl = isAdmin(state) ? "#/entries" : "#/myevent";
 
   return `
     <div class="score-card-editor-standalone" style="width: 100%;">
@@ -89,7 +89,7 @@ export function renderScoreCardForm(activeEvent, row, options = {}) {
     <input type="hidden" name="templateId" value="${escapeHtml(template.id)}" />
   `;
 
-  let backUrl = options.backUrl || "#/scorecards";
+  let backUrl = options.backUrl || "#/entries";
   const currentHash = window.location.hash || "";
   if (currentHash.includes('?back=')) {
     const backParam = currentHash.split('?back=')[1];
@@ -128,7 +128,7 @@ export function renderScoreCardForm(activeEvent, row, options = {}) {
     <div class="score-card-sticky-footer no-print" style="display: flex; flex-direction: column; gap: 12px; max-width: 600px; margin: 0 auto; width: 100%;">
       <div style="display: flex; justify-content: center; align-items: center; padding-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.1);">
         <div class="footer-totals" style="display: flex; align-items: center;">
-          <strong style="font-size: 1.8rem; color: #ffd166; text-shadow: 0 0 10px rgba(255, 209, 102, 0.4);">${t(state, "scorecard_editor.total")} <span name="final_sum_display">${totals.totalPoints}</span> p</strong>
+          <strong style="font-size: 1.4rem; color: var(--muted); margin-right: 15px;">Koko kilpailu: <span name="final_sum_display">${totals.totalPoints}</span> p</strong>
         </div>
         ${templateSelectHtml}
       </div>

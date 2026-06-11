@@ -13,7 +13,6 @@ import { renderAircraftView } from "./features/aircraft/aircraftView.js";
 import { renderEntriesView } from "./features/entries/entriesView.js";
 import { renderHeatsView } from "./features/heats/heatsView.js";
 import { renderResultsView } from "./features/results/resultsView.js";
-import { renderScoreCardsView } from "./features/scorecards/scorecardsView.js";
 import { renderScoreCardEditorView } from "./features/scorecards/components/ScoreCardEditor.js";
 import { renderDocumentsView } from "./features/documents/documentsView.js";
 import { renderSettingsView } from "./features/settings/settingsView.js";
@@ -25,13 +24,15 @@ import { isAdmin } from "./users/roles.js";
 import { renderSeasonStandingsView } from "./features/results/seasonStandingsView.js";
 import { renderMessagesView } from "./features/messages/messagesView.js";
 
-import { renderAuthView } from "./features/auth/authView.js";
 import { renderAboutView } from "./features/about/aboutView.js";
+import { renderLandingView } from "./features/landing/landingView.js";
+import { renderEnvironmentsView } from "./features/landing/environmentsView.js";
+import { renderBuildGuideView } from "./features/about/buildGuideView.js";
+import { renderTachometerView, unmountTachometer } from "./features/tools/tachometerView.js";
 
 import { t } from "./utils/i18n.js";
 
 export const ROUTES = {
-  login: { title: (state) => t(state, "auth.login"), render: renderAuthView },
   home: { title: (state) => t(state, "nav.home"), render: renderHomeView },
   dashboard: { title: (state) => isAdmin(state) ? t(state, "nav.home") : t(state, "nav.home"), render: renderDashboardView },
   calendar: { title: (state) => t(state, "nav.calendar"), render: renderCalendarView },
@@ -51,7 +52,6 @@ export const ROUTES = {
   myevent: { title: (state) => t(state, "nav.myevent"), render: renderMyEventView },
   aircraft: { title: (state) => t(state, "nav.aircraft"), render: renderAircraftView },
   heats: { title: (state) => isAdmin(state) ? t(state, "nav.heats") : t(state, "nav.heats_public"), render: renderHeatsView },
-  scorecards: { title: (state) => t(state, "nav.scorecards"), render: renderScoreCardsView },
   scorecard: { title: (state) => "Tuloskortin syöttö", render: renderScoreCardEditorView },
   documents: { title: (state) => t(state, "nav.documents"), render: renderDocumentsView },
   about: { title: (state) => t(state, "nav.about"), render: renderAboutView },
@@ -59,13 +59,18 @@ export const ROUTES = {
   standings: { title: (state) => t(state, "nav.standings"), render: renderSeasonStandingsView },
   settings: { title: (state) => t(state, "nav.settings"), render: renderSettingsView },
   mapeditor: { title: (state) => t(state, "nav.mapeditor"), render: renderMapEditorView },
-  messages: { title: (state) => t(state, "nav.messages"), render: renderMessagesView }
+  messages: { title: (state) => t(state, "nav.messages"), render: renderMessagesView },
+  landing: { title: (state) => "Tervetuloa / Welcome", render: renderLandingView },
+  environments: { title: (state) => "Valitse maa / Select Country", render: renderEnvironmentsView },
+  buildguide: { title: (state) => t(state, "about.guide_title"), render: renderBuildGuideView },
+  tachometer: { title: (state) => t(state, "tachometer.title"), render: renderTachometerView }
 };
 
 export function getCurrentRoute() {
   const hash = location.hash.replace("#/", "");
-  const route = hash.split("/")[0] || "home";
-  return ROUTES[route] ? route : "home";
+  const route = hash.split("/")[0];
+  if (!route) return "landing";
+  return ROUTES[route] ? route : "landing";
 }
 
 export function getRouteParam() {

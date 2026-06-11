@@ -45,11 +45,11 @@ export function renderWorkspaceRegistrationsTab(state, activeEvent) {
           </div>
           <div style="display: flex; gap: 8px; flex-direction: column; min-width: 150px;">
             ${reg.status === 'pending' ? `
-              <button type="button" class="button success small" data-action="approve-registration" data-reg-id="${escapeHtml(reg.id)}">${t(state, "event_workspace.approve")}</button>
-              <button type="button" class="button danger small" data-action="reject-registration" data-reg-id="${escapeHtml(reg.id)}">${t(state, "event_workspace.reject")}</button>
+              ${UI.Button({ label: t(state, "event_workspace.approve"), action: "approve-registration", variant: "success", size: "small", regId: reg.id })}
+              ${UI.Button({ label: t(state, "event_workspace.reject"), action: "reject-registration", variant: "danger", size: "small", regId: reg.id })}
             ` : ""}
-            <button type="button" class="button danger small" data-action="delete-registration" data-reg-id="${escapeHtml(reg.id)}">${t(state, "my_pilot.reg_cancel")}</button>
-            <button type="button" class="button dashed small" data-action="open-pilot-card" data-pilot-id="${escapeHtml(pilot.id)}">${t(state, "event_workspace.open_pilot_card")}</button>
+            ${UI.Button({ label: t(state, "my_pilot.reg_cancel"), action: "delete-registration", variant: "danger", size: "small", regId: reg.id })}
+            ${UI.Button({ label: t(state, "event_workspace.open_pilot_card"), action: "open-pilot-card", size: "small", pilotId: pilot.id })}
           </div>
         </div>
       </div>

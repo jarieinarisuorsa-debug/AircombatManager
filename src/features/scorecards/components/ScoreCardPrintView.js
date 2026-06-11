@@ -1,5 +1,7 @@
 import { escapeHtml } from "../../../utils/html.js";
-import { getScoreCardRules, SCORE_CARD_TEMPLATE_WWI, SCORE_CARD_TEMPLATES, calculateModelPoints } from "../../../logic/scoreCards.js";
+import { getScoreCardRules, SCORE_CARD_TEMPLATE_WWI, SCORE_CARD_TEMPLATES, calculateModelPoints, roundHasData } from "../../../logic/scoreCards.js";
+import { t } from "../../../utils/i18n.js";
+import { isDemo } from "../../../state/store.js";
 
 export function renderScoreCardPrintView(activeEvent, viewRow) {
   const { card, pilotName, aircraftName, className, totals } = viewRow;
@@ -16,29 +18,31 @@ export function renderScoreCardPrintView(activeEvent, viewRow) {
     return renderWWIScoreCardPrintView(card, viewRow, activeEvent);
   }
 
+  const demoWatermark = isDemo ? `<div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-30deg); font-size: 150px; font-weight: 900; color: rgba(255, 0, 0, 0.15); pointer-events: none; z-index: 9999; letter-spacing: 20px; white-space: nowrap;">DEMO</div>` : '';
+
   return `
-    <div class="scorecard-print-view matrix-layout">
-      
+    <div class="scorecard-print-view matrix-layout" style="position: relative;">
+      ${demoWatermark}
       <!-- HEADER -->
       <div class="matrix-header">
         <div class="header-field">
-          <span class="label">Nro:</span>
+          <span class="label">${t(window.appState, "scorecard_print.number")}</span>
           <span class="value-line">${escapeHtml(startNumber)}</span>
         </div>
         <div class="header-field wide">
-          <span class="label">Nimi:</span>
+          <span class="label">${t(window.appState, "scorecard_print.name")}</span>
           <span class="value-line">${escapeHtml(pilot)}</span>
         </div>
         <div class="header-field">
-          <span class="label">Luokka:</span>
+          <span class="label">${t(window.appState, "scorecard_print.class")}</span>
           <span class="value-line">${escapeHtml(className || "")}</span>
         </div>
         <div class="header-field">
-          <span class="label">Taajuus:</span>
+          <span class="label">${t(window.appState, "scorecard_print.frequency")}</span>
           <span class="value-line">${escapeHtml(frequency)}</span>
         </div>
         <div class="header-field wide">
-          <span class="label">Lentovuorot:</span>
+          <span class="label">${t(window.appState, "scorecard_print.flying_rounds")}</span>
           <span class="value-line">${escapeHtml(flyingRound || "")}</span>
         </div>
       </div>
@@ -48,7 +52,7 @@ export function renderScoreCardPrintView(activeEvent, viewRow) {
         <thead>
           <tr>
             <th class="col-label" style="font-size: 0.7rem; font-weight: normal; text-align: left; vertical-align: top;">
-              Kirjaa starttipaikka /<br>tuomari
+              ${t(window.appState, "scorecard_print.judge_start_place")}
             </th>
             ${stages.map(stage => {
               const heat = (viewRow.pilotHeats || []).find(h => h.phase === stage.heatPhase && h.round === stage.heatRound);
@@ -66,21 +70,21 @@ export function renderScoreCardPrintView(activeEvent, viewRow) {
           </tr>
         </thead>
         <tbody>
-          ${isWWI ? renderMatrixBooleanRow("Nosto (Takeoff) (50 P)", stages, card, totals, "takeoff", "takeoffPoints") : ""}
-          ${renderMatrixFlightTimeRow("Lentoaika (3sek=1 P)", stages, card, totals)}
-          ${renderMatrixNumberRow("Leikkaukset (100 P)", stages, card, totals, "cuts", "cutPoints")}
-          ${isWWI ? renderMatrixNumberRow("Maamaalit (60 P)", stages, card, totals, "groundTargets", "groundTargetPoints") : ""}
-          ${renderMatrixBooleanRow("Streamer ehjä (50 P)", stages, card, totals, "streamerOk", "streamerOkPoints")}
-          ${renderMatrixBooleanRow("Pakoilu (-50 P)", stages, card, totals, "hasenfuss", "hasenfussPenalty", true)}
-          ${renderMatrixBooleanRow("Turvaraja (-200 P)", stages, card, totals, "safetylineOverflown", "safetylinePenalty", true)}
-          ${isWWI ? renderMatrixBooleanRow("Laskeutuminen merkistä (50 P)", stages, card, totals, "landingAfterEndSignal", "landingAfterEndSignalPoints") : ""}
+          ${isWWI ? renderMatrixBooleanRow(t(window.appState, "scorecard_print.takeoff"), stages, card, totals, "takeoff", "takeoffPoints") : ""}
+          ${renderMatrixFlightTimeRow(t(window.appState, "scorecard_print.flight_time"), stages, card, totals)}
+          ${renderMatrixNumberRow(t(window.appState, "scorecard_print.cuts"), stages, card, totals, "cuts", "cutPoints")}
+          ${isWWI ? renderMatrixNumberRow(t(window.appState, "scorecard_print.ground_targets"), stages, card, totals, "groundTargets", "groundTargetPoints") : ""}
+          ${renderMatrixBooleanRow(t(window.appState, "scorecard_print.streamer_ok"), stages, card, totals, "streamerOk", "streamerOkPoints")}
+          ${renderMatrixBooleanRow(t(window.appState, "scorecard_print.hasenfuss"), stages, card, totals, "hasenfuss", "hasenfussPenalty", true)}
+          ${renderMatrixBooleanRow(t(window.appState, "scorecard_print.safety_line"), stages, card, totals, "safetylineOverflown", "safetylinePenalty", true)}
+          ${isWWI ? renderMatrixBooleanRow(t(window.appState, "scorecard_print.landing_mark"), stages, card, totals, "landingAfterEndSignal", "landingAfterEndSignalPoints") : ""}
           
           <tr class="row-summe">
-            <td><strong>Summa</strong></td>
+            <td><strong>${t(window.appState, "scorecard_print.sum")}</strong></td>
             ${stages.map(stage => {
               const round = card.rounds?.find(r => Number(r.roundNumber) === stage.roundNumber);
               const roundScore = totals?.roundScores?.find(rs => rs.roundNumber === stage.roundNumber)?.score;
-              const val = round && (round.flightSeconds > 0 || round.cuts > 0 || round.takeoff) && roundScore ? roundScore.total : "";
+              const val = round && roundHasData(round) && roundScore ? roundScore.total : "";
               return `
                 <td>
                   <div class="sum-box-container">
@@ -92,13 +96,13 @@ export function renderScoreCardPrintView(activeEvent, viewRow) {
           </tr>
 
           <!-- AIRCRAFT & SIGNATURES -->
-          ${isWWI ? renderMatrixTextLineRow("Mallipisteet", stages, card, "modelPoints", "kpl") : renderMatrixBooleanRow("2,5-luokka", stages, card, totals, "dummy", "dummy")}
-          ${renderMatrixTextLineRow("Malli", stages, card, "modelName")}
-          ${renderMatrixTextLineRow("Moottori / Akku", stages, card, "motorOrBattery")}
-          ${renderMatrixTextLineRow("Potkuri", stages, card, "propeller")}
-          ${renderMatrixTextLineRow("Kierrosluku / RPM", stages, card, "rpm")}
-          ${renderMatrixSignatureRow("Pilotin allekirjoitus", stages, card, "pilotSignature")}
-          ${renderMatrixSignatureRow("Tuomarin allekirjoitus", stages, card, "judgeSignature")}
+          ${isWWI ? renderMatrixTextLineRow(t(window.appState, "scorecard_print.model_points"), stages, card, "modelPoints", "kpl", viewRow) : renderMatrixBooleanRow(t(window.appState, "scorecard_print.dummy_class"), stages, card, totals, "dummy", "dummy")}
+          ${renderMatrixTextLineRow(t(window.appState, "scorecard_print.model"), stages, card, "modelName", "", viewRow)}
+          ${renderMatrixTextLineRow(t(window.appState, "scorecard_print.motor_battery"), stages, card, "motorOrBattery", "", viewRow)}
+          ${renderMatrixTextLineRow(t(window.appState, "scorecard_print.propeller"), stages, card, "propeller", "", viewRow)}
+          ${renderMatrixTextLineRow(t(window.appState, "scorecard_print.rpm"), stages, card, "rpm", "", viewRow)}
+          ${renderMatrixSignatureRow(t(window.appState, "scorecard_print.pilot_signature"), stages, card, "pilotSignature")}
+          ${renderMatrixSignatureRow(t(window.appState, "scorecard_print.judge_signature"), stages, card, "judgeSignature")}
 
         </tbody>
       </table>
@@ -106,19 +110,19 @@ export function renderScoreCardPrintView(activeEvent, viewRow) {
       <!-- BOTTOM BAR: TOTALS & WARNINGS -->
       <div class="print-bottom-bar">
         <div class="warnings-box horizontal-warnings">
-          <strong>Huomioitavaa:</strong><br>
-          <span class="red-text">Ota aina eri starttipaikka!</span> &nbsp;|&nbsp;
-          <span class="red-text">Ota aina eri tuomari!</span> &nbsp;|&nbsp;
-          <span class="red-text">Kirjoita selkeästi!</span>
+          <strong>${t(window.appState, "scorecard_print.warnings")}</strong><br>
+          <span class="red-text">${t(window.appState, "scorecard_print.warning_start")}</span> &nbsp;|&nbsp;
+          <span class="red-text">${t(window.appState, "scorecard_print.warning_judge")}</span> &nbsp;|&nbsp;
+          <span class="red-text">${t(window.appState, "scorecard_print.warning_clear")}</span>
         </div>
         
         <div class="final-totals-box">
           <div class="total-field">
-            <span class="label">Kokonaispisteet:</span>
+            <span class="label">${t(window.appState, "scorecard_print.total_points")}</span>
             <div class="print-box yellow-box huge-yellow">${totals?.totalPoints !== undefined && totals.totalPoints !== "" ? totals.totalPoints : ""}</div>
           </div>
           <div class="total-field">
-            <span class="label">Sijoitus:</span>
+            <span class="label">${t(window.appState, "scorecard_print.placement")}</span>
             <div class="print-box white-box huge-white"></div>
           </div>
         </div>
@@ -134,7 +138,7 @@ function renderMatrixFlightTimeRow(label, stages, card, totals) {
       <td class="sticky-col"><strong>${label}</strong></td>
       ${stages.map(stage => {
         const round = card.rounds?.find(r => Number(r.roundNumber) === stage.roundNumber);
-        const hasData = round && (round.flightMinutes > 0 || round.flightSeconds > 0 || round.cuts > 0 || round.takeoff);
+        const hasData = round && roundHasData(round);
         const min = hasData ? (round.flightMinutes || 0) : "";
         const sek = hasData ? (round.flightSeconds || 0) : "";
         
@@ -142,8 +146,8 @@ function renderMatrixFlightTimeRow(label, stages, card, totals) {
           <td>
             <div class="print-input-group">
               <div class="print-labels" style="width: 100px;">
-                <span style="flex:1;">Min</span>
-                <span style="flex:1;">sek</span>
+                <span style="flex:1;">${t(window.appState, "scorecard_print.min")}</span>
+                <span style="flex:1;">${t(window.appState, "scorecard_print.sec")}</span>
               </div>
               <div class="print-boxes" style="width: 100px;">
                 <div class="print-box white-box" style="flex:1; display:flex; align-items:center; justify-content:center; font-weight:bold;">${min}</div>
@@ -163,14 +167,14 @@ function renderMatrixNumberRow(label, stages, card, totals, field) {
       <td class="sticky-col"><strong>${label}</strong></td>
       ${stages.map(stage => {
         const round = card.rounds?.find(r => Number(r.roundNumber) === stage.roundNumber);
-        const hasData = round && (round[field] > 0 || round.flightSeconds > 0 || round.takeoff);
+        const hasData = round && roundHasData(round);
         const val = hasData ? (round[field] || 0) : "";
         
         return `
           <td>
             <div class="print-input-group">
               <div class="print-labels" style="width: 100%;">
-                <span>Kpl</span>
+                <span>${t(window.appState, "scorecard_print.pcs")}</span>
               </div>
               <div class="print-boxes" style="width: 100%;">
                 <div class="print-box white-box wide-white" style="flex:1; display:flex; align-items:center; justify-content:center; font-weight:bold;">${val}</div>
@@ -194,7 +198,7 @@ function renderMatrixBooleanRow(label, stages, card, totals, field, pointsField,
             val = card.aircraft?.[field];
         } else {
             const round = card.rounds?.find(r => Number(r.roundNumber) === stage.roundNumber);
-            if (round && (round.flightSeconds > 0 || round.cuts > 0 || round[field] !== undefined || round.takeoff)) {
+            if (round && roundHasData(round)) {
                 val = round[field];
             }
         }
@@ -210,8 +214,8 @@ function renderMatrixBooleanRow(label, stages, card, totals, field, pointsField,
                 <div class="print-box white-box ${isNo ? 'checked-box' : ''}" style="flex:1; display:flex; align-items:center; justify-content:center; font-weight:bold;">${isNo ? 'X' : ''}</div>
               </div>
               <div class="print-labels" style="width: 80px;">
-                <span style="flex:1;">kyllä</span>
-                <span style="flex:1;">ei</span>
+                <span style="flex:1;">${t(window.appState, "scorecard_print.yes")}</span>
+                <span style="flex:1;">${t(window.appState, "scorecard_print.no")}</span>
               </div>
             </div>
           </td>
@@ -221,18 +225,18 @@ function renderMatrixBooleanRow(label, stages, card, totals, field, pointsField,
   `;
 }
 
-function renderMatrixTextLineRow(label, stages, card, infoField, unit = "") {
+function renderMatrixTextLineRow(label, stages, card, infoField, unit = "", viewRow = null) {
   return `
     <tr class="matrix-text-row">
       <td>${label}</td>
       ${stages.map(stage => {
-        // If we want to populate filled cards with the info across rounds, we can just take the first round info for now, 
-        // or leave them blank for paper print.
+        // Jos tuloskortille ei ole tallennettu omaa konetta, haetaan ensisijaisesti pilotin kisaan ilmoittama kone
+        const sourceAircraft = card.aircraft || (viewRow && viewRow.aircraft) || {};
         let val = "";
-        if (infoField === "modelName" && card.aircraft?.modelName) val = card.aircraft.modelName;
-        if (infoField === "motorOrBattery" && card.aircraft?.motorOrBattery) val = card.aircraft.motorOrBattery;
-        if (infoField === "propeller" && card.aircraft?.propeller) val = card.aircraft.propeller;
-        if (infoField === "rpm" && card.aircraft?.rpm) val = card.aircraft.rpm;
+        if (infoField === "modelName" && sourceAircraft.modelName) val = sourceAircraft.modelName;
+        if (infoField === "motorOrBattery" && sourceAircraft.motorOrBattery) val = sourceAircraft.motorOrBattery;
+        if (infoField === "propeller" && sourceAircraft.propeller) val = sourceAircraft.propeller;
+        if (infoField === "rpm" && sourceAircraft.rpm) val = sourceAircraft.rpm;
         
         return `
           <td>
@@ -277,29 +281,31 @@ function renderWWIScoreCardPrintView(card, viewRow, activeEvent) {
   const frequency = card.frequency || "2.4 GHz";
   const pilot = pilotName || "";
 
+  const demoWatermark = isDemo ? `<div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-30deg); font-size: 150px; font-weight: 900; color: rgba(255, 0, 0, 0.15); pointer-events: none; z-index: 9999; letter-spacing: 20px; white-space: nowrap;">DEMO</div>` : '';
+
   return `
-    <div class="scorecard-print-view wwi-matrix-layout">
-      
+    <div class="scorecard-print-view wwi-matrix-layout" style="position: relative;">
+      ${demoWatermark}
       <!-- HEADER -->
       <div class="matrix-header" style="margin-bottom: 10px;">
         <div class="header-field">
-          <span class="label">Nro:</span>
+          <span class="label">${t(window.appState, "scorecard_print.number")}</span>
           <span class="value-line">${escapeHtml(startNumber)}</span>
         </div>
         <div class="header-field wide">
-          <span class="label">Nimi:</span>
+          <span class="label">${t(window.appState, "scorecard_print.name")}</span>
           <span class="value-line">${escapeHtml(pilot)}</span>
         </div>
         <div class="header-field">
-          <span class="label">Luokka:</span>
+          <span class="label">${t(window.appState, "scorecard_print.class")}</span>
           <span class="value-line">${escapeHtml(className || "")}</span>
         </div>
         <div class="header-field">
-          <span class="label">Taajuus:</span>
+          <span class="label">${t(window.appState, "scorecard_print.frequency")}</span>
           <span class="value-line">${escapeHtml(frequency)}</span>
         </div>
         <div class="header-field wide">
-          <span class="label">Lentovuorot:</span>
+          <span class="label">${t(window.appState, "scorecard_print.flying_rounds")}</span>
           <span class="value-line">${escapeHtml(flyingRound || "")}</span>
         </div>
       </div>
@@ -325,7 +331,7 @@ function renderWWIScoreCardPrintView(card, viewRow, activeEvent) {
           <tbody>
             
             <!-- MODELLPUNKTE -->
-            <tr><td colspan="5" class="section-title"><strong>Mallipisteet</strong></td></tr>
+            <tr><td colspan="5" class="section-title"><strong>${t(window.appState, "scorecard_print.model_points")}</strong></td></tr>
             ${SCORE_CARD_TEMPLATES[SCORE_CARD_TEMPLATE_WWI].modelPointItems.map(item => `
               <tr>
                 <td class="row-label">${item.label} (${item.points} P)</td>
@@ -351,25 +357,25 @@ function renderWWIScoreCardPrintView(card, viewRow, activeEvent) {
               <td class="max-points-label"><span class="highlight-yellow">max. 100</span> Mallipisteet</td>
               ${stages.map(stage => {
                   const round = card.rounds?.find(r => Number(r.roundNumber) === stage.roundNumber);
-                  const hasModelPoints = round && Object.keys(round.modelPoints || {}).length > 0;
+                  const hasModelPoints = round && roundHasData(round);
                   const pts = hasModelPoints ? calculateModelPoints(round, getScoreCardRules(activeEvent)) : "";
                   return `<td class="check-col"><div class="wwi-points-box yellow-box ${hasModelPoints ? '' : 'empty'}">${pts}</div></td>`;
               }).join("")}
             </tr>
 
             <!-- FLUGPUNKTE -->
-            <tr><td colspan="5" class="section-title" style="padding-top: 15px;"><strong>Lentopisteet</strong></td></tr>
+            <tr><td colspan="5" class="section-title" style="padding-top: 15px;"><strong>${t(window.appState, "scorecard_print.flight_points")}</strong></td></tr>
             <tr>
-              <td class="row-label">Lentoaika (3 sek = 1P, max 138 P)</td>
+              <td class="row-label">${t(window.appState, "scorecard_print.flight_time")}</td>
               ${stages.map(stage => {
                  const round = card.rounds?.find(r => Number(r.roundNumber) === stage.roundNumber);
-                 const hasData = round && (round.flightMinutes > 0 || round.flightSeconds > 0 || round.cuts > 0);
+                 const hasData = round && roundHasData(round);
                  const min = hasData ? (round.flightMinutes || 0) : "";
                  const sek = hasData ? (round.flightSeconds || 0) : "";
                  return `
                    <td class="check-col">
                       <div class="wwi-min-sek">
-                        <div class="ms-header"><span>Min</span><span>sek</span></div>
+                        <div class="ms-header"><span>${t(window.appState, "scorecard_print.min")}</span><span>${t(window.appState, "scorecard_print.sec")}</span></div>
                         <div class="ms-boxes">
                           <div class="ms-box">${min}</div>
                           <div class="ms-box">${sek}</div>
@@ -380,10 +386,10 @@ function renderWWIScoreCardPrintView(card, viewRow, activeEvent) {
               }).join("")}
             </tr>
             <tr>
-              <td class="row-label">Cuts (100 P)</td>
+              <td class="row-label">${t(window.appState, "scorecard_print.cuts")}</td>
               ${stages.map(stage => {
                  const round = card.rounds?.find(r => Number(r.roundNumber) === stage.roundNumber);
-                 const hasData = round && (round.cuts > 0 || round.flightSeconds > 0);
+                 const hasData = round && roundHasData(round);
                  const cuts = hasData ? (round.cuts || 0) : "";
                  return `
                    <td class="check-col">
@@ -399,15 +405,15 @@ function renderWWIScoreCardPrintView(card, viewRow, activeEvent) {
               }).join("")}
             </tr>
             <tr>
-              <td class="row-label">Maamaalit (60 P)</td>
+              <td class="row-label">${t(window.appState, "scorecard_print.ground_targets")}</td>
               ${stages.map(stage => {
                  const round = card.rounds?.find(r => Number(r.roundNumber) === stage.roundNumber);
-                 const hasData = round && round.groundTargets > 0;
+                 const hasData = round && roundHasData(round);
                  const targets = hasData ? (round.groundTargets || 0) : "";
                  return `
                    <td class="check-col">
                       <div class="wwi-cuts">
-                        <div class="cuts-header">kpl</div>
+                        <div class="cuts-header">${t(window.appState, "scorecard_print.pcs")}</div>
                         <div class="cuts-boxes">
                           <div class="cuts-box">${targets}</div>
                           <div class="cuts-box empty"></div>
@@ -421,17 +427,17 @@ function renderWWIScoreCardPrintView(card, viewRow, activeEvent) {
             <!-- SÄÄNNÖT / PENALTIES -->
             <tr><td colspan="5" style="height: 10px;"></td></tr>
             ${[
-              { label: "Nosto (50 P)", key: "takeoff" },
-              { label: "Pakoilu (-50 P)", key: "hasenfuss" },
-              { label: "Turvaraja (-200 P)", key: "safetylineOverflown" },
-              { label: "Streamer ehjä (50 P)", key: "streamerOk" },
-              { label: "Laskeutuminen merkistä (50 P)", key: "landingAfterEndSignal" }
+              { label: t(window.appState, "scorecard_print.takeoff"), key: "takeoff" },
+              { label: t(window.appState, "scorecard_print.hasenfuss"), key: "hasenfuss" },
+              { label: t(window.appState, "scorecard_print.safety_line"), key: "safetylineOverflown" },
+              { label: t(window.appState, "scorecard_print.streamer_ok"), key: "streamerOk" },
+              { label: t(window.appState, "scorecard_print.landing_mark"), key: "landingAfterEndSignal" }
             ].map(item => `
               <tr>
                 <td class="row-label">${item.label}</td>
                 ${stages.map(stage => {
                    const round = card.rounds?.find(r => Number(r.roundNumber) === stage.roundNumber);
-                   const val = round?.[item.key];
+                   const val = round && roundHasData(round) ? round[item.key] : undefined;
                    const isYes = val === true;
                    const isNo = val === false;
                    return `
@@ -451,7 +457,7 @@ function renderWWIScoreCardPrintView(card, viewRow, activeEvent) {
 
             <!-- SUMMA -->
             <tr class="wwi-sum-row">
-              <td class="sum-label" style="font-size: 1.1rem;"><strong>Summa</strong></td>
+              <td class="sum-label" style="font-size: 1.1rem;"><strong>${t(window.appState, "scorecard_print.sum")}</strong></td>
               ${stages.map(stage => {
                 const roundScore = totals?.roundScores?.find(rs => rs.roundNumber === stage.roundNumber)?.score;
                 const val = roundScore ? roundScore.total : "";
@@ -462,10 +468,10 @@ function renderWWIScoreCardPrintView(card, viewRow, activeEvent) {
             <!-- FOOTER INFO -->
             <tr><td colspan="5" style="height: 15px;"></td></tr>
             ${[
-              { label: "Mallin nimi", key: "modelName" },
-              { label: "Moottori - Potkuri", key: "motorOrBattery" },
-              { label: "Pilotin allekirjoitus", key: "pilotSignature", isImage: true },
-              { label: "Tuomarin allekirjoitus", key: "judgeSignature", isImage: true }
+              { label: t(window.appState, "scorecard_print.model"), key: "modelName" },
+              { label: t(window.appState, "scorecard_print.motor_battery"), key: "motorOrBattery" },
+              { label: t(window.appState, "scorecard_print.pilot_signature"), key: "pilotSignature", isImage: true },
+              { label: t(window.appState, "scorecard_print.judge_signature"), key: "judgeSignature", isImage: true }
             ].map(item => `
               <tr class="wwi-footer-row">
                 <td class="row-label">${item.label}</td>
@@ -478,10 +484,11 @@ function renderWWIScoreCardPrintView(card, viewRow, activeEvent) {
                       return `<td class="check-col"><img src="${val}" class="wwi-print-sig"></td>`;
                     }
                   } else {
-                    if (item.key === "modelName") val = card.aircraft?.modelName || "";
+                    if (item.key === "modelName") val = (card.aircraft || viewRow.aircraft || {}).modelName || "";
                     if (item.key === "motorOrBattery") {
-                      const m = card.aircraft?.motorOrBattery || "";
-                      const p = card.aircraft?.propeller || "";
+                      const sourceAircraft = card.aircraft || viewRow.aircraft || {};
+                      const m = sourceAircraft.motorOrBattery || "";
+                      const p = sourceAircraft.propeller || "";
                       val = (m || p) ? `${m} - ${p}` : "";
                     }
                   }

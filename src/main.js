@@ -16,7 +16,12 @@ import { ROUTES, getCurrentRoute } from "./router.js";
 import { t } from "./utils/i18n.js";
 import { closeAircraftSpecForm, closeCompetitionFormatModal, closeEventForm } from "./features/settings/settingsActions.js";
 
-import { getState, updateState } from "./state/store.js";
+console.log("===================================");
+console.log("CACHE BUST: UUSIN KOODI ON NYT LATAUTUNUT!");
+console.log("Versio: 2026-06-11 v29");
+console.log("===================================");
+
+import { getState, updateState, isDemo } from "./state/store.js";
 import { getCurrentUser } from "./services/authService.js";
 import { updateBulkButtonState, updateEntryFormVisibility, applyFormSaveFeedback } from "./ui/domHelpers.js";
 import { getActiveEvent } from "./utils/html.js";
@@ -32,6 +37,7 @@ import { initResultActions } from "./features/results/resultActions.js";
 import { initSettingsActions } from "./features/settings/settingsActions.js";
 import { initEventActions, moveMapPoi } from "./features/events/eventActions.js";
 import { registerRegistrationActions } from "./features/entries/registrationActions.js";
+import { registerScorecardActions } from "./features/scorecards/scorecardActions.js";
 import { initSignatureActions } from "./controllers/signatureController.js";
 import { initConfirmActions } from "./core/confirmActions.js";
 import { renderConfirmModal } from "./ui/ConfirmModal.js";
@@ -53,6 +59,7 @@ initResultActions();
 initSettingsActions();
 initEventActions();
 registerRegistrationActions();
+registerScorecardActions();
 initSignatureActions();
 initMessageActions();
 
@@ -212,7 +219,7 @@ async function initApp() {
                 if (!state.settings) state.settings = {};
                 state.settings.authMode = 'update_password';
               }, "recovery_mode");
-              location.hash = "#/login";
+              location.hash = "#/landing/login";
             }
           });
         }
@@ -282,11 +289,19 @@ async function initApp() {
           }
         }).catch(err => console.error("Realtime init failed:", err));
         
-        // Automaattinen taustapäivitys (30 sekunnin välein)
+        // Automaattinen taustapäivitys
+        let lastSyncTime = Date.now();
         setInterval(async () => {
           if (!isCloudMode()) return;
           
           const state = getState();
+          const isCompMode = state.settings?.competitionMode;
+          const now = Date.now();
+          
+          // Normaalitilassa päivitetään 30 minuutin välein, kilpailumoodissa 30 sekunnin välein
+          if (!isCompMode && now - lastSyncTime < 30 * 60 * 1000) {
+            return;
+          }
           // Älä päivitä jos käyttäjällä on jokin lomake tai modaali auki, jotta työ ei katoa
           if (state.settings?.aircraftSpecFormOpen || 
               state.settings?.eventFormOpen || 
@@ -302,6 +317,7 @@ async function initApp() {
           if (["INPUT", "TEXTAREA", "SELECT"].includes(activeTag)) return;
 
           try {
+            lastSyncTime = now;
             const cloudData = await import("./services/cloudStore.js").then(m => m.syncAllFromCloud());
             if (cloudData) {
               const oldState = getState();
@@ -317,7 +333,8 @@ async function initApp() {
                 settings: {
                   systemUpdates: oldState.settings?.systemUpdates,
                   organizerName: oldState.settings?.organizerName,
-                  publicDisplayMode: oldState.settings?.publicDisplayMode
+                  publicDisplayMode: oldState.settings?.publicDisplayMode,
+                  competitionMode: oldState.settings?.competitionMode
                 }
               });
               const newStr = JSON.stringify({
@@ -332,7 +349,8 @@ async function initApp() {
                 settings: {
                   systemUpdates: cloudData.settings?.systemUpdates,
                   organizerName: cloudData.settings?.organizerName,
-                  publicDisplayMode: cloudData.settings?.publicDisplayMode
+                  publicDisplayMode: cloudData.settings?.publicDisplayMode,
+                  competitionMode: cloudData.settings?.competitionMode
                 }
               });
               
@@ -351,6 +369,7 @@ async function initApp() {
                     if (cloudData.settings.systemUpdates) s.settings.systemUpdates = cloudData.settings.systemUpdates;
                     if (cloudData.settings.organizerName) s.settings.organizerName = cloudData.settings.organizerName;
                     if (cloudData.settings.publicDisplayMode !== undefined) s.settings.publicDisplayMode = cloudData.settings.publicDisplayMode;
+                    if (cloudData.settings.competitionMode !== undefined) s.settings.competitionMode = cloudData.settings.competitionMode;
                     if (cloudData.settings.organizationLogoData) s.settings.organizationLogoData = cloudData.settings.organizationLogoData;
                     if (cloudData.settings.whatsappReceivers) s.settings.whatsappReceivers = cloudData.settings.whatsappReceivers;
                   }
@@ -375,7 +394,7 @@ async function initApp() {
     }
   }
 
-  if (!location.hash) location.hash = `#/${getDefaultRouteForRole(getCurrentRole(getState()))}`;
+  if (!location.hash || location.hash === "#/") location.hash = `#/landing`;
   renderApp();
 }
 
@@ -386,8 +405,8 @@ export function renderApp() {
   const routeKey = getCurrentRoute();
 
   if (!canUseRoute(state, routeKey)) {
-    if (!state.auth?.user && routeKey !== "login") {
-      location.hash = "#/login";
+    if (!state.auth?.user && routeKey !== "landing") {
+      location.hash = "#/landing/login";
       setTimeout(() => showToast(t(state, "auth.login_to_continue"), "error"), 50);
     } else {
       location.hash = `#/${getDefaultRouteForRole(getCurrentRole(state))}`;
@@ -403,6 +422,22 @@ export function renderApp() {
   } else {
     document.body.classList.remove("chat-mode");
     document.documentElement.classList.remove("chat-mode");
+  }
+
+  if (routeKey === "landing" || routeKey === "environments") {
+    document.body.classList.add("landing-mode");
+    if (navEl) navEl.innerHTML = "";
+    if (activeEventPillEl) activeEventPillEl.textContent = "";
+    const titleFn = ROUTES[routeKey].title;
+    titleEl.textContent = typeof titleFn === "function" ? titleFn(state) : titleFn;
+    appEl.innerHTML = ROUTES[routeKey].render(state);
+    const topbarRoleSelect = document.querySelector("#current-role-select");
+    if (topbarRoleSelect) topbarRoleSelect.style.display = "none";
+    applyTheme(state);
+    applyDeviceProfile();
+    return;
+  } else {
+    document.body.classList.remove("landing-mode");
   }
 
   if (routeKey === "login") {
@@ -447,6 +482,15 @@ export function renderApp() {
       brandMarkEl.style.padding = "";
     }
   }
+  
+  const brandP = document.querySelector('.brand p');
+  if (brandP) {
+    if (isDemo) {
+      brandP.innerHTML = `Competition Manager <span style="background: var(--accent); color: white; padding: 2px 6px; border-radius: 4px; font-size: 0.8em; font-weight: 800; margin-left: 8px; vertical-align: middle; letter-spacing: 0.05em; box-shadow: 0 0 10px rgba(88, 183, 255, 0.5);">DEMO</span>`;
+    } else {
+      brandP.innerHTML = `Competition Manager`;
+    }
+  }
 
   titleEl.textContent = typeof route.title === "function" ? route.title(state) : route.title;
   if (activeEventPillEl) {
@@ -465,25 +509,28 @@ export function renderApp() {
     langBtn.textContent = `🌐 ${state.settings?.language === 'en' ? 'FI' : 'EN'}`;
   }
 
-  appEl.innerHTML = route.render(state);
-  
-  const modalContainer = document.getElementById("modal-container");
-  if (modalContainer) {
-    modalContainer.innerHTML = renderConfirmModal(state) + renderAlertModal(state);
-  }
+  // Import renderPrintOverlay dynamically if not at top-level
+  import("./features/documents/documentsView.js").then(m => {
+    appEl.innerHTML = route.render(state) + (m.renderPrintOverlay ? m.renderPrintOverlay(state) : "");
 
-  const entryForm = appEl.querySelector("form[data-action='add-entry']");
-  if (entryForm) updateEntryFormVisibility(entryForm);
-
-  updateBulkButtonState();
-  applyFormSaveFeedback(state);
-  
-  setTimeout(() => {
-    const chatContainer = document.getElementById("chat-messages-container");
-    if (chatContainer) {
-      chatContainer.scrollTop = chatContainer.scrollHeight;
+    const modalContainer = document.getElementById("modal-container");
+    if (modalContainer) {
+      modalContainer.innerHTML = renderConfirmModal(state) + renderAlertModal(state);
     }
-  }, 100);
+
+    const entryForm = appEl.querySelector("form[data-action='add-entry']");
+    if (entryForm) updateEntryFormVisibility(entryForm);
+
+    updateBulkButtonState();
+    applyFormSaveFeedback(state);
+    
+    setTimeout(() => {
+      const chatContainer = document.getElementById("chat-messages-container");
+      if (chatContainer) {
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+      }
+    }, 100);
+  });
 }
 
 export function updateMessagesDOM() {
@@ -560,7 +607,7 @@ function renderNavigation(state, routeKey) {
          </span>
          ${t(state, "auth.logout")}
        </a>`
-    : `<a href="#/login" style="cursor: pointer;">
+    : `<a href="#/landing/login" style="cursor: pointer;">
          <span class="nav-icon">
            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path><polyline points="10 17 15 12 10 7"></polyline><line x1="15" y1="12" x2="3" y2="12"></line></svg>
          </span>
@@ -573,6 +620,15 @@ function renderNavigation(state, routeKey) {
         <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
       </span>
       ${t(state, "nav.about")}
+    </a>
+  `;
+
+  const countrySelectHtml = `
+    <a href="#/environments" style="cursor: pointer;" class="nav-item-country">
+      <span class="nav-icon">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+      </span>
+      ${t(state, "nav.environments")}
     </a>
   `;
 
@@ -601,7 +657,7 @@ function renderNavigation(state, routeKey) {
         <span style="display: flex; align-items: center;">${labelHtml}</span>
       </a>`;
     })
-    .join("") + creditsItemHtml + authItemHtml;
+    .join("") + creditsItemHtml + countrySelectHtml + authItemHtml;
 }
 
 function renderRoleSwitch(state) {

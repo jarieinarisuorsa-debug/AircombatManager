@@ -67,11 +67,17 @@ export function generateHeats(targetClassName = null) {
         ? stageStatus.qualifyingRoundsGenerated + 1
         : 1;
 
+      // Finaaliin osallistuvat (esim. 7) lentävät AINA samassa erässä riippumatta
+      // maxAircraftPerHeat -asetuksesta. Alkuerissä ja semeissä käytetään maksimikokoa.
+      const groupSize = stageStatus.nextPhase === HEAT_PHASES.FINAL 
+        ? stageEntries.length 
+        : activeEvent.rules.maxAircraftPerHeat;
+
       const classNewHeats = buildHeatGroups({
         eventId: activeEvent.id,
         className,
         entries: stageEntries,
-        groupSize: activeEvent.rules.maxAircraftPerHeat,
+        groupSize: groupSize,
         round,
         phase: stageStatus.nextPhase,
         state
@@ -100,9 +106,9 @@ export function cancelLastHeats(className) {
     const classHeats = state.heats.filter((heat) => heat.eventId === activeEvent.id && heat.className === className);
     if (!classHeats.length) throw new Error("Ei peruttavia heatteja.");
 
-    const finalHeats = classHeats.filter((heat) => heat.phase === "final");
-    const semifinalHeats = classHeats.filter((heat) => heat.phase === "semifinal");
-    const qualifyingHeats = classHeats.filter((heat) => !heat.phase || heat.phase === "qualifying");
+    const finalHeats = classHeats.filter((heat) => heat.phase === "final" || heat.name?.toLowerCase().includes("finaali") || heat.name?.toLowerCase().includes("final"));
+    const semifinalHeats = classHeats.filter((heat) => heat.phase === "semifinal" || heat.name?.toLowerCase().includes("semi"));
+    const qualifyingHeats = classHeats.filter((heat) => !finalHeats.includes(heat) && !semifinalHeats.includes(heat));
 
     let heatsToRemove = [];
 
@@ -179,7 +185,7 @@ export function initHeatActions() {
       action: "execute-cancel-class-heats",
       payload: { class: button.dataset.class },
       isDanger: true,
-      submitLabel: "Peruuta arvonta"
+      submitLabel: "Kyllä, poista arvonta"
     });
     return true;
   });

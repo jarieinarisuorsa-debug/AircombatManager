@@ -7,7 +7,10 @@
 
 import { supabase } from "./supabaseClient.js";
 
-let currentMode = supabase ? "cloud" : "local";
+const activeSystem = localStorage.getItem("activeSystem") || "finland";
+const isDemo = activeSystem === "demo";
+
+let currentMode = (supabase && !isDemo) ? "cloud" : "local";
 
 export function getStorageMode() {
   return currentMode;

@@ -17,20 +17,53 @@ export function buildHeatGroups({ eventId, className, entries, groupSize = 6, ro
     });
   }
 
+  // Build a map of past encounters to avoid putting same pilots in same heat
+  const encounterMap = new Map();
+  if (state && Array.isArray(state.heats) && Array.isArray(state.entries)) {
+    const previousHeats = state.heats.filter(h => h.eventId === eventId && h.className === className);
+    previousHeats.forEach(heat => {
+      if (!Array.isArray(heat.entryIds)) return;
+      const heatPilotIds = heat.entryIds.map(eid => {
+        const entry = state.entries.find(e => e.id === eid);
+        return entry ? entry.pilotId : null;
+      }).filter(Boolean);
+      
+      for (let i = 0; i < heatPilotIds.length; i++) {
+        for (let j = i + 1; j < heatPilotIds.length; j++) {
+          const pA = heatPilotIds[i];
+          const pB = heatPilotIds[j];
+          if (pA === pB) continue;
+          const key = pA < pB ? `${pA}-${pB}` : `${pB}-${pA}`;
+          encounterMap.set(key, (encounterMap.get(key) || 0) + 1);
+        }
+      }
+    });
+  }
+
   function getConflictScore(shuffledList) {
     let score = 0;
     const groups = splitBySizes(shuffledList, groupSizes);
 
     groups.forEach((heatEntries) => {
       for (let i = 0; i < heatEntries.length; i++) {
-        const p1 = pilotsMap.get(heatEntries[i].pilotId);
-        if (!p1) continue;
+        const p1Id = heatEntries[i].pilotId;
+        const p1 = pilotsMap.get(p1Id);
+        
         for (let j = i + 1; j < heatEntries.length; j++) {
-          const p2 = pilotsMap.get(heatEntries[j].pilotId);
-          if (!p2) continue;
+          const p2Id = heatEntries[j].pilotId;
+          const p2 = pilotsMap.get(p2Id);
 
-          if (p1.club && p1.club === p2.club) score += 2;
-          if (p1.country && p1.country === p2.country) score += 1;
+          if (p1Id && p2Id && p1Id !== p2Id) {
+            const key = p1Id < p2Id ? `${p1Id}-${p2Id}` : `${p2Id}-${p1Id}`;
+            const pastEncounters = encounterMap.get(key) || 0;
+            // High penalty for repeating opponents
+            score += pastEncounters * 50;
+          }
+
+          if (p1 && p2) {
+            if (p1.club && p1.club === p2.club) score += 2;
+            if (p1.country && p1.country === p2.country) score += 1;
+          }
         }
       }
     });

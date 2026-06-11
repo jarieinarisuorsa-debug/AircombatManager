@@ -13,8 +13,8 @@ export function renderWorkspaceParticipantsTab(state, activeEvent, className) {
   const searchQuery = (state.settings?.workspacePilotSearch || "").toLowerCase().trim();
   const countryFilter = (state.settings?.workspacePilotCountryFilter || "").toLowerCase();
 
-  const searchContainer = UI.Flex({ justify: "space-between", align: "center", wrap: "wrap", gap: "10px", className: "pilot-search-container", style: "margin-bottom: 20px;" }, `
-    <div class="search-input-wrapper" style="flex: 1; min-width: 200px; max-width: 300px; display: flex;">
+  const searchContainer = UI.Flex({ justify: "flex-start", align: "center", wrap: "wrap", gap: "15px", className: "pilot-search-container", style: "margin-bottom: 20px;" }, `
+    <div class="search-input-wrapper" style="width: 300px; max-width: 100%; display: flex;">
       <input type="search" id="workspace-pilot-search" value="${escapeHtml(state.settings?.workspacePilotSearch || "")}" placeholder="${t(state, "event_workspace.search_pilot_placeholder")}" autocomplete="off" style="flex: 1; width: 100%; min-height: 34px; padding: 6px 12px 6px 36px; border-radius: 8px;" />
     </div>
     ${UI.Select({ 

@@ -46,6 +46,9 @@ export function saveSettings(data, form) {
     if (form.elements.publicDisplayMode) {
       state.settings.publicDisplayMode = Boolean(form.elements.publicDisplayMode.checked);
     }
+    if (form.elements.competitionMode) {
+      state.settings.competitionMode = Boolean(form.elements.competitionMode.checked);
+    }
   }, "save_settings");
 }
 
@@ -424,6 +427,17 @@ export function initSettingsActions() {
   registerAction("close-competition-format-modal", (event, button, { renderApp }) => {
     closeCompetitionFormatModal();
     renderApp();
+    return true;
+  });
+
+  registerAction("toggle-combat-mode", (event, button, { renderApp }) => {
+    import("../../state/store.js").then(({ updateState }) => {
+      updateState((state) => {
+        state.settings = state.settings || {};
+        state.settings.competitionMode = !state.settings.competitionMode;
+      }, "toggle_combat_mode");
+      renderApp();
+    });
     return true;
   });
 }

@@ -20,8 +20,8 @@ export function renderWorkspaceHeatsTab(state, activeEvent, className) {
     disabled: !status.canGenerate || !status.nextPhase
   });
 
-  const printBtn = heats.length > 0 ? UI.Button({ label: t(state, "event_workspace.print_heats"), action: "print-class-heats", class: className, variant: "dashed", style: "margin-left: 10px;" }) : "";
-  const cancelBtn = heats.length > 0 && admin ? UI.Button({ label: t(state, "event_workspace.cancel_draw"), action: "cancel-class-heats", class: className, variant: "danger dashed", style: "margin-left: 10px;" }) : "";
+  const printBtn = heats.length > 0 ? UI.Button({ label: t(state, "event_workspace.print_heats"), action: "print-class-heats", class: className }) : "";
+  const cancelBtn = heats.length > 0 && admin ? UI.Button({ label: t(state, "event_workspace.cancel_draw"), action: "cancel-class-heats", class: className, variant: "danger" }) : "";
 
   let nextPhaseStatusStr = t(state, "event_workspace.all_phases_done");
   if (status.nextPhase) {
@@ -34,10 +34,12 @@ export function renderWorkspaceHeatsTab(state, activeEvent, className) {
 
   const controls = `
     <div style="margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid var(--border);">
-      <p class="muted" style="margin-bottom: 10px;">${status.disabledReason || nextPhaseStatusStr}</p>
-      ${generateBtn}
-      ${printBtn}
-      ${cancelBtn}
+      <p class="muted" style="margin-bottom: 15px;">${status.disabledReason || nextPhaseStatusStr}</p>
+      <div class="ui-form-actions" style="justify-content: flex-start; margin-top: 0;">
+        ${generateBtn}
+        ${printBtn}
+        ${cancelBtn}
+      </div>
     </div>
   `;
 

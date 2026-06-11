@@ -34,8 +34,8 @@ export function initAuthActions() {
         }
       }, "auth_login");
 
-      showToast("Kirjautuminen onnistui.", "success");
-      window.location.hash = "";
+        showToast("Kirjautuminen onnistui.", "success");
+      window.location.hash = "#/environments";
       window.location.reload();
     } catch (err) {
       console.error("Login failed:", err);
@@ -56,7 +56,7 @@ export function initAuthActions() {
       }, "logout");
 
       showToast("Olet kirjautunut ulos.", "success");
-      window.location.hash = "#/login";
+      window.location.hash = "#/landing";
       window.location.reload();
     } catch (err) {
       console.error("Logout error:", err);
@@ -115,7 +115,7 @@ export function initAuthActions() {
         }, "auth_register_login");
         
         showToast("Tili luotu ja kirjautuminen onnistui!", "success");
-        window.location.hash = "";
+        window.location.hash = "#/environments";
         window.location.reload();
       } else {
         // Auto-confirm is ON, they need to check email, or the local mock just finished
@@ -246,7 +246,7 @@ export function initAuthActions() {
       }, "delete_own_account");
 
       showToast("Tilisi on poistettu onnistuneesti.", "success");
-      window.location.hash = "#/login";
+      window.location.hash = "#/landing/login";
       window.location.reload();
     } catch (err) {
       console.error("Account deletion failed:", err);

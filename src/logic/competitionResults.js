@@ -207,7 +207,7 @@ function buildScoreCardStructureBreakdown(scoreCardRow, structureLabels) {
       score: round.score?.total || 0,
       cuts: Number(round.cuts || 0),
       flightSeconds: round.score?.flightSeconds || 0,
-      completed: hasRoundData(round)
+      completed: Boolean(round.isSaved) || hasRoundData(round)
     };
   });
 }

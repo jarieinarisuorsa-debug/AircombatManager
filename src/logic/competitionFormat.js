@@ -7,7 +7,7 @@
 // ==============================
 
 import { calculateResultScore } from "./scoring.js";
-import { getScoreCardForEntry, hasRoundData } from "./scoreCards.js";
+import { getScoreCardForEntry, hasRoundData, hasSavedScoreCard, getScoreCardStructureStages, calculateScoreCardRound } from "./scoreCards.js";
 import { t } from "../utils/i18n.js";
 
 export const HEAT_PHASES = {
@@ -26,8 +26,8 @@ export const DEFAULT_COMPETITION_FORMAT = {
   qualifyingRounds: 3,
   semiFinalEnabled: false,
   semiFinalists: 12,
-  finalEnabled: false,
-  finalists: 6,
+  finalEnabled: true,
+  finalists: 7,
   rankingMode: "total_points"
 };
 
@@ -53,7 +53,10 @@ export function normalizeCompetitionFormat(format = {}) {
 
 export function getCompetitionFormatForClass(event, className) {
   const classFormats = event?.classFormats || {};
-  return normalizeCompetitionFormat(classFormats[className] || event?.competitionFormat || DEFAULT_COMPETITION_FORMAT);
+  const searchName = String(className || "").toLowerCase().trim();
+  const foundKey = Object.keys(classFormats).find(k => k.toLowerCase().trim() === searchName);
+  const format = foundKey ? classFormats[foundKey] : event?.competitionFormat;
+  return normalizeCompetitionFormat(format || DEFAULT_COMPETITION_FORMAT);
 }
 
 export function normalizeClassFormats(classFormats = {}) {
@@ -143,19 +146,52 @@ function inferQualifyingRoundCount(context = {}) {
   return rounds.length ? Math.max(...rounds) : 0;
 }
 
-export function buildPhaseRanking({ entries, heats, results, rules, phase }) {
+export function buildPhaseRanking({ entries, heats, results, rules, phase, state, event }) {
   const phaseHeatIds = new Set(heats.filter((heat) => getHeatPhase(heat) === phase).map((heat) => heat.id));
   const phaseResults = results.filter((result) => phaseHeatIds.has(result.heatId));
 
   return entries
     .map((entry) => {
-      const entryResults = phaseResults.filter((result) => result.entryId === entry.id);
+      // 1. Kokeile käyttää tuloskorttia, jos se on olemassa ja tallennettu
+      const card = state && event ? getScoreCardForEntry(state, event, entry) : null;
+      let phaseScore = 0;
+      let phaseCuts = 0;
+      let phaseFlightSeconds = 0;
+      let phaseResultCount = 0;
+
+      if (card && hasSavedScoreCard(card)) {
+        // Jos tuloskortti löytyy, etsi tähän vaiheeseen (esim. qualifying) kuuluvat kierrokset
+        const stages = getScoreCardStructureStages({ card, event, entry });
+        const roundScores = stages.map(({ roundNumber }) => {
+          const round = card.rounds.find((item) => Number(item.roundNumber) === roundNumber) || {};
+          return { roundNumber, ...round, score: calculateScoreCardRound(round, event, card.templateId) };
+        });
+
+        // Etsi ne stages, jotka kuuluvat tähän phaseen (esim. qualifying)
+        const phaseStages = stages.filter(s => s.heatPhase === phase);
+        const phaseRoundNumbers = new Set(phaseStages.map(s => Number(s.roundNumber)));
+
+        const activeRoundScores = roundScores.filter(r => phaseRoundNumbers.has(Number(r.roundNumber)) && hasRoundData(r));
+        
+        phaseScore = activeRoundScores.reduce((sum, round) => sum + (round.score?.total || 0), 0);
+        phaseCuts = activeRoundScores.reduce((sum, round) => sum + Number(round.cuts || 0), 0);
+        phaseFlightSeconds = activeRoundScores.reduce((sum, round) => sum + (round.score?.flightSeconds || 0), 0);
+        phaseResultCount = activeRoundScores.length;
+      } else {
+        // 2. Jos tuloskorttia ei ole, käytä vanhaa legacy-results taulukkoa
+        const entryResults = phaseResults.filter((result) => result.entryId === entry.id);
+        phaseScore = entryResults.reduce((sum, result) => sum + calculateResultScore(result, rules).total, 0);
+        phaseCuts = entryResults.reduce((sum, result) => sum + Number(result.cuts || 0), 0);
+        phaseFlightSeconds = entryResults.reduce((sum, result) => sum + Number(result.flightSeconds || 0), 0);
+        phaseResultCount = entryResults.length;
+      }
+
       return {
         ...entry,
-        totalScore: entryResults.reduce((sum, result) => sum + calculateResultScore(result, rules).total, 0),
-        totalCuts: entryResults.reduce((sum, result) => sum + Number(result.cuts || 0), 0),
-        totalFlightSeconds: entryResults.reduce((sum, result) => sum + Number(result.flightSeconds || 0), 0),
-        resultCount: entryResults.length
+        totalScore: phaseScore,
+        totalCuts: phaseCuts,
+        totalFlightSeconds: phaseFlightSeconds,
+        resultCount: phaseResultCount
       };
     })
     .sort((a, b) => b.totalScore - a.totalScore || b.totalCuts - a.totalCuts || b.totalFlightSeconds - a.totalFlightSeconds);
@@ -193,7 +229,9 @@ export function getClassStageStatus({ event, className, classEntries, classHeats
     heats: classHeats,
     results,
     rules,
-    phase: HEAT_PHASES.QUALIFYING
+    phase: HEAT_PHASES.QUALIFYING,
+    state,
+    event
   });
 
   const semifinalRanking = buildPhaseRanking({
@@ -201,7 +239,19 @@ export function getClassStageStatus({ event, className, classEntries, classHeats
     heats: classHeats,
     results,
     rules,
-    phase: HEAT_PHASES.SEMIFINAL
+    phase: HEAT_PHASES.SEMIFINAL,
+    state,
+    event
+  });
+
+  const finalRanking = buildPhaseRanking({
+    entries: classEntries,
+    heats: classHeats,
+    results,
+    rules,
+    phase: HEAT_PHASES.FINAL,
+    state,
+    event
   });
 
   const base = {

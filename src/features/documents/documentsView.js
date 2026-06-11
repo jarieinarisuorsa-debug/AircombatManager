@@ -4,51 +4,9 @@ import { SCORE_CARD_TEMPLATES } from "../../logic/scoreCards.js";
 import { renderScoreCardForm } from "../scorecards/components/ScoreCardEditor.js";
 import { t } from "../../utils/i18n.js";
 
-export function renderDocumentsView(state) {
+export function renderPrintOverlay(state) {
   const activeEvent = getActiveEvent(state);
-  
-  if (!activeEvent) {
-    return UI.Panel({ title: t(state, "documents.no_active_event") }, `<p>${t(state, "documents.no_active_event_desc")}</p>`);
-  }
-
-  const introText = `
-    <p class="muted no-print" style="margin-top: 0; margin-bottom: 20px;">
-      ${t(state, "documents.print_intro")} <strong style="color: var(--text);">${escapeHtml(activeEvent.name)}</strong>
-    </p>
-  `;
-
-  const tab = window.DOCUMENT_TAB || 'tuloskortit';
-  const tabNavigation = `
-    <div class="ui-tabs no-print" style="display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 1px solid var(--border); padding-bottom: 10px; overflow-x: auto;">
-      <button type="button" class="button ${tab === 'tuloskortit' ? 'primary' : 'dashed'}" data-action="set-document-tab" data-tab="tuloskortit">${t(state, "documents.tab_scorecards")}</button>
-      <button type="button" class="button ${tab === 'listaukset' ? 'primary' : 'dashed'}" data-action="set-document-tab" data-tab="listaukset">${t(state, "documents.tab_lists")}</button>
-      <button type="button" class="button ${tab === 'tarkastukset' ? 'primary' : 'dashed'}" data-action="set-document-tab" data-tab="tarkastukset">${t(state, "documents.tab_inspections")}</button>
-      <button type="button" class="button ${tab === 'aikataulut' ? 'primary' : 'dashed'}" data-action="set-document-tab" data-tab="aikataulut">${t(state, "documents.tab_schedules")}</button>
-    </div>
-  `;
-
-  let contentHtml = "";
-  if (tab === "tuloskortit") {
-    contentHtml = renderScoreCardPrintOptions(state, activeEvent);
-  } else if (tab === "listaukset") {
-    contentHtml = renderListPrintOptions();
-  } else if (tab === "tarkastukset") {
-    contentHtml = renderOfficialPrintOptions();
-  } else if (tab === "aikataulut") {
-    contentHtml = UI.Panel({ title: t(state, "documents.tab_schedules") }, `
-      <div style="display: flex; flex-direction: column; gap: 15px;">
-        <div class="print-option-row">
-          <div>
-            <strong>${t(state, "documents.schedule_title")}</strong>
-            <div class="muted" style="font-size: 0.8rem;">${t(state, "documents.schedule_desc")}</div>
-          </div>
-          <a href="#/eventinfo" class="button small primary">${t(state, "documents.open_for_print")}</a>
-        </div>
-      </div>
-    `);
-  }
-
-  const content = contentHtml;
+  if (!activeEvent) return "";
 
   let printOverlay = "";
   if (window.PRINT_GENERIC_EMPTY_CARD_TEMPLATE) {
@@ -89,7 +47,80 @@ export function renderDocumentsView(state) {
       </div>
     `;
     window.PRINT_EMPTY_CARD_MODE = null;
+  } else if (window.PRINT_CLASS_FILLED_SCORECARDS) {
+    const allRows = buildScoreCardRows(state, activeEvent).filter(row => (row.className || t(state, "results.general_class")) === window.PRINT_CLASS_FILLED_SCORECARDS);
+    window.PRINT_EMPTY_CARD_MODE = "filled";
+    const overlayContent = allRows.map(row => renderScoreCardForm(activeEvent, row, { forceOpen: true })).join("<div style='page-break-after: always;'></div>");
+    printOverlay = `
+      <div class="print-only-fullscreen-overlay" style="display: flex; flex-direction: column; gap: 20px;">
+        ${overlayContent}
+      </div>
+    `;
+    window.PRINT_EMPTY_CARD_MODE = null;
+  } else if (window.PRINT_PILOT_SCORECARD_ENTRY_ID) {
+    const allRows = buildScoreCardRows(state, activeEvent);
+    const row = allRows.find(r => r.entry.id === window.PRINT_PILOT_SCORECARD_ENTRY_ID);
+    if (row) {
+      window.PRINT_EMPTY_CARD_MODE = "filled";
+      printOverlay = `
+        <div class="print-only-fullscreen-overlay" style="display: flex; flex-direction: column; gap: 20px;">
+          ${renderScoreCardForm(activeEvent, row, { forceOpen: true })}
+        </div>
+      `;
+      window.PRINT_EMPTY_CARD_MODE = null;
+    }
   }
+
+  return printOverlay;
+}
+
+export function renderDocumentsView(state) {
+  const activeEvent = getActiveEvent(state);
+  
+  const introText = activeEvent ? `
+    <p class="muted no-print" style="margin-top: 0; margin-bottom: 20px;">
+      ${t(state, "documents.print_intro")} <strong style="color: var(--text);">${escapeHtml(activeEvent.name)}</strong>
+    </p>
+  ` : `
+    <p class="muted no-print" style="margin-top: 0; margin-bottom: 20px;">
+      Kilpailun asiakirjat. Valitse kilpailu kisakalenterista nähdäksesi kilpailukohtaiset listaukset.
+    </p>
+  `;
+
+  const tab = window.DOCUMENT_TAB || 'tuloskortit';
+  const tabNavigation = `
+    <div class="ui-tabs no-print" style="display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 1px solid var(--border); padding-bottom: 10px; overflow-x: auto;">
+      <button type="button" class="button ${tab === 'tuloskortit' ? 'primary' : 'dashed'}" data-action="set-document-tab" data-tab="tuloskortit">${t(state, "documents.tab_scorecards")}</button>
+      <button type="button" class="button ${tab === 'listaukset' ? 'primary' : 'dashed'}" data-action="set-document-tab" data-tab="listaukset">${t(state, "documents.tab_lists")}</button>
+      <button type="button" class="button ${tab === 'tarkastukset' ? 'primary' : 'dashed'}" data-action="set-document-tab" data-tab="tarkastukset">${t(state, "documents.tab_inspections")}</button>
+      <button type="button" class="button ${tab === 'aikataulut' ? 'primary' : 'dashed'}" data-action="set-document-tab" data-tab="aikataulut">${t(state, "documents.tab_schedules")}</button>
+    </div>
+  `;
+
+  let contentHtml = "";
+  if (!activeEvent) {
+    contentHtml = UI.Panel({ title: t(state, "documents.no_active_event") }, `<p>${t(state, "documents.no_active_event_desc")}</p>`);
+  } else if (tab === "tuloskortit") {
+    contentHtml = renderScoreCardPrintOptions(state, activeEvent);
+  } else if (tab === "listaukset") {
+    contentHtml = renderListPrintOptions();
+  } else if (tab === "tarkastukset") {
+    contentHtml = renderOfficialPrintOptions();
+  } else if (tab === "aikataulut") {
+    contentHtml = UI.Panel({ title: t(state, "documents.tab_schedules") }, `
+      <div style="display: flex; flex-direction: column; gap: 15px;">
+        <div class="print-option-row">
+          <div>
+            <strong>${t(state, "documents.schedule_title")}</strong>
+            <div class="muted" style="font-size: 0.8rem;">${t(state, "documents.schedule_desc")}</div>
+          </div>
+          <a href="#/eventinfo" class="button small primary">${t(state, "documents.open_for_print")}</a>
+        </div>
+      </div>
+    `);
+  }
+
+  const content = contentHtml;
 
   return `
     <div class="documents-container no-print" style="margin-top: 20px;">
@@ -97,7 +128,7 @@ export function renderDocumentsView(state) {
       ${tabNavigation}
       ${content}
     </div>
-    ${printOverlay}
+    ${renderPrintOverlay(state)}
   `;
 }
 
@@ -149,10 +180,12 @@ function renderScoreCardPrintOptions(state, activeEvent) {
         ${classButtons}
       </div>
 
+      ${activeEvent ? `
       <div style="margin-top: 10px; padding-top: 15px; border-top: 1px solid var(--border);">
         <p class="muted" style="margin: 0 0 10px 0; font-size: 0.9rem;">Voit myös tulostaa kaikki ohjelmaan luodut sähköiset tuloskortit yhdellä kertaa, valmiiksi esitäytettyinä!</p>
         <button type="button" class="button primary" data-action="print-all-filled-scorecards" style="width: 100%; justify-content: center;">Tulosta esitäytetyt kortit (Kaikki luokat)</button>
       </div>
+      ` : ''}
     </div>
   `);
 }
