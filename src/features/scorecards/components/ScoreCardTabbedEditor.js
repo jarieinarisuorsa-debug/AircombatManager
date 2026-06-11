@@ -144,7 +144,7 @@ function renderSingleRoundTable(stage, isActive, viewRow, isWWI) {
         
         <div style="text-align: center; padding: 25px 0 15px 0; border-top: 1px solid rgba(255,255,255,0.05); margin-top: 10px;">
           <strong style="font-size: 1.8rem; color: #ffd166; text-shadow: 0 0 10px rgba(255, 209, 102, 0.4);">
-            Erän pisteet: <span name="r${rn}_total_display">${(() => {
+            Heat score: <span name="r${rn}_total_display">${(() => {
               const roundScore = totals?.roundScores?.find(rs => rs.roundNumber === rn)?.score;
               return roundScore ? roundScore.total : 0;
             })()}</span> p
@@ -326,7 +326,7 @@ function renderSignatureRow(label, stage, card, infoField) {
           
           <!-- Sign button -->
           <button type="button" class="app-btn" data-action="open-signature" data-target-input="${fieldName}" data-target-image="${imageId}" style="width: 95%; max-width: 200px; justify-content: center; font-size: 0.9rem;">
-            ✍️ Allekirjoita
+            ✍️ Sign
           </button>
         </div>
       </td>

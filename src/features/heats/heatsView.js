@@ -234,7 +234,7 @@ function renderHeatPilotRow(state, activeEvent, heat, entry, hasConflict, admin,
         ${scoreHtml}
         ${mode === 'scorecards' ? `
           <div style="display: flex; flex-direction: column; align-items: flex-end; margin-left: 10px;">
-            <a class="button small ${scoreHtml ? '' : 'primary'}" href="#/scorecard/${escapeHtml(entry.id)}?back=entries">${scoreHtml ? "Muokkaa" : t(state, "scorecards_list.open_card")}</a>
+            <a class="button small ${scoreHtml ? '' : 'primary'}" href="#/scorecard/${escapeHtml(entry.id)}?back=entries">${scoreHtml ? t(state, "common.edit") : t(state, "scorecards_list.open_card")}</a>
             ${UI.Badge({ 
               label: scoreHtml ? t(state, "scorecard_editor.saved") : t(state, "scorecard_editor.not_saved"), 
               variant: scoreHtml ? 'approved' : 'pending',

@@ -97,11 +97,11 @@ export function renderScoreCardForm(activeEvent, row, options = {}) {
   }
 
   const rightActionsHtml = isPilotMode ? `
-    <button type="button" class="button outline footer-action-btn" data-action="show-qr-code" data-entry-id="${escapeHtml(entry.id)}" title="Näytä QR-koodi tuomarille">QR-koodi</button>
+    <button type="button" class="button outline footer-action-btn" data-action="show-qr-code" data-entry-id="${escapeHtml(entry.id)}" title="Näytä QR-koodi tuomarille">QR Code</button>
     <button type="submit" class="button primary footer-action-btn" style="font-weight: bold;">${t(state, "scorecard_editor.save_submit")}</button>
     <a class="button outline footer-action-btn" style="display: flex; justify-content: center; align-items: center;" href="${backUrl}">${t(state, "common.close")}</a>
   ` : `
-    <button type="button" class="button outline footer-action-btn" data-action="show-qr-code" data-entry-id="${escapeHtml(entry.id)}" title="Näytä QR-koodi tuomarille">QR-koodi</button>
+    <button type="button" class="button outline footer-action-btn" data-action="show-qr-code" data-entry-id="${escapeHtml(entry.id)}" title="Näytä QR-koodi tuomarille">QR Code</button>
     <button type="submit" class="button primary footer-action-btn" style="font-weight: bold;">${t(state, "common.save")}</button>
     <a class="button outline footer-action-btn" style="display: flex; justify-content: center; align-items: center;" href="${backUrl}">${t(state, "common.close")}</a>
   `;
@@ -128,7 +128,7 @@ export function renderScoreCardForm(activeEvent, row, options = {}) {
     <div class="score-card-sticky-footer no-print" style="display: flex; flex-direction: column; gap: 12px; max-width: 600px; margin: 0 auto; width: 100%;">
       <div style="display: flex; justify-content: center; align-items: center; padding-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.1);">
         <div class="footer-totals" style="display: flex; align-items: center;">
-          <strong style="font-size: 1.4rem; color: var(--muted); margin-right: 15px;">Koko kilpailu: <span name="final_sum_display">${totals.totalPoints}</span> p</strong>
+          <strong style="font-size: 1.4rem; color: var(--muted); margin-right: 15px;">Total score: <span name="final_sum_display">${totals.totalPoints}</span> p</strong>
         </div>
         ${templateSelectHtml}
       </div>

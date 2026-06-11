@@ -94,7 +94,7 @@ export function renderQRGeneratorModal(card, pilotName, activeHeatTitle = "") {
   
   const content = `
     <div style="display: flex; flex-direction: column; align-items: center; padding: 20px;">
-      <p style="text-align: center; margin-bottom: 20px;" class="muted">Näytä tämä koodi tuomarille tulosten tallentamiseksi.</p>
+      <p style="text-align: center; margin-bottom: 20px;" class="muted">Show this code to the judge to save the results.</p>
       
       <div id="qrcode-container" style="background: white; padding: 15px; border-radius: 10px; margin-bottom: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
         <canvas id="qrcode-canvas"></canvas>
@@ -127,13 +127,13 @@ export function renderQRGeneratorModal(card, pilotName, activeHeatTitle = "") {
     <div class="app-modal-backdrop" style="z-index: 2000;" data-action="close-qr-scanner">
       <div class="app-modal-shell" role="dialog" aria-modal="true" style="max-width: 450px;" data-action="none">
         <div class="app-modal-topbar" style="display: flex; flex-direction: column; align-items: flex-start;">
-          <h3 style="margin: 0;">QR Tuloskortti - ${escapeHtml(pilotName)}</h3>
+          <h3 style="margin: 0;">QR Scorecard - ${escapeHtml(pilotName)}</h3>
           ${activeHeatTitle ? `<span style="color: var(--primary); font-weight: bold; font-size: 0.85rem; margin-top: 5px; text-transform: uppercase; letter-spacing: 0.05em;">${escapeHtml(activeHeatTitle)}</span>` : ''}
         </div>
         <div class="app-modal-content">
           ${content}
           <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 24px;">
-            <button type="button" class="button" data-action="close-qr-scanner">Sulje</button>
+            <button type="button" class="button" data-action="close-qr-scanner">Close</button>
           </div>
         </div>
       </div>
@@ -147,7 +147,7 @@ export function renderQRGeneratorModal(card, pilotName, activeHeatTitle = "") {
 export function renderQRScannerModal() {
   const content = `
     <div style="display: flex; flex-direction: column; align-items: center; padding: 10px;">
-      <p style="text-align: center; margin-bottom: 15px;" class="muted">Osoita kamera kilpailijan tuloskortin QR-koodiin.</p>
+      <p style="text-align: center; margin-bottom: 15px;" class="muted">Point the camera at the competitor's scorecard QR code.</p>
       <div id="qr-reader" style="width: 100%; max-width: 500px; border-radius: 10px; overflow: hidden; background: #000;"></div>
       <div id="qr-scanner-status" style="margin-top: 15px; font-weight: bold; min-height: 24px;"></div>
     </div>
@@ -156,7 +156,7 @@ export function renderQRScannerModal() {
   // Start scanner
   setTimeout(() => {
     if (!window.Html5Qrcode) {
-      document.getElementById('qr-scanner-status').innerHTML = '<span style="color:red">QR-kirjastoa ei löytynyt. Lataa sivu uudelleen.</span>';
+      document.getElementById('qr-scanner-status').innerHTML = '<span style="color:red">QR library not found. Reload the page.</span>';
       return;
     }
 
@@ -171,7 +171,7 @@ export function renderQRScannerModal() {
       config,
       (decodedText, decodedResult) => {
         // Success callback
-        document.getElementById('qr-scanner-status').innerHTML = '<span style="color:var(--success)">Koodi luettu! Tallennetaan...</span>';
+        document.getElementById('qr-scanner-status').innerHTML = '<span style="color:var(--success)">Code scanned! Saving...</span>';
         
         // Stop scanning
         html5QrCode.stop().then(() => {
@@ -190,7 +190,7 @@ export function renderQRScannerModal() {
         // Parse error, happens continuously, ignore.
       }
     ).catch((err) => {
-      document.getElementById('qr-scanner-status').innerHTML = `<span style="color:var(--danger)">Kameraa ei voitu käynnistää: ${err}</span>`;
+      document.getElementById('qr-scanner-status').innerHTML = `<span style="color:var(--danger)">Could not start camera: ${err}</span>`;
     });
   }, 100);
 
@@ -198,12 +198,12 @@ export function renderQRScannerModal() {
     <div class="app-modal-backdrop" style="z-index: 2000;" data-action="close-qr-scanner">
       <div class="app-modal-shell" role="dialog" aria-modal="true" style="max-width: 550px;" data-action="none">
         <div class="app-modal-topbar">
-          <h3 style="margin: 0;">Skannaa Tuloskortti</h3>
+          <h3 style="margin: 0;">Scan Scorecard</h3>
         </div>
         <div class="app-modal-content">
           ${content}
           <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 24px;">
-            <button type="button" class="button" data-action="close-qr-scanner">Peruuta</button>
+            <button type="button" class="button" data-action="close-qr-scanner">Cancel</button>
           </div>
         </div>
       </div>

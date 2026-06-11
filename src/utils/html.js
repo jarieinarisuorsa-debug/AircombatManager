@@ -48,8 +48,8 @@ export function getPilotName(state, pilotId) {
 }
 
 export function getAircraftName(state, aircraftId) {
-  if (!aircraftId) return "Kone lisäämättä";
-  return state.aircraft.find((aircraft) => aircraft.id === aircraftId)?.name || "Tuntematon kone";
+  if (!aircraftId) return "No aircraft selected";
+  return state.aircraft.find((aircraft) => aircraft.id === aircraftId)?.name || "Unknown aircraft";
 }
 
 export function downloadTextFile(filename, text, mimeType = "application/json") {

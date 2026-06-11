@@ -12,13 +12,13 @@ export function renderWorkspaceScorecardsTab(state, activeEvent, className) {
   
   if (!rows.length) return UI.Panel({ title: t(state, "event_workspace.no_scorecards_title") }, `<p class='muted'>${t(state, "event_workspace.no_scorecards_msg")}</p>`);
   const scanBtn = UI.Button({
-    label: "📷 Skannaa QR-tuloskortti",
+    label: "📷 Scan QR Scorecard",
     action: "open-qr-scanner",
     variant: "primary"
   });
 
   const randomizeBtn = isDemo ? `
-    <button class="button dashed" data-action="randomize-demo-scores" data-class="${escapeHtml(className)}">🎲 Arvo pisteet (${escapeHtml(className)})</button>
+    <button class="button dashed" data-action="randomize-demo-scores" data-class="${escapeHtml(className)}">🎲 Generate Points (${escapeHtml(className)})</button>
   ` : "";
 
   const controls = `
@@ -35,8 +35,8 @@ export function renderWorkspaceScorecardsTab(state, activeEvent, className) {
     : "";
 
   const heatsPanel = heatsHtml ? UI.Panel({ 
-    kicker: "HEATEITTÄIN", 
-    title: `${escapeHtml(className)} tuloskortit erittäin` 
+    kicker: "BY HEATS", 
+    title: `${escapeHtml(className)} Scorecards by Heat` 
   }, heatsHtml) : "";
 
   return UI.Panel({ kicker: t(state, "event_workspace.step5"), title: t(state, "event_workspace.scorecards_title").replace("{class}", escapeHtml(className)) }, controls + heatsPanel);
