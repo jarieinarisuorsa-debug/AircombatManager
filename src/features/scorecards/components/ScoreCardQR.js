@@ -100,9 +100,7 @@ export function renderQRGeneratorModal(card, pilotName, activeHeatTitle = "") {
         <canvas id="qrcode-canvas"></canvas>
       </div>
       
-      <div style="font-family: monospace; font-size: 10px; color: var(--text-muted); word-break: break-all; max-width: 300px; text-align: center;">
-        ${escapeHtml(payload)}
-      </div>
+
     </div>
   `;
 
