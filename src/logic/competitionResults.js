@@ -174,11 +174,11 @@ function buildStructureRoundLabels(event, className) {
   const labels = [];
 
   for (let round = 1; round <= Number(format.qualifyingRounds || 0); round++) {
-    labels.push(`Alkuerä ${round}`);
+    labels.push(`Qualifying ${round}`);
   }
 
-  if (format.semiFinalEnabled) labels.push("Semifinaali");
-  if (format.finalEnabled) labels.push("Finaali");
+  if (format.semiFinalEnabled) labels.push("Semifinal");
+  if (format.finalEnabled) labels.push("Final");
 
   return labels;
 }
@@ -187,7 +187,7 @@ function buildScoreCardStructureBreakdown(scoreCardRow, structureLabels) {
   const roundScores = scoreCardRow?.totals?.roundScores || [];
   const labels = structureLabels.length
     ? structureLabels
-    : roundScores.map((round) => `Alkuerä ${round.roundNumber}`);
+    : roundScores.map((round) => `Qualifying ${round.roundNumber}`);
 
   return labels.map((label, index) => {
     const round = roundScores[index];
@@ -273,10 +273,10 @@ function compareHeatMeta(a, b) {
 }
 
 function getRoundLabel(heat) {
-  if (!heat) return "Alkuerä 1";
-  if (heat.phase === "semifinal") return "Semifinaali";
-  if (heat.phase === "final") return "Finaali";
-  return `Alkuerä ${Number(heat.round || 1)}`;
+  if (!heat) return "Qualifying 1";
+  if (heat.phase === "semifinal") return "Semifinal";
+  if (heat.phase === "final") return "Final";
+  return `Qualifying ${Number(heat.round || 1)}`;
 }
 
 function compareRoundLabelStrings(a, b) {
@@ -284,8 +284,8 @@ function compareRoundLabelStrings(a, b) {
     if (/^heat\s+\d+/i.test(label)) {
       return { bucket: 1, number: Number(label.match(/\d+/)?.[0] || 0) };
     }
-    if (/semifinaali/i.test(label)) return { bucket: 2, number: 0 };
-    if (/finaali/i.test(label)) return { bucket: 3, number: 0 };
+    if (/semifinaali|semifinal/i.test(label)) return { bucket: 2, number: 0 };
+    if (/finaali|final/i.test(label)) return { bucket: 3, number: 0 };
     return { bucket: 9, number: 0 };
   };
 

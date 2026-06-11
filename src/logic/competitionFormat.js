@@ -17,9 +17,9 @@ export const HEAT_PHASES = {
 };
 
 export const HEAT_PHASE_LABELS = {
-  [HEAT_PHASES.QUALIFYING]: "Alkuerä",
-  [HEAT_PHASES.SEMIFINAL]: "Semifinaali",
-  [HEAT_PHASES.FINAL]: "Finaali"
+  [HEAT_PHASES.QUALIFYING]: "Qualifying",
+  [HEAT_PHASES.SEMIFINAL]: "Semifinal",
+  [HEAT_PHASES.FINAL]: "Final"
 };
 
 export const DEFAULT_COMPETITION_FORMAT = {
@@ -73,7 +73,7 @@ export function getPhaseLabel(phase, state) {
     if (phase === HEAT_PHASES.SEMIFINAL) return t(state, "format.phase_semifinal");
     if (phase === HEAT_PHASES.FINAL) return t(state, "format.phase_final");
   }
-  return HEAT_PHASE_LABELS[phase] || "Alkuerä";
+  return HEAT_PHASE_LABELS[phase] || "Qualifying";
 }
 
 export function formatHeatTitle(heat, state) {
@@ -383,8 +383,8 @@ export function getEntriesForNextStage(status, classEntries) {
 
 export function formatCompetitionStructureLabel(format) {
   if (!format) return "";
-  const parts = [`${format.qualifyingRounds} alkuerää`];
-  if (format.semiFinalEnabled) parts.push("semifinaali");
-  if (format.finalEnabled) parts.push("finaali");
+  const parts = [`${format.qualifyingRounds} qualifying rounds`];
+  if (format.semiFinalEnabled) parts.push("semifinal");
+  if (format.finalEnabled) parts.push("final");
   return parts.join(" + ");
 }

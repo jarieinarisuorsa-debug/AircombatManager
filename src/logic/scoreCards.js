@@ -36,10 +36,10 @@ export const SCORE_CARD_TEMPLATES = {
   },
   [SCORE_CARD_TEMPLATE_WWI]: {
     id: SCORE_CARD_TEMPLATE_WWI,
-    label: "WWI · 4 Kierrosta + Finaali",
+    label: "WWI · 4 Rounds + Final",
     shortLabel: "WWI",
     rounds: [1, 2, 3, 4],
-    resultLabels: ["Kierros 1", "Kierros 2", "Kierros 3", "Finaali"],
+    resultLabels: ["Round 1", "Round 2", "Round 3", "Final"],
     headerLastNameLabel: "Sukunimi",
     modelPointItems: [
       { key: "fourStroke", label: "Nelitahtimoottori", points: 30 },
@@ -112,16 +112,16 @@ export function getScoreCardStructureStages({ card = null, event = null, entry =
   const heatMappings = [];
 
   for (let round = 1; round <= Number(format.qualifyingRounds || 0); round++) {
-    labels.push(`Alkuerä ${round}`);
+    labels.push(`Qualifying ${round}`);
     heatMappings.push({ phase: "qualifying", round: round });
   }
 
   if (format.semiFinalEnabled) {
-    labels.push("Semifinaali");
+    labels.push("Semifinal");
     heatMappings.push({ phase: "semifinal", round: 1 });
   }
   if (format.finalEnabled) {
-    labels.push("Finaali");
+    labels.push("Final");
     heatMappings.push({ phase: "final", round: 1 });
   }
 
@@ -353,7 +353,7 @@ export function buildScoreCardRows(state, event) {
       
       const pilotHeats = eventHeats.filter(h => h.className === className && h.entryIds.includes(entry.id));
       const calculatedFlyingRound = pilotHeats.map(h => {
-        const phaseLabel = h.phase === "semifinal" ? "Semi " : (h.phase === "final" ? "Finaali " : `K${h.round} `);
+        const phaseLabel = h.phase === "semifinal" ? "Semi " : (h.phase === "final" ? "Final " : `R${h.round} `);
         return `${phaseLabel}${formatHeatTitle(h, null)}`;
       }).join(", ");
       const pilotAircraft = state.aircraft.filter(a => a.pilotId === entry.pilotId && a.className === className);
