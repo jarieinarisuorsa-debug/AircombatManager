@@ -143,10 +143,10 @@ export function initHeatActions() {
   registerAction("generate-heats", (event, button) => {
     requireAdmin(getState());
     openConfirmModal({
-      title: "Arvo heatit",
-      message: "Arvotaanko seuraavat heatit aktiivisille luokille?",
+      title: "Generate heats",
+      message: "Generate next heats for active classes?",
       action: "execute-generate-heats",
-      requireText: "ARVO"
+      requireText: "DRAW"
     });
     return true;
   });
@@ -161,11 +161,11 @@ export function initHeatActions() {
   registerAction("generate-class-heats", (event, button) => {
     requireAdmin(getState());
     openConfirmModal({
-      title: `Arvo luokan ${button.dataset.class} heatit`,
-      message: `Arvotaanko seuraavat heatit luokalle ${button.dataset.class}?`,
+      title: `Generate heats for class ${button.dataset.class}`,
+      message: `Generate next heats for class ${button.dataset.class}?`,
       action: "execute-generate-class-heats",
       payload: { class: button.dataset.class },
-      requireText: "ARVO"
+      requireText: "DRAW"
     });
     return true;
   });
@@ -180,12 +180,12 @@ export function initHeatActions() {
   registerAction("cancel-class-heats", (event, button) => {
     requireAdmin(getState());
     openConfirmModal({
-      title: `Peruuta viimeisin arvonta (${button.dataset.class})`,
-      message: `Haluatko varmasti peruuttaa luokan ${button.dataset.class} viimeisimmän heat-arvonnan?`,
+      title: `Cancel latest draw (${button.dataset.class})`,
+      message: `Are you sure you want to cancel the latest heat draw for class ${button.dataset.class}?`,
       action: "execute-cancel-class-heats",
       payload: { class: button.dataset.class },
       isDanger: true,
-      submitLabel: "Kyllä, poista arvonta"
+      submitLabel: "Yes, delete draw"
     });
     return true;
   });

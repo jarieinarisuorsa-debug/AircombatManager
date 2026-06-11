@@ -6,7 +6,7 @@ export function renderConfirmModal(state) {
   
   const textInputHtml = config.requireText ? `
     <div style="margin: 20px 0;">
-      <label class="ui-label" style="display: block; margin-bottom: 8px;">Kirjoita <strong style="user-select: none;">${escapeHtml(config.requireText)}</strong> vahvistaaksesi:</label>
+      <label class="ui-label" style="display: block; margin-bottom: 8px;">Type <strong style="user-select: none;">${escapeHtml(config.requireText)}</strong> to confirm:</label>
       <input type="text" name="confirmText" class="ui-input" autocomplete="off" style="width: 100%; border-color: var(--danger); font-family: monospace; font-size: 1.1em; letter-spacing: 1px;" required autofocus />
     </div>
   ` : config.isPrompt ? `
@@ -29,8 +29,8 @@ export function renderConfirmModal(state) {
           <form data-action="execute-confirm-modal" style="margin: 0;">
             ${textInputHtml}
             <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 24px;">
-              ${config.hideCancel ? '' : '<button type="button" class="button" data-action="close-confirm-modal">Peruuta</button>'}
-              <button type="submit" class="button ${submitClass}">${escapeHtml(config.submitLabel || "Poista")}</button>
+              ${config.hideCancel ? '' : '<button type="button" class="button" data-action="close-confirm-modal">Cancel</button>'}
+              <button type="submit" class="button ${submitClass}">${escapeHtml(config.submitLabel || "OK")}</button>
             </div>
           </form>
         </div>
