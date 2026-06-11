@@ -14,7 +14,7 @@ export function renderWorkspaceCompetitorsTab(state, activeEvent, className, eve
       pilotCountry: pilot.country || "",
       pilotClub: pilot.club || "",
       pilotImage: pilot.image || "",
-      aircraftName: aircraft.name || "Ei konekorttia",
+      aircraftName: aircraft.name || "No aircraft",
       raceNumber: entry.raceNumber || ""
     };
   }).sort((a, b) => {
