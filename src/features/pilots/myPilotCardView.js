@@ -20,10 +20,10 @@ export function renderMyPilotCardView(state) {
       title: t(state, "my_pilot.create_title")
     }, `
       <p style="margin-bottom: 16px;">${t(state, "my_pilot.create_msg1")}</p>
-      <p class="muted" style="margin-bottom: 15px;">Olet tällä hetkellä kirjautunut sisään tunnuksella <strong>${escapeHtml(userEmail)}</strong>. Voit nyt luoda itsellesi pilottikortin tälle sähköpostille.</p>
+      <p class="muted" style="margin-bottom: 15px;">You are currently logged in as <strong>${escapeHtml(userEmail)}</strong>. You can now create a pilot card for this email.</p>
       ${isUserAdmin(state) ? `
         <div style="background: rgba(255, 165, 0, 0.1); border-left: 3px solid orange; padding: 10px; margin-bottom: 20px; font-size: 0.9rem;">
-          <strong>Huomio Admin:</strong> Jos oma pilottikorttisi on rekisteröity <em>toiselle sähköpostille</em>, et näe sitä tässä "Oma pilottikortti" -näkymässä. Voit muokata omaa korttiasi avaamalla sen <a href="#/pilots" style="text-decoration: underline;">Pilotit-sivulta</a>.
+          <strong>Attention Admin:</strong> If your own pilot card is registered to <em>another email</em>, you won't see it here in the "My pilot card" view. You can edit your own card by opening it from the <a href="#/pilots" style="text-decoration: underline;">Pilots page</a>.
         </div>
       ` : ""}
       <div style="display: flex; gap: 10px; flex-wrap: wrap;">
