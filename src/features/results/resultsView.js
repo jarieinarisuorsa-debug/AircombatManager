@@ -324,7 +324,7 @@ export function renderResultsTable(state, rows, showDetails = false, classPositi
     // Tulostuspainike (Pöytäkirja) rivin loppuun
     cells.push(`
       <div style="display: flex; gap: 4px; justify-content: flex-end;">
-        ${UI.Button({ label: "Pöytäkirja", action: "print-pilot-scorecard", entryId: escapeHtml(row.entryId), variant: "small dashed" })}
+        ${UI.Button({ label: "Scorecard", action: "print-pilot-scorecard", entryId: escapeHtml(row.entryId), variant: "small dashed" })}
       </div>
     `);
 

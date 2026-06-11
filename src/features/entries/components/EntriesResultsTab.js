@@ -27,7 +27,7 @@ export function renderWorkspaceResultsTab(state, activeEvent, className) {
   return UI.Panel({ kicker: t(state, "event_workspace.step6"), title: t(state, "event_workspace.results_title").replace("{class}", escapeHtml(className)) }, `
     <div class="ui-form-actions" style="margin-bottom: 20px; align-items: center;">
       <strong style="margin-right: auto;">${statusText}</strong>
-      ${UI.Button({ label: "Tulosta tuloskortit", action: "print-class-scorecards", class: className, variant: "dashed" })}
+      ${UI.Button({ label: "Print Scorecards", action: "print-class-scorecards", class: className, variant: "dashed" })}
       ${publishBtn}
     </div>
     ${tableHtml}
