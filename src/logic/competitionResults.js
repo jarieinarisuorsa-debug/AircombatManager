@@ -13,6 +13,7 @@ import { getCompetitionFormatForClass } from "./competitionFormat.js";
 import { calculateResultScore } from "./scoring.js";
 import { buildScoreCardRows, hasRoundData, hasSavedScoreCard } from "./scoreCards.js";
 import { getAircraftName, getPilotName } from "../utils/html.js";
+import { t } from "../utils/i18n.js";
 
 export function getEventHeats(state, eventId) {
   return state.heats.filter((heat) => heat.eventId === eventId);
@@ -52,10 +53,10 @@ export function buildCompetitionResults(state, event) {
     const aircraft = state.aircraft.find((item) => item.id === entry.aircraftId);
     const scoreCardRow = scoreCardRows.find((row) => row.entry.id === entry.id);
     const useScoreCard = scoreCardRow && hasSavedScoreCard(scoreCardRow.card);
-    const structureLabels = buildStructureRoundLabels(event, entry.className || aircraft?.className || "Yleinen");
-    const legacyRoundBreakdown = buildLegacyRoundBreakdown(entryResults, heats, event, structureLabels);
+    const structureLabels = buildStructureRoundLabels(state, event, entry.className || aircraft?.className || "Yleinen");
+    const legacyRoundBreakdown = buildLegacyRoundBreakdown(state, entryResults, heats, event, structureLabels);
     const roundBreakdown = useScoreCard
-      ? buildScoreCardStructureBreakdown(scoreCardRow, structureLabels)
+      ? buildScoreCardStructureBreakdown(scoreCardRow, structureLabels, state)
       : legacyRoundBreakdown;
     const effectiveRoundBreakdown = roundBreakdown.filter((round) => round.completed);
     const legacyTotalScore = heatScores.reduce((sum, score) => sum + score, 0);
@@ -169,25 +170,25 @@ function escapeCsvCell(value) {
 
 
 
-function buildStructureRoundLabels(event, className) {
+function buildStructureRoundLabels(state, event, className) {
   const format = getCompetitionFormatForClass(event, className);
   const labels = [];
 
   for (let round = 1; round <= Number(format.qualifyingRounds || 0); round++) {
-    labels.push(`Qualifying ${round}`);
+    labels.push(`${t(state, "results.qualifying")} ${round}`);
   }
 
-  if (format.semiFinalEnabled) labels.push("Semifinal");
-  if (format.finalEnabled) labels.push("Final");
+  if (format.semiFinalEnabled) labels.push(t(state, "results.semifinal"));
+  if (format.finalEnabled) labels.push(t(state, "results.final"));
 
   return labels;
 }
 
-function buildScoreCardStructureBreakdown(scoreCardRow, structureLabels) {
+function buildScoreCardStructureBreakdown(scoreCardRow, structureLabels, state) {
   const roundScores = scoreCardRow?.totals?.roundScores || [];
   const labels = structureLabels.length
     ? structureLabels
-    : roundScores.map((round) => `Qualifying ${round.roundNumber}`);
+    : roundScores.map((round) => `${t(state, "results.qualifying")} ${round.roundNumber}`);
 
   return labels.map((label, index) => {
     const round = roundScores[index];
@@ -226,7 +227,7 @@ function mergeRoundBreakdownWithStructure(structureLabels, actualBreakdown) {
   });
 }
 
-function buildLegacyRoundBreakdown(entryResults, heats, event, structureLabels = []) {
+function buildLegacyRoundBreakdown(state, entryResults, heats, event, structureLabels = []) {
 
   const heatMap = new Map(heats.map((heat) => [heat.id, heat]));
   const grouped = new Map();
@@ -236,7 +237,7 @@ function buildLegacyRoundBreakdown(entryResults, heats, event, structureLabels =
     .sort((a, b) => compareResultsByHeat(a, b, heatMap))
     .forEach((result) => {
       const heat = heatMap.get(result.heatId);
-      const label = getRoundLabel(heat);
+      const label = getRoundLabel(state, heat);
       const score = calculateResultScore(result, event.rules).total;
       const previous = grouped.get(label) || { label, score: 0, completed: false };
       grouped.set(label, {
@@ -272,11 +273,11 @@ function compareHeatMeta(a, b) {
   return String(a?.groupName || "").localeCompare(String(b?.groupName || ""), "fi", { numeric: true });
 }
 
-function getRoundLabel(heat) {
-  if (!heat) return "Qualifying 1";
-  if (heat.phase === "semifinal") return "Semifinal";
-  if (heat.phase === "final") return "Final";
-  return `Qualifying ${Number(heat.round || 1)}`;
+function getRoundLabel(state, heat) {
+  if (!heat) return `${t(state, "results.qualifying")} 1`;
+  if (heat.phase === "semifinal") return t(state, "results.semifinal");
+  if (heat.phase === "final") return t(state, "results.final");
+  return `${t(state, "results.qualifying")} ${Number(heat.round || 1)}`;
 }
 
 function compareRoundLabelStrings(a, b) {
