@@ -259,6 +259,19 @@
         pilot_id TEXT REFERENCES pilots(id) ON DELETE CASCADE,
         class_name TEXT NOT NULL,
         aircraft_id TEXT,
+        
+        -- V2 Scorecard Uudet Kentät
+        template_id TEXT,
+        start_number TEXT,
+        first_name TEXT,
+        last_name TEXT,
+        flying_round TEXT,
+        rounds JSONB,
+        aircraft JSONB,
+        signatures JSONB,
+        status TEXT DEFAULT 'draft',
+        
+        -- Legacy Kentät
         frequency TEXT,
         flight_time_seconds INTEGER DEFAULT 0,
         points_flight INTEGER DEFAULT 0,
