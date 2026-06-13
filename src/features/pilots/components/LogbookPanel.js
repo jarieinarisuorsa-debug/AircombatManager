@@ -60,7 +60,43 @@ export function renderLogbookPanel(state, pilot) {
         <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--primary-color)"><path d="M12 20v-6M6 20V10M18 20V4"/></svg>
         ${logbookTab === t(state, "logbook.summary") ? t(state, "logbook.summary_all_classes") : t(state, "logbook.summary_class").replace("{class}", escapeHtml(logbookTab))}
       </h3>
-      <div class="result-stat-grid" style="margin-bottom: 16px;">
+      <style>
+        .logbook-compact-grid {
+          display: grid;
+          grid-template-columns: repeat(4, 1fr);
+          gap: 12px;
+          margin-bottom: 16px;
+        }
+        .logbook-compact-grid .small-card {
+          min-height: auto;
+          padding: 12px;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          text-align: center;
+        }
+        .logbook-compact-grid .small-card span {
+          font-size: 0.75rem;
+          margin-bottom: 4px;
+        }
+        .logbook-compact-grid .small-card strong {
+          font-size: 1.5rem;
+        }
+        @media (max-width: 640px) {
+          .logbook-compact-grid {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+          }
+          .logbook-compact-grid .small-card {
+            padding: 8px;
+            border-radius: 12px;
+          }
+          .logbook-compact-grid .small-card strong {
+            font-size: 1.4rem;
+          }
+        }
+      </style>
+      <div class="logbook-compact-grid">
         <article class="small-card"><span>${t(state, "logbook.events")}</span><strong>${summaryStats.events}</strong></article>
         <article class="small-card"><span>${t(state, "logbook.rounds")}</span><strong>${summaryStats.flights}</strong></article>
         <article class="small-card"><span>${t(state, "logbook.cuts")}</span><strong style="color: var(--accent);">${summaryStats.cuts}</strong></article>
@@ -70,7 +106,7 @@ export function renderLogbookPanel(state, pilot) {
     </div>
   `;
 
-  const historyHtml = filteredEvents.length === 0 ? `<p class="muted">${t(state, "logbook.no_results_class")}</p>` : filteredEvents.map(ev => {
+  const historyHtml = filteredEvents.length === 0 ? `<p class="muted">${t(state, "logbook.no_results_class")}</p>` : filteredEvents.map((ev, i) => {
     const flightsHtml = ev.flights.map(f => `
       <tr style="border-bottom: 1px solid var(--border); font-size: 0.95rem; transition: background 0.2s ease;">
         <td style="padding: 12px 20px; font-weight: 500;">${escapeHtml(f.roundLabel)}</td>
@@ -85,9 +121,12 @@ export function renderLogbookPanel(state, pilot) {
       ? `<span class="badge badge-saved" style="font-size: 0.75rem;">${t(state, "logbook.status_official")}</span>` 
       : `<span class="badge badge-empty" style="font-size: 0.75rem;">${t(state, "logbook.status_draft")}</span>`;
 
+    const isOpen = i === 0 ? "open" : "";
     return `
-      <div class="panel" style="margin-bottom: 24px; padding: 0; overflow: hidden; border: 1px solid var(--border); border-radius: 12px; background: var(--panel); box-shadow: 0 4px 20px rgba(0,0,0,0.15);">
-        <div style="background: linear-gradient(135deg, rgba(88,183,255,0.08), transparent); padding: 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
+      <details class="panel" ${isOpen} style="margin-bottom: 24px; padding: 0; overflow: hidden; border: 1px solid var(--border); border-radius: 12px; background: var(--panel); box-shadow: 0 4px 20px rgba(0,0,0,0.15);">
+        <summary style="list-style: none; cursor: pointer; outline: none; background: linear-gradient(135deg, rgba(88,183,255,0.08), transparent); padding: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; border-bottom: 1px solid rgba(255,255,255,0.05);">
+          <!-- Hide default webkit marker inline -->
+          <style>details > summary::-webkit-details-marker { display: none; }</style>
           <div>
             <h4 style="margin: 0 0 8px 0; font-size: 1.25rem; display: flex; align-items: center; gap: 10px;">
               ${escapeHtml(ev.eventName)}
@@ -102,13 +141,18 @@ export function renderLogbookPanel(state, pilot) {
               ${ev.aircraftName ? `<span class="badge" style="background: var(--panel-strong); border: 1px solid var(--border); font-weight: 500;">${t(state, "logbook.aircraft_label")} <span style="color: var(--text); margin-left: 4px;">${escapeHtml(ev.aircraftName)}</span></span>` : ""}
             </div>
           </div>
-          <div style="text-align: right; background: var(--panel-strong); padding: 14px 20px; border-radius: 10px; border: 1px solid var(--border); min-width: 140px;">
-            ${ev.resultsPublished && ev.ranking ? `<div style="font-size: 0.85rem; color: var(--muted); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.05em;">${t(state, "logbook.ranking")}</div><div style="font-size: 1.6rem; font-weight: 800; color: var(--text); line-height: 1;">${ev.ranking}.</div>` : ""}
-            ${ev.resultsPublished && ev.ranking ? `<div style="height: 1px; background: var(--border); margin: 10px 0;"></div>` : ""}
-            ${ev.resultsPublished ? `<div style="font-size: 0.85rem; color: var(--muted); margin-bottom: 2px; text-transform: uppercase; letter-spacing: 0.05em;">${t(state, "logbook.points")}</div><div style="font-size: 1.2rem; font-weight: bold; color: var(--accent);">${ev.totalEventScore}</div>` : ""}
-            ${!ev.resultsPublished ? `<div style="color: var(--muted); font-size: 0.9rem;">${t(state, "logbook.waiting_publication")}</div>` : ""}
+          <div style="display: flex; gap: 20px; align-items: center;">
+            <div style="text-align: right; background: var(--panel-strong); padding: 14px 20px; border-radius: 10px; border: 1px solid var(--border); min-width: 140px;">
+              ${ev.resultsPublished && ev.ranking ? `<div style="font-size: 0.85rem; color: var(--muted); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.05em;">${t(state, "logbook.ranking")}</div><div style="font-size: 1.6rem; font-weight: 800; color: var(--text); line-height: 1;">${ev.ranking}.</div>` : ""}
+              ${ev.resultsPublished && ev.ranking ? `<div style="height: 1px; background: var(--border); margin: 10px 0;"></div>` : ""}
+              ${ev.resultsPublished ? `<div style="font-size: 0.85rem; color: var(--muted); margin-bottom: 2px; text-transform: uppercase; letter-spacing: 0.05em;">${t(state, "logbook.points")}</div><div style="font-size: 1.2rem; font-weight: bold; color: var(--accent);">${ev.totalEventScore}</div>` : ""}
+              ${!ev.resultsPublished ? `<div style="color: var(--muted); font-size: 0.9rem;">${t(state, "logbook.waiting_publication")}</div>` : ""}
+            </div>
+            <div style="color: var(--muted);">
+               <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+            </div>
           </div>
-        </div>
+        </summary>
         <div class="table-wrap" style="margin: 0; border: none; border-radius: 0;">
           <table style="width: 100%; border-collapse: collapse; text-align: left; margin: 0;">
             <thead style="background: var(--panel-strong);">
@@ -125,7 +169,7 @@ export function renderLogbookPanel(state, pilot) {
             </tbody>
           </table>
         </div>
-      </div>
+      </details>
     `;
   }).join('');
 

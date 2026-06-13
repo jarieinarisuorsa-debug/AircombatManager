@@ -31,54 +31,89 @@ export function renderSpeedometerView(state) {
         align-items: center;
         padding: 30px 10px;
       }
-      .speedo-display {
-        text-align: center;
-        margin-bottom: 30px;
-        padding: 30px;
-        background: radial-gradient(circle, rgba(30,41,59,0.9) 0%, rgba(15,23,42,0.95) 100%);
-        border: 2px solid rgba(59, 130, 246, 0.4);
-        border-radius: 20px;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.5), inset 0 0 20px rgba(59, 130, 246, 0.2);
+      .speedo-gauge-wrapper {
+        position: relative;
+        width: 280px;
+        height: 280px;
+        margin-bottom: 40px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      .speedo-svg {
+        position: absolute;
+        top: 0;
+        left: 0;
         width: 100%;
-        max-width: 400px;
+        height: 100%;
+        transform: rotate(-90deg); /* Start from top */
+        filter: drop-shadow(0 0 15px rgba(59, 130, 246, 0.2));
+      }
+      .speedo-track {
+        fill: none;
+        stroke: rgba(255, 255, 255, 0.05);
+        stroke-width: 18;
+      }
+      .speedo-progress {
+        fill: none;
+        stroke: url(#speedoGradient);
+        stroke-width: 18;
+        stroke-linecap: round;
+        stroke-dasharray: 754; /* 2 * PI * 120 (radius) = ~754 */
+        stroke-dashoffset: 754;
+        transition: stroke-dashoffset 1.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+      }
+      .speedo-gauge-wrapper.active .speedo-svg {
+        filter: drop-shadow(0 0 25px rgba(239, 68, 68, 0.6));
+      }
+      .speedo-content {
+        position: relative;
+        z-index: 2;
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        width: 200px;
+        height: 200px;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(30,41,59,0.9) 0%, rgba(15,23,42,0.95) 100%);
+        box-shadow: inset 0 0 20px rgba(0,0,0,0.5), 0 10px 25px rgba(0,0,0,0.4);
+        border: 2px solid rgba(255,255,255,0.05);
       }
       .speedo-value {
-        font-size: 4rem;
+        font-size: 3.5rem;
         font-weight: 900;
         color: #fff;
         font-family: 'Inter', monospace;
         line-height: 1;
         text-shadow: 0 2px 10px rgba(0,0,0,0.8);
-        transition: color 0.3s;
       }
-      .speedo-value.active {
-        color: #3b82f6;
-        text-shadow: 0 0 20px rgba(59, 130, 246, 0.6);
+      .speedo-value.recording {
+        color: #ef4444;
+        text-shadow: 0 0 20px rgba(239, 68, 68, 0.6);
+        animation: pulseText 1.5s infinite alternate;
+      }
+      @keyframes pulseText {
+        0% { opacity: 0.7; }
+        100% { opacity: 1; }
       }
       .speedo-unit {
-        font-size: 1.2rem;
+        font-size: 1.1rem;
         color: #94a3b8;
         text-transform: uppercase;
-        letter-spacing: 2px;
-        margin-top: 10px;
+        letter-spacing: 3px;
+        margin-top: 5px;
         font-weight: 600;
       }
       .speedo-stats {
         display: flex;
         justify-content: space-between;
         margin-top: 20px;
+        width: 280px;
         padding-top: 20px;
-        border-top: 1px solid rgba(255,255,255,0.1);
         font-size: 0.9rem;
         color: #64748b;
-      }
-      .speedo-stat-item {
-        display: flex;
-        flex-direction: column;
-      }
-      .speedo-stat-val {
-        font-weight: 700;
-        color: #e2e8f0;
       }
       .speedo-controls {
         display: flex;
@@ -109,18 +144,32 @@ export function renderSpeedometerView(state) {
     ${styles}
     <div class="speedo-container">
       
-      <div class="speedo-display">
-        <div id="speedo-value" class="speedo-value">---</div>
-        <div class="speedo-unit">km/h</div>
-        <div class="speedo-stats">
-          <div class="speedo-stat-item">
-            <span>MAX PITCH</span>
-            <span id="speedo-max-pitch" class="speedo-stat-val">--- Hz</span>
-          </div>
-          <div class="speedo-stat-item" style="text-align: right;">
-            <span>MIN PITCH</span>
-            <span id="speedo-min-pitch" class="speedo-stat-val">--- Hz</span>
-          </div>
+      <div id="speedo-gauge-wrapper" class="speedo-gauge-wrapper">
+        <svg class="speedo-svg" viewBox="0 0 280 280">
+          <defs>
+            <linearGradient id="speedoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#3b82f6" />
+              <stop offset="50%" stop-color="#8b5cf6" />
+              <stop offset="100%" stop-color="#ef4444" />
+            </linearGradient>
+          </defs>
+          <circle class="speedo-track" cx="140" cy="140" r="120"></circle>
+          <circle id="speedo-progress" class="speedo-progress" cx="140" cy="140" r="120"></circle>
+        </svg>
+        <div class="speedo-content">
+          <div id="speedo-value" class="speedo-value">---</div>
+          <div class="speedo-unit">km/h</div>
+        </div>
+      </div>
+      
+      <div class="speedo-stats">
+        <div class="speedo-stat-item">
+          <span>MAX PITCH</span>
+          <span id="speedo-max-pitch" class="speedo-stat-val" style="color:#e2e8f0; font-weight:bold;">--- Hz</span>
+        </div>
+        <div class="speedo-stat-item" style="text-align: right;">
+          <span>MIN PITCH</span>
+          <span id="speedo-min-pitch" class="speedo-stat-val" style="color:#e2e8f0; font-weight:bold;">--- Hz</span>
         </div>
       </div>
 
@@ -168,7 +217,11 @@ export function renderSpeedometerView(state) {
         startBtn.innerHTML = '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 8px; vertical-align: text-bottom;"><circle cx="12" cy="12" r="10"></circle><polygon points="10 8 16 12 10 16 10 8"></polygon></svg> ' + t(state, "speedometer.start", "Start Recording");
         startBtn.classList.remove("danger");
         startBtn.classList.add("primary");
-        valueDisplay.classList.remove("active");
+        valueDisplay.classList.remove("recording");
+        const gaugeWrapper = document.getElementById("speedo-gauge-wrapper");
+        if (gaugeWrapper) gaugeWrapper.classList.remove("active");
+        
+        const gaugeProgress = document.getElementById("speedo-progress");
         
         // Calculate final speed
         if (maxFreq > 0 && minFreq < Infinity && maxFreq > minFreq) {
@@ -176,8 +229,18 @@ export function renderSpeedometerView(state) {
           const v_ms = SPEED_OF_SOUND * (maxFreq - minFreq) / (maxFreq + minFreq);
           const v_kmh = v_ms * 3.6;
           valueDisplay.textContent = Math.round(v_kmh);
+          
+          if (gaugeProgress) {
+            const maxKmh = 350; // Assume max display is 350km/h
+            const percentage = Math.min(Math.max(v_kmh / maxKmh, 0), 1);
+            const offset = 754 - (percentage * 754);
+            gaugeProgress.style.strokeDashoffset = offset;
+          }
         } else {
           valueDisplay.textContent = "ERR";
+          if (gaugeProgress) {
+            gaugeProgress.style.strokeDashoffset = 754;
+          }
         }
         
         return;
@@ -190,8 +253,13 @@ export function renderSpeedometerView(state) {
         minFreq = Infinity;
         freqHistory = new Array(HISTORY_SIZE).fill(null);
         
-        valueDisplay.textContent = "---";
-        valueDisplay.classList.add("active");
+        valueDisplay.textContent = "REC";
+        valueDisplay.classList.add("recording");
+        const gaugeWrapper = document.getElementById("speedo-gauge-wrapper");
+        if (gaugeWrapper) gaugeWrapper.classList.add("active");
+        const gaugeProgress = document.getElementById("speedo-progress");
+        if (gaugeProgress) gaugeProgress.style.strokeDashoffset = 754;
+        
         maxPitchDisplay.textContent = "--- Hz";
         minPitchDisplay.textContent = "--- Hz";
         

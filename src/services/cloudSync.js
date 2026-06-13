@@ -79,12 +79,20 @@ export async function syncAllFromCloud() {
       fetchRegistrationRequestsFromCloud(),
       fetchAircraftSpecsFromCloud(),
       fetchMessagesFromCloud(),
-      supabase.from("settings").select("*")
+      // Emme hae koko data-objektia säästääksemme kaistaa (ohitamme organizationLogoData base64:n)
+      supabase.from("settings").select("id, updated_at, data->systemUpdates, data->organizerName, data->whatsappReceivers")
     ]);
 
     let settings = null;
     if (settingsRows && settingsRows.data && settingsRows.data.length > 0) {
-      settings = settingsRows.data.find(r => r.id === 'global')?.data;
+      const row = settingsRows.data.find(r => r.id === 'global');
+      if (row) {
+        settings = {
+          systemUpdates: row.systemUpdates,
+          organizerName: row.organizerName,
+          whatsappReceivers: row.whatsappReceivers
+        };
+      }
     }
 
     return {

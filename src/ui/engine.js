@@ -131,7 +131,7 @@ export const UI = {
     if (!countryCode) return "";
     const code = String(countryCode).trim().toLowerCase();
     if (code.length !== 2) return `<span class="country-badge">${escapeHtml(countryCode)}</span>`;
-    return `<img src="https://flagcdn.com/24x18/${code}.png" alt="${escapeHtml(countryCode)}" title="${escapeHtml(countryCode)}" style="width: 20px; height: 15px; border-radius: 2px; vertical-align: middle; box-shadow: 0 1px 2px rgba(0,0,0,0.2);" onerror="this.outerHTML='<span class=\\'country-badge\\'>${escapeHtml(countryCode)}</span>'" />`;
+    return `<img src="src/assets/flags/${code}.png" alt="${escapeHtml(countryCode)}" title="${escapeHtml(countryCode)}" style="width: 20px; height: 15px; border-radius: 2px; vertical-align: middle; box-shadow: 0 1px 2px rgba(0,0,0,0.2);" onerror="this.outerHTML='<span class=\\'country-badge\\'>${escapeHtml(countryCode)}</span>'" />`;
   },
 
   Badge: ({ label, variant = "info", style = "" }) => {

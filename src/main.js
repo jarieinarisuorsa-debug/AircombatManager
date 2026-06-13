@@ -250,8 +250,7 @@ async function initApp() {
 
   if (isCloudMode()) {
     try {
-      console.info("Cloud mode active. Fetching ALL initial data...");
-      const cloudData = await import("./services/cloudStore.js").then(m => m.syncAllFromCloud());
+      const cloudData = await import("./services/cacheService.js").then(m => m.checkCacheAndSync(false));
       
       if (cloudData) {
         updateState(state => {
@@ -292,15 +291,22 @@ async function initApp() {
             if (!existingChannels.some(c => c.topic === 'realtime:' + channelName)) {
               m.supabase
                 .channel(channelName)
-                .on('postgres_changes', { event: '*', schema: 'public', table: 'messages' }, () => {
-                  // Kun viestitaulussa tapahtuu muutos (uusi viesti / luettu), haetaan tuoreet viestit
-                  import("./services/cloudStore.js").then(cloud => {
-                    cloud.fetchMessagesFromCloud().then(msgs => {
-                      updateState(state => {
-                        state.messages = msgs;
-                      }, "realtime_messages");
-                      import("./main.js").then(m => m.updateMessagesDOM()); // Päivittää vain chätin listan menettämättä focusta
-                    });
+                .on('postgres_changes', { event: '*', schema: 'public', table: 'messages' }, (payload) => {
+                  import("./services/cloudMessages.js").then(cloudMsg => {
+                    updateState(state => {
+                      if (!state.messages) state.messages = [];
+                      if (payload.eventType === "INSERT" && payload.new) {
+                        const newMsg = cloudMsg.mapMessageFromDb(payload.new);
+                        if (!state.messages.find(m => m.id === newMsg.id)) state.messages.push(newMsg);
+                      } else if (payload.eventType === "UPDATE" && payload.new) {
+                        const newMsg = cloudMsg.mapMessageFromDb(payload.new);
+                        const idx = state.messages.findIndex(m => m.id === newMsg.id);
+                        if (idx !== -1) state.messages[idx] = newMsg;
+                      } else if (payload.eventType === "DELETE" && payload.old) {
+                        state.messages = state.messages.filter(m => m.id !== payload.old.id);
+                      }
+                    }, "realtime_messages");
+                    import("./main.js").then(mainMod => mainMod.updateMessagesDOM());
                   });
                 })
                 .subscribe();
@@ -337,7 +343,8 @@ async function initApp() {
 }
 
 export async function executeCloudSync(reason = "auto_sync_background") {
-  const cloudData = await import("./services/cloudStore.js").then(m => m.syncAllFromCloud());
+  const isManual = reason === "manual_cloud_sync";
+  const cloudData = await import("./services/cacheService.js").then(m => m.checkCacheAndSync(isManual));
   if (!cloudData) return false;
 
   const oldState = getState();

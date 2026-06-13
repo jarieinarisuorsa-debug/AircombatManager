@@ -32,6 +32,12 @@ export function createClickHandler({ renderApp }) {
     const formElement = event.target.closest("select, input, textarea");
     if (formElement && formElement !== button) return;
 
+    // Reset saved scroll position for tabs when a tab button is clicked
+    const subNav = button.closest(".sub-nav");
+    if (subNav && subNav.id && window.NAV_SCROLL_POSITIONS) {
+      delete window.NAV_SCROLL_POSITIONS[subNav.id];
+    }
+
     const action = button.dataset.action;
     const context = { renderApp };
 
@@ -265,13 +271,22 @@ function runUiClickAction(action, button, { renderApp }) {
     if (wrapper) {
       const nav = wrapper.querySelector(".sub-nav");
       if (nav) {
-        const tabs = Array.from(nav.querySelectorAll("button[data-tab]"));
+        const tabs = Array.from(nav.querySelectorAll("button[data-tab], button[data-tab-target]"));
         if (tabs.length > 0) {
-          const activeIndex = tabs.findIndex(t => t.classList.contains("nav-active"));
+          const activeIndex = tabs.findIndex(t => t.classList.contains("nav-active") || t.classList.contains("active") || t.classList.contains("primary"));
           if (activeIndex !== -1) {
             const nextIndex = activeIndex + direction;
             if (nextIndex >= 0 && nextIndex < tabs.length) {
-              tabs[nextIndex].click();
+              const nextTab = tabs[nextIndex];
+              if (window.NAV_SCROLL_POSITIONS && nav.id) {
+                delete window.NAV_SCROLL_POSITIONS[nav.id];
+              }
+              const tabAction = nextTab.dataset.action;
+              if (tabAction) {
+                runUiClickAction(tabAction, nextTab, { renderApp });
+              } else {
+                nextTab.click();
+              }
             }
           }
         } else {

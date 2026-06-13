@@ -8,11 +8,12 @@ export async function fetchPilotsFromCloud() {
   
   try {
     // Haetaan julkiset tiedot kaikista piloteista (näkymän kautta)
-    const { data: publicData, error: publicError } = await supabase.from("public_pilots").select("*");
+    const { data: publicData, error: publicError } = await supabase.from("public_pilots").select("id, name, country, club, created_at");
     if (publicError) throw publicError;
 
     // Haetaan omat yksityiset tiedot (RLS rajaa tämän vain käyttäjän omaan profiiliin tai admineille)
-    const { data: privateData, error: privateError } = await supabase.from("pilots").select("*");
+    // Emme hae avatarDataa oletuksena säästääksemme kaistaa
+    const { data: privateData, error: privateError } = await supabase.from("pilots").select("id, email, phone, license, address");
     if (privateError) throw privateError;
 
     // Yhdistetään tiedot: julkinen data on pohjana, johon liitetään yksityiset kentät jos ne on saatu

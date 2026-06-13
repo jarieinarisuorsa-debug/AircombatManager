@@ -113,7 +113,17 @@
 }
 
 @media (max-width: 640px) {
-  .result-stat-grid,
+  .result-stat-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  .result-stat-grid .small-card {
+    min-height: 80px;
+    padding: 12px;
+  }
+  .result-stat-grid .small-card strong {
+    font-size: 1.5rem;
+  }
   .podium-grid {
     grid-template-columns: 1fr;
   }

@@ -23,9 +23,7 @@ export function renderPilotCardView(state) {
   const hasWw2 = entries.some((e) => e.className === "WWII");
   const hasWwi = entries.some((e) => e.className === "WWI");
 
-  const backButton = isNew ? "" : (activeEvent 
-    ? `<a href="#/entries" class="button small dashed">${t(state, "pilot.back_to_event")}</a><a href="#/pilots" class="button small dashed">${t(state, "pilot.all_pilots")}</a>`
-    : `<a href="#/pilots" class="button small dashed">${t(state, "pilot.back")}</a>`);
+  const backButton = "";
 
   const deleteButton = isNew ? "" : UI.Button({ label: t(state, "pilot.delete"), action: "delete-pilot", pilotId: pilot.id, variant: "danger small" });
 
@@ -187,7 +185,7 @@ export function renderPilotCardView(state) {
         </div>
       </div>
       <div style="display: flex; gap: 10px;">
-        ${backButton}
+        
       </div>
     </div>
   `;
