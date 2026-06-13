@@ -335,6 +335,12 @@ async function initApp() {
           const activeTag = document.activeElement ? document.activeElement.tagName : "";
           if (["INPUT", "TEXTAREA", "SELECT"].includes(activeTag)) return;
 
+          // Älä päivitä jos sivulla on tallentamattomia muutoksia lomakkeissa
+          if (document.querySelector('form[data-dirty="true"]')) return;
+
+          // Älä päivitä jos käyttäjä on tuloskorttinäkymässä
+          if (location.hash.startsWith("#/scorecard")) return;
+
           try {
             lastSyncTime = now;
             const cloudData = await import("./services/cloudStore.js").then(m => m.syncAllFromCloud());
@@ -545,6 +551,62 @@ export function renderApp() {
       if (chatContainer) {
         chatContainer.scrollTop = chatContainer.scrollHeight;
       }
+      
+      window.NAV_SCROLL_POSITIONS = window.NAV_SCROLL_POSITIONS || {};
+      
+      document.querySelectorAll(".ui-tabs-wrapper").forEach(wrapper => {
+        const nav = wrapper.querySelector(".sub-nav");
+        if (!nav) return;
+        
+        const navId = nav.id || "default";
+        
+        const updateArrows = () => {
+          const leftArrow = wrapper.querySelector(".nav-arrow-left");
+          const rightArrow = wrapper.querySelector(".nav-arrow-right");
+          
+          const tabs = Array.from(nav.querySelectorAll("button[data-tab]"));
+          if (tabs.length > 0) {
+            const activeIndex = tabs.findIndex(t => t.classList.contains("nav-active"));
+            
+            if (leftArrow) {
+              if (activeIndex <= 0) leftArrow.setAttribute("disabled", "true");
+              else leftArrow.removeAttribute("disabled");
+            }
+            if (rightArrow) {
+              if (activeIndex === -1 || activeIndex >= tabs.length - 1) rightArrow.setAttribute("disabled", "true");
+              else rightArrow.removeAttribute("disabled");
+            }
+          } else {
+            if (leftArrow) {
+              if (nav.scrollLeft <= 0) leftArrow.setAttribute("disabled", "true");
+              else leftArrow.removeAttribute("disabled");
+            }
+            if (rightArrow) {
+              if (nav.scrollLeft + nav.clientWidth >= nav.scrollWidth - 1) rightArrow.setAttribute("disabled", "true");
+              else rightArrow.removeAttribute("disabled");
+            }
+          }
+        };
+
+        if (window.NAV_SCROLL_POSITIONS[navId] !== undefined) {
+          nav.scrollLeft = window.NAV_SCROLL_POSITIONS[navId];
+        } else {
+          const activeBtn = nav.querySelector(".button.nav-active");
+          if (activeBtn) {
+            nav.scrollLeft = activeBtn.offsetLeft - nav.offsetLeft - 20;
+            window.NAV_SCROLL_POSITIONS[navId] = nav.scrollLeft;
+          }
+        }
+        
+        updateArrows();
+        
+        nav.addEventListener("scroll", () => {
+          window.NAV_SCROLL_POSITIONS[navId] = nav.scrollLeft;
+          updateArrows();
+        }, { passive: true });
+        
+        setTimeout(updateArrows, 100);
+      });
     }, 100);
   });
 }

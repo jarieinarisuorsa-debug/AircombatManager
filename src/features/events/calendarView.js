@@ -48,7 +48,7 @@ export function renderCalendarView(state) {
   const yearTabs = `
     <div class="ui-tabs no-print" style="display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 1px solid var(--border); padding-bottom: 10px; overflow-x: auto;">
       ${allYears.map(year => `
-        <button type="button" class="button ${selectedYear === year ? 'primary' : 'dashed'}" data-action="set-calendar-year" data-year="${year}">${year}</button>
+        <button type="button" class="button ${selectedYear === year ? 'nav-active' : 'dashed'}" data-action="set-calendar-year" data-year="${year}">${year}</button>
       `).join("")}
     </div>
   `;

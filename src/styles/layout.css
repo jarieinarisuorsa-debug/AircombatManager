@@ -58,6 +58,43 @@
   gap: 8px;
 }
 
+.sub-nav {
+  scrollbar-width: none;
+  scroll-snap-type: x mandatory;
+}
+
+.sub-nav .button {
+  scroll-snap-align: start;
+}
+
+.sub-nav::-webkit-scrollbar {
+  display: none;
+}
+
+/* Ensure arrows don't stretch and have a subtle green tint */
+.ui-tabs-wrapper > .nav-arrow {
+  width: auto !important;
+  flex: 0 0 auto !important;
+  color: #10b981;
+  border-color: rgba(16, 185, 129, 0.3);
+}
+
+.ui-tabs-wrapper > .nav-arrow:hover:not(:disabled) {
+  color: #34d399;
+  border-color: rgba(52, 211, 153, 0.6);
+  box-shadow: 0 0 8px rgba(16, 185, 129, 0.2);
+}
+
+/* On mobile, tabs act as a full-width carousel */
+@media (max-width: 768px) {
+  .ui-tabs-wrapper .sub-nav .button {
+    flex: 0 0 100% !important;
+    width: 100% !important;
+    justify-content: center;
+  }
+}
+
+
 .nav a {
   display: flex;
   align-items: center;

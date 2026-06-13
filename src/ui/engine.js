@@ -208,6 +208,23 @@ export const UI = {
     `;
   },
 
+  // Navigation
+  ScrollableNav: ({ id = "", className = "", style = "", navStyle = "" } = {}, content = "") => {
+    return `
+      <div class="ui-tabs-wrapper ${className}" style="display: flex; align-items: center; gap: 4px; width: 100%; max-width: 100%; box-sizing: border-box; ${escapeHtml(style)}">
+        <button type="button" class="button nav-arrow nav-arrow-left" data-action="scroll-nav" data-direction="-1" style="padding: 0 6px; flex-shrink: 0; min-height: 36px;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+        </button>
+        <div class="sub-nav" ${id ? `id="${escapeHtml(id)}"` : ""} style="display: flex; gap: 8px; overflow-x: auto; flex-wrap: nowrap; -webkit-overflow-scrolling: touch; scrollbar-width: none; flex: 1; min-width: 0; scroll-snap-type: x mandatory; ${escapeHtml(navStyle)}">
+          ${content}
+        </div>
+        <button type="button" class="button nav-arrow nav-arrow-right" data-action="scroll-nav" data-direction="1" style="padding: 0 6px; flex-shrink: 0; min-height: 36px;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+        </button>
+      </div>
+    `;
+  },
+
   // Large hero banner for top-of-view context
   HeroBanner: ({ kicker = "", title = "", subtitle = "", meta = "", actions = "", className = "" } = {}) => `
     <section class="hero-banner ${className}">

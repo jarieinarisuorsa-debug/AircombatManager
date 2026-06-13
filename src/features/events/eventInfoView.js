@@ -41,19 +41,22 @@ export function renderEventInfoView(state) {
   const tab = window.EVENT_INFO_TAB || 'yleista';
   const editMode = state.settings?.eventInfoEditMode;
 
-  const tabNavigation = `
-    <div class="ui-tabs" style="display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 1px solid var(--border); padding-bottom: 10px; overflow-x: auto;">
-      <button type="button" class="button ${tab === 'yleista' ? 'primary' : 'dashed'}" data-action="set-event-info-tab" data-tab="yleista">${t(state, "event_info.tab_general")}</button>
-      <button type="button" class="button ${tab === 'saapuminen' ? 'primary' : 'dashed'}" data-action="set-event-info-tab" data-tab="saapuminen">${t(state, "event_info.tab_arrival")}</button>
-      <button type="button" class="button ${tab === 'kartta' ? 'primary' : 'dashed'}" data-action="set-event-info-tab" data-tab="kartta">${t(state, "event_info.tab_map")}</button>
-      <button type="button" class="button ${tab === 'saatila' ? 'primary' : 'dashed'}" data-action="set-event-info-tab" data-tab="saatila">${t(state, "event_info.tab_weather")}</button>
-      <button type="button" class="button ${tab === 'aikataulu' ? 'primary' : 'dashed'}" data-action="set-event-info-tab" data-tab="aikataulu">${t(state, "event_info.tab_schedule")}</button>
-      <button type="button" class="button ${tab === 'dokumentit' ? 'primary' : 'dashed'}" data-action="set-event-info-tab" data-tab="dokumentit">${t(state, "event_info.tab_docs")}</button>
-      <button type="button" class="button ${tab === 'tiedotteet' ? 'primary' : 'dashed'}" data-action="set-event-info-tab" data-tab="tiedotteet">${t(state, "event_info.tab_notices")}</button>
-      <button type="button" class="button ${tab === 'yhteystiedot' ? 'primary' : 'dashed'}" data-action="set-event-info-tab" data-tab="yhteystiedot">${t(state, "event_info.tab_contacts")}</button>
-      <button type="button" class="button ${tab === 'sponsorit' ? 'primary' : 'dashed'}" data-action="set-event-info-tab" data-tab="sponsorit">${t(state, "event_info.tab_sponsors")}</button>
-    </div>
-  `;
+  const tabNavigation = UI.ScrollableNav({
+    id: "event-info-sub-nav",
+    className: "no-print",
+    style: "margin-bottom: 20px; border-bottom: 1px solid var(--border);",
+    navStyle: "padding-bottom: 10px;"
+  }, `
+    <button type="button" class="button ${tab === 'yleista' ? 'nav-active' : 'dashed'}" style="flex-shrink: 0;" data-action="set-event-info-tab" data-tab="yleista">${t(state, "event_info.tab_general")}</button>
+    <button type="button" class="button ${tab === 'saapuminen' ? 'nav-active' : 'dashed'}" style="flex-shrink: 0;" data-action="set-event-info-tab" data-tab="saapuminen">${t(state, "event_info.tab_arrival")}</button>
+    <button type="button" class="button ${tab === 'kartta' ? 'nav-active' : 'dashed'}" style="flex-shrink: 0;" data-action="set-event-info-tab" data-tab="kartta">${t(state, "event_info.tab_map")}</button>
+    <button type="button" class="button ${tab === 'saatila' ? 'nav-active' : 'dashed'}" style="flex-shrink: 0;" data-action="set-event-info-tab" data-tab="saatila">${t(state, "event_info.tab_weather")}</button>
+    <button type="button" class="button ${tab === 'aikataulu' ? 'nav-active' : 'dashed'}" style="flex-shrink: 0;" data-action="set-event-info-tab" data-tab="aikataulu">${t(state, "event_info.tab_schedule")}</button>
+    <button type="button" class="button ${tab === 'dokumentit' ? 'nav-active' : 'dashed'}" style="flex-shrink: 0;" data-action="set-event-info-tab" data-tab="dokumentit">${t(state, "event_info.tab_docs")}</button>
+    <button type="button" class="button ${tab === 'tiedotteet' ? 'nav-active' : 'dashed'}" style="flex-shrink: 0;" data-action="set-event-info-tab" data-tab="tiedotteet">${t(state, "event_info.tab_notices")}</button>
+    <button type="button" class="button ${tab === 'yhteystiedot' ? 'nav-active' : 'dashed'}" style="flex-shrink: 0;" data-action="set-event-info-tab" data-tab="yhteystiedot">${t(state, "event_info.tab_contacts")}</button>
+    <button type="button" class="button ${tab === 'sponsorit' ? 'nav-active' : 'dashed'}" style="flex-shrink: 0;" data-action="set-event-info-tab" data-tab="sponsorit">${t(state, "event_info.tab_sponsors")}</button>
+  `);
 
   let tabContent = "";
   if (tab === 'yleista') {

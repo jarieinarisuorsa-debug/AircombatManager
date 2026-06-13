@@ -88,14 +88,17 @@ export function renderDocumentsView(state) {
   `;
 
   const tab = window.DOCUMENT_TAB || 'tuloskortit';
-  const tabNavigation = `
-    <div class="ui-tabs no-print" style="display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 1px solid var(--border); padding-bottom: 10px; overflow-x: auto;">
-      <button type="button" class="button ${tab === 'tuloskortit' ? 'primary' : 'dashed'}" data-action="set-document-tab" data-tab="tuloskortit">${t(state, "documents.tab_scorecards")}</button>
-      <button type="button" class="button ${tab === 'listaukset' ? 'primary' : 'dashed'}" data-action="set-document-tab" data-tab="listaukset">${t(state, "documents.tab_lists")}</button>
-      <button type="button" class="button ${tab === 'tarkastukset' ? 'primary' : 'dashed'}" data-action="set-document-tab" data-tab="tarkastukset">${t(state, "documents.tab_inspections")}</button>
-      <button type="button" class="button ${tab === 'aikataulut' ? 'primary' : 'dashed'}" data-action="set-document-tab" data-tab="aikataulut">${t(state, "documents.tab_schedules")}</button>
-    </div>
-  `;
+  const tabNavigation = UI.ScrollableNav({
+    id: "documents-sub-nav",
+    className: "no-print",
+    style: "margin-bottom: 20px; border-bottom: 1px solid var(--border);",
+    navStyle: "padding-bottom: 10px;"
+  }, `
+    <button type="button" class="button ${tab === 'tuloskortit' ? 'nav-active' : 'dashed'}" style="flex-shrink: 0;" data-action="set-document-tab" data-tab="tuloskortit">${t(state, "documents.tab_scorecards")}</button>
+    <button type="button" class="button ${tab === 'listaukset' ? 'nav-active' : 'dashed'}" style="flex-shrink: 0;" data-action="set-document-tab" data-tab="listaukset">${t(state, "documents.tab_lists")}</button>
+    <button type="button" class="button ${tab === 'tarkastukset' ? 'nav-active' : 'dashed'}" style="flex-shrink: 0;" data-action="set-document-tab" data-tab="tarkastukset">${t(state, "documents.tab_inspections")}</button>
+    <button type="button" class="button ${tab === 'aikataulut' ? 'nav-active' : 'dashed'}" style="flex-shrink: 0;" data-action="set-document-tab" data-tab="aikataulut">${t(state, "documents.tab_schedules")}</button>
+  `);
 
   let contentHtml = "";
   if (!activeEvent) {

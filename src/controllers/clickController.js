@@ -259,6 +259,29 @@ function runUiClickAction(action, button, { renderApp }) {
     return true;
   }
 
+  if (action === "scroll-nav") {
+    const direction = parseInt(button.dataset.direction || "1", 10);
+    const wrapper = button.closest(".ui-tabs-wrapper");
+    if (wrapper) {
+      const nav = wrapper.querySelector(".sub-nav");
+      if (nav) {
+        const tabs = Array.from(nav.querySelectorAll("button[data-tab]"));
+        if (tabs.length > 0) {
+          const activeIndex = tabs.findIndex(t => t.classList.contains("nav-active"));
+          if (activeIndex !== -1) {
+            const nextIndex = activeIndex + direction;
+            if (nextIndex >= 0 && nextIndex < tabs.length) {
+              tabs[nextIndex].click();
+            }
+          }
+        } else {
+          nav.scrollBy({ left: direction * (nav.clientWidth * 0.8), behavior: "smooth" });
+        }
+      }
+    }
+    return true; 
+  }
+
   if (action === "step-input") {
     stepInput(button);
     return true;

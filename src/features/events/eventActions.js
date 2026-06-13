@@ -466,6 +466,14 @@ export function initEventActions() {
   });
 
   registerAction("set-workspace-tab", (event, button, { renderApp }) => {
+    const wrapper = button.closest(".ui-tabs-wrapper");
+    if (wrapper) {
+      const nav = wrapper.querySelector(".sub-nav");
+      if (nav && window.NAV_SCROLL_POSITIONS) {
+        delete window.NAV_SCROLL_POSITIONS[nav.id || "default"];
+      }
+    }
+    
     const tabValue = button.dataset.tab || button.value;
     if (tabValue === "toggle_combat_mode") {
       updateState((state) => {
@@ -611,6 +619,13 @@ export function initEventActions() {
   });
 
   registerAction("set-event-info-tab", (event, button, { renderApp }) => {
+    const wrapper = button.closest(".ui-tabs-wrapper");
+    if (wrapper) {
+      const nav = wrapper.querySelector(".sub-nav");
+      if (nav && window.NAV_SCROLL_POSITIONS) {
+        delete window.NAV_SCROLL_POSITIONS[nav.id || "default"];
+      }
+    }
     window.EVENT_INFO_TAB = button.dataset.tab || button.value;
     updateState(state => {
       state.settings = state.settings || {};
