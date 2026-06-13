@@ -17,6 +17,12 @@ export function renderWorkspaceScorecardsTab(state, activeEvent, className) {
     variant: "primary"
   });
 
+  const refreshBtn = UI.Button({
+    label: "🔄 Päivitä tulokset",
+    action: "manual-cloud-sync",
+    variant: "dashed"
+  });
+
   const randomizeBtn = isDemo ? `
     <button class="button dashed" data-action="randomize-demo-scores" data-class="${escapeHtml(className)}">🎲 Generate Points (${escapeHtml(className)})</button>
   ` : "";
@@ -26,6 +32,7 @@ export function renderWorkspaceScorecardsTab(state, activeEvent, className) {
       <p class="muted" style="margin-bottom: 15px;">Syötä tulokset käsin tai lue ne QR-koodilla.</p>
       <div class="ui-form-actions" style="justify-content: flex-start; margin-top: 0;">
         ${scanBtn}
+        ${refreshBtn}
         ${randomizeBtn}
       </div>
     </div>

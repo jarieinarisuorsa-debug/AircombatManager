@@ -346,68 +346,7 @@ async function initApp() {
 
           try {
             lastSyncTime = now;
-            const cloudData = await import("./services/cloudStore.js").then(m => m.syncAllFromCloud());
-            if (cloudData) {
-              const oldState = getState();
-              const oldStr = JSON.stringify({
-                events: oldState.events,
-                pilots: oldState.pilots,
-                aircraft: oldState.aircraft,
-                entries: oldState.entries,
-                heats: oldState.heats,
-                results: oldState.results,
-                scoreCards: oldState.scoreCards,
-                registrations: oldState.registrations,
-                settings: {
-                  systemUpdates: oldState.settings?.systemUpdates,
-                  organizerName: oldState.settings?.organizerName,
-                  competitionMode: oldState.settings?.competitionMode
-                }
-              });
-              const newStr = JSON.stringify({
-                events: cloudData.events,
-                pilots: cloudData.pilots,
-                aircraft: cloudData.aircraft,
-                entries: cloudData.entries,
-                heats: cloudData.heats,
-                results: cloudData.results,
-                scoreCards: cloudData.scoreCards,
-                registrations: cloudData.registrations,
-                settings: {
-                  systemUpdates: cloudData.settings?.systemUpdates,
-                  organizerName: cloudData.settings?.organizerName,
-                  competitionMode: cloudData.settings?.competitionMode
-                }
-              });
-              
-              if (oldStr !== newStr) {
-                updateState(s => {
-                  if (cloudData.events) s.events = cloudData.events;
-                  if (cloudData.pilots) s.pilots = cloudData.pilots;
-                  if (cloudData.aircraft) s.aircraft = cloudData.aircraft;
-                  if (cloudData.entries) s.entries = cloudData.entries;
-                  if (cloudData.heats) s.heats = cloudData.heats;
-                  if (cloudData.results) s.results = cloudData.results;
-                  if (cloudData.scoreCards) s.scoreCards = cloudData.scoreCards;
-                  if (cloudData.registrations) s.registrations = cloudData.registrations;
-                  if (cloudData.settings) {
-                    s.settings = s.settings || {};
-                    if (cloudData.settings.systemUpdates) s.settings.systemUpdates = cloudData.settings.systemUpdates;
-                    if (cloudData.settings.organizerName) s.settings.organizerName = cloudData.settings.organizerName;
-                    if (cloudData.settings.competitionMode !== undefined) s.settings.competitionMode = cloudData.settings.competitionMode;
-                    if (cloudData.settings.organizationLogoData) s.settings.organizationLogoData = cloudData.settings.organizationLogoData;
-                    if (cloudData.settings.whatsappReceivers) s.settings.whatsappReceivers = cloudData.settings.whatsappReceivers;
-                  }
-                }, "auto_sync_background");
-                
-                // Säilytä skrollauskohta päivityksen yli
-                const scrollY = window.scrollY;
-                import("./main.js").then(m => {
-                  m.renderApp();
-                  window.scrollTo(0, scrollY);
-                });
-              }
-            }
+            await executeCloudSync("auto_sync_background");
           } catch (e) {
             console.warn("Auto-sync failed:", e);
           }
@@ -419,8 +358,81 @@ async function initApp() {
     }
   }
 
+  // Rekisteröidään manuaalinen synkronointi (Päivitä-painike)
+  import("./core/actionRegistry.js").then(({ registerAction }) => {
+    registerAction("manual-cloud-sync", async (event, button, { renderApp }) => {
+      button.disabled = true;
+      const originalHtml = button.innerHTML;
+      button.innerHTML = "🔄 Ladataan...";
+      try {
+        await executeCloudSync("manual_cloud_sync");
+      } catch (e) {
+        console.error("Manual sync failed", e);
+      } finally {
+        button.disabled = false;
+        button.innerHTML = originalHtml;
+      }
+      return true;
+    });
+  });
+
   if (!location.hash || location.hash === "#/") location.hash = `#/landing`;
   renderApp();
+}
+
+export async function executeCloudSync(reason = "auto_sync_background") {
+  const cloudData = await import("./services/cloudStore.js").then(m => m.syncAllFromCloud());
+  if (!cloudData) return false;
+
+  const oldState = getState();
+  const extractCompareState = (stateObj) => ({
+    events: stateObj.events,
+    pilots: stateObj.pilots,
+    aircraft: stateObj.aircraft,
+    entries: stateObj.entries,
+    heats: stateObj.heats,
+    results: stateObj.results,
+    scoreCards: stateObj.scoreCards,
+    registrations: stateObj.registrations,
+    settings: {
+      systemUpdates: stateObj.settings?.systemUpdates,
+      organizerName: stateObj.settings?.organizerName,
+      competitionMode: stateObj.settings?.competitionMode
+    }
+  });
+
+  const oldStr = JSON.stringify(extractCompareState(oldState));
+  const newStr = JSON.stringify(extractCompareState(cloudData));
+  
+  if (oldStr !== newStr) {
+    updateState(s => {
+      if (cloudData.events) s.events = cloudData.events;
+      if (cloudData.pilots) s.pilots = cloudData.pilots;
+      if (cloudData.aircraft) s.aircraft = cloudData.aircraft;
+      if (cloudData.entries) s.entries = cloudData.entries;
+      if (cloudData.heats) s.heats = cloudData.heats;
+      if (cloudData.results) s.results = cloudData.results;
+      if (cloudData.scoreCards) s.scoreCards = cloudData.scoreCards;
+      if (cloudData.registrations) s.registrations = cloudData.registrations;
+      if (cloudData.settings) {
+        s.settings = s.settings || {};
+        if (cloudData.settings.systemUpdates) s.settings.systemUpdates = cloudData.settings.systemUpdates;
+        if (cloudData.settings.organizerName) s.settings.organizerName = cloudData.settings.organizerName;
+        if (cloudData.settings.competitionMode !== undefined) s.settings.competitionMode = cloudData.settings.competitionMode;
+        if (cloudData.settings.organizationLogoData) s.settings.organizationLogoData = cloudData.settings.organizationLogoData;
+        if (cloudData.settings.whatsappReceivers) s.settings.whatsappReceivers = cloudData.settings.whatsappReceivers;
+      }
+    }, reason);
+    
+    // Säilytä skrollauskohta päivityksen yli
+    const scrollY = window.scrollY;
+    import("./main.js").then(m => {
+      m.renderApp();
+      window.scrollTo(0, scrollY);
+    });
+    return true;
+  }
+  return false;
 }
 
 initApp();
