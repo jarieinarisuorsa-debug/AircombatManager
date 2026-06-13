@@ -341,6 +341,9 @@ async function initApp() {
           // Älä päivitä jos käyttäjä on tuloskorttinäkymässä
           if (location.hash.startsWith("#/scorecard")) return;
 
+          // Älä päivitä 10 sekuntiin tallennuksen jälkeen, jotta hitaampi tietokanta ei ylikirjoita tuoretta paikallista tilaa (optimistic UI race condition)
+          if (state.settings?.lastSave?.time && (now - state.settings.lastSave.time < 10000)) return;
+
           try {
             lastSyncTime = now;
             const cloudData = await import("./services/cloudStore.js").then(m => m.syncAllFromCloud());
