@@ -428,14 +428,4 @@ export function initSettingsActions() {
     return true;
   });
 
-  registerAction("toggle-combat-mode", (event, button, { renderApp }) => {
-    import("../../state/store.js").then(({ updateState }) => {
-      updateState((state) => {
-        state.settings = state.settings || {};
-        state.settings.competitionMode = !state.settings.competitionMode;
-      }, "toggle_combat_mode");
-      renderApp();
-    });
-    return true;
-  });
 }

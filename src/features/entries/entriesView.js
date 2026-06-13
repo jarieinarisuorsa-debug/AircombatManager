@@ -35,7 +35,6 @@ export function renderEntriesView(state) {
     subtitle: `${escapeHtml(activeEvent.location)} · ${t(state, "event_workspace.class_label")} ${activeClassName || t(state, "event_workspace.not_selected")}`
   });
 
-  const isCombatMode = state.settings?.competitionMode;
   const tabNav = UI.ScrollableNav({
     id: "workspace-sub-nav",
     className: "no-print",
@@ -49,9 +48,6 @@ export function renderEntriesView(state) {
     <button type="button" class="button ${tab === 'heatit' ? 'nav-active' : 'dashed'}" style="flex-shrink: 0;" data-action="set-workspace-tab" data-tab="heatit">${t(state, "event_workspace.tab_heats")}</button>
     <button type="button" class="button ${tab === 'tuloskortit' ? 'nav-active' : 'dashed'}" style="flex-shrink: 0;" data-action="set-workspace-tab" data-tab="tuloskortit">${t(state, "event_workspace.tab_scorecards")}</button>
     <button type="button" class="button ${tab === 'tulokset' ? 'nav-active' : 'dashed'}" style="flex-shrink: 0;" data-action="set-workspace-tab" data-tab="tulokset">${t(state, "event_workspace.tab_results")}</button>
-    <button type="button" class="button ${isCombatMode ? 'danger' : 'dashed'}" data-action="toggle-combat-mode" style="flex-shrink: 0; box-shadow: 0 0 10px ${isCombatMode ? 'rgba(255,50,50,0.5)' : 'rgba(88, 183, 255, 0.5)'}; font-weight: bold;">
-      ${isCombatMode ? t(state, "event_workspace.tab_combat_mode_off") : t(state, "event_workspace.tab_combat_mode_on")}
-    </button>
   `);
 
   let content = "";

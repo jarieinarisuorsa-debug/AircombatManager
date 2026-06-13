@@ -21,6 +21,7 @@ export function renderWorkspaceHeatsTab(state, activeEvent, className) {
   });
 
   const printBtn = heats.length > 0 ? UI.Button({ label: t(state, "event_workspace.print_heats"), action: "print-class-heats", class: className }) : "";
+  const syncBtn = heats.length > 0 && admin ? UI.Button({ label: "🔄 Päivitä heatit piloteille", action: "manual-cloud-sync", class: className, variant: "dashed" }) : "";
   const cancelBtn = heats.length > 0 && admin ? UI.Button({ label: t(state, "event_workspace.cancel_draw"), action: "cancel-class-heats", class: className, variant: "danger" }) : "";
 
   let nextPhaseStatusStr = t(state, "event_workspace.all_phases_done");
@@ -38,6 +39,7 @@ export function renderWorkspaceHeatsTab(state, activeEvent, className) {
       <div class="ui-form-actions" style="justify-content: flex-start; margin-top: 0;">
         ${generateBtn}
         ${printBtn}
+        ${syncBtn}
         ${cancelBtn}
       </div>
     </div>

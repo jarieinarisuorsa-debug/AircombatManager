@@ -258,7 +258,11 @@ export function renderMyPilotCardView(state) {
   // --- VÄLILEHTI 4: KILPAILUTAPAHTUMAT ---
   let myHeatsContent = `<p class="muted">${t(state, "my_pilot.no_heats")}</p>`;
   if (activeEvent && state.heats.some(h => h.eventId === activeEvent.id)) {
-    const myHeats = state.heats.filter(h => h.eventId === activeEvent.id && (h.pilotIds || []).includes(pilot.id));
+    const myEntries = state.entries.filter(e => e.eventId === activeEvent.id && e.pilotId === pilot.id).map(e => e.id);
+    const myHeats = state.heats.filter(h => {
+      if (h.eventId !== activeEvent.id) return false;
+      return (h.pilotIds || []).includes(pilot.id) || (h.entryIds || []).some(eid => myEntries.includes(eid));
+    });
     if (myHeats.length > 0) {
       myHeatsContent = `<ul style="list-style: none; padding: 0; margin: 0;">` + myHeats.map(h => `
         <li style="padding: 8px 0; border-bottom: 1px solid var(--border-color);">

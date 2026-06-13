@@ -24,12 +24,19 @@ export function renderWorkspaceResultsTab(state, activeEvent, className) {
 
   const statusText = published ? t(state, "event_workspace.status_published") : t(state, "event_workspace.status_draft");
 
+  const syncBtn = UI.Button({
+    label: "🔄 Päivitä tulokset",
+    action: "manual-cloud-sync",
+    variant: "dashed"
+  });
+
   const controls = `
     <div style="margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid var(--border);">
       <p class="muted" style="margin-bottom: 15px;">${t(state, "event_workspace.results_desc")}</p>
       <div class="ui-form-actions" style="justify-content: flex-start; margin-top: 0; align-items: center; flex-wrap: wrap;">
         ${publishBtn}
         ${UI.Button({ label: t(state, "documents.print"), action: "print-class-scorecards", class: className, variant: "dashed" })}
+        ${syncBtn}
         <strong style="margin-left: auto; color: ${published ? 'var(--success)' : 'var(--muted)'};">${statusText}</strong>
       </div>
     </div>

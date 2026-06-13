@@ -86,7 +86,7 @@ export function renderLogbookPanel(state, pilot) {
       : `<span class="badge badge-empty" style="font-size: 0.75rem;">${t(state, "logbook.status_draft")}</span>`;
 
     return `
-      <div class="panel" style="margin-bottom: 24px; padding: 0; overflow: hidden; border: 1px solid var(--border); border-radius: 12px; background: rgba(5, 12, 24, 0.4); box-shadow: 0 4px 20px rgba(0,0,0,0.15);">
+      <div class="panel" style="margin-bottom: 24px; padding: 0; overflow: hidden; border: 1px solid var(--border); border-radius: 12px; background: var(--panel); box-shadow: 0 4px 20px rgba(0,0,0,0.15);">
         <div style="background: linear-gradient(135deg, rgba(88,183,255,0.08), transparent); padding: 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
           <div>
             <h4 style="margin: 0 0 8px 0; font-size: 1.25rem; display: flex; align-items: center; gap: 10px;">
@@ -98,20 +98,20 @@ export function renderLogbookPanel(state, pilot) {
               <span style="display: flex; align-items: center; gap: 4px;"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg> ${escapeHtml(ev.eventLocation)}</span>
             </div>
             <div style="display: inline-flex; gap: 8px;">
-              <span class="badge" style="background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); font-weight: 500;">${t(state, "logbook.class_label")} <span style="color: var(--accent); margin-left: 4px;">${escapeHtml(ev.className)}</span></span>
-              ${ev.aircraftName ? `<span class="badge" style="background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); font-weight: 500;">${t(state, "logbook.aircraft_label")} <span style="color: var(--text); margin-left: 4px;">${escapeHtml(ev.aircraftName)}</span></span>` : ""}
+              <span class="badge" style="background: var(--panel-strong); border: 1px solid var(--border); font-weight: 500;">${t(state, "logbook.class_label")} <span style="color: var(--accent); margin-left: 4px;">${escapeHtml(ev.className)}</span></span>
+              ${ev.aircraftName ? `<span class="badge" style="background: var(--panel-strong); border: 1px solid var(--border); font-weight: 500;">${t(state, "logbook.aircraft_label")} <span style="color: var(--text); margin-left: 4px;">${escapeHtml(ev.aircraftName)}</span></span>` : ""}
             </div>
           </div>
-          <div style="text-align: right; background: rgba(0,0,0,0.3); padding: 14px 20px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.05); min-width: 140px;">
+          <div style="text-align: right; background: var(--panel-strong); padding: 14px 20px; border-radius: 10px; border: 1px solid var(--border); min-width: 140px;">
             ${ev.resultsPublished && ev.ranking ? `<div style="font-size: 0.85rem; color: var(--muted); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.05em;">${t(state, "logbook.ranking")}</div><div style="font-size: 1.6rem; font-weight: 800; color: var(--text); line-height: 1;">${ev.ranking}.</div>` : ""}
-            ${ev.resultsPublished && ev.ranking ? `<div style="height: 1px; background: rgba(255,255,255,0.1); margin: 10px 0;"></div>` : ""}
+            ${ev.resultsPublished && ev.ranking ? `<div style="height: 1px; background: var(--border); margin: 10px 0;"></div>` : ""}
             ${ev.resultsPublished ? `<div style="font-size: 0.85rem; color: var(--muted); margin-bottom: 2px; text-transform: uppercase; letter-spacing: 0.05em;">${t(state, "logbook.points")}</div><div style="font-size: 1.2rem; font-weight: bold; color: var(--accent);">${ev.totalEventScore}</div>` : ""}
             ${!ev.resultsPublished ? `<div style="color: var(--muted); font-size: 0.9rem;">${t(state, "logbook.waiting_publication")}</div>` : ""}
           </div>
         </div>
         <div class="table-wrap" style="margin: 0; border: none; border-radius: 0;">
           <table style="width: 100%; border-collapse: collapse; text-align: left; margin: 0;">
-            <thead style="background: rgba(0,0,0,0.2);">
+            <thead style="background: var(--panel-strong);">
               <tr style="font-size: 0.8rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em;">
                 <th style="padding: 14px 20px; font-weight: 600;">${t(state, "logbook.round")}</th>
                 <th style="padding: 14px 20px; font-weight: 600;">${t(state, "logbook.points")}</th>

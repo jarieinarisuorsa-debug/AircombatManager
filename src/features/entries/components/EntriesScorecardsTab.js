@@ -18,7 +18,7 @@ export function renderWorkspaceScorecardsTab(state, activeEvent, className) {
   });
 
   const refreshBtn = UI.Button({
-    label: "🔄 Päivitä tulokset",
+    label: "🔄 Päivitä tuloskortit",
     action: "manual-cloud-sync",
     variant: "dashed"
   });

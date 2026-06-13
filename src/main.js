@@ -308,50 +308,6 @@ async function initApp() {
           }
         }).catch(err => console.error("Realtime init failed:", err));
         
-        // Automaattinen taustapäivitys
-        let lastSyncTime = Date.now();
-        setInterval(async () => {
-          if (!isCloudMode()) return;
-          
-          const state = getState();
-          const isCompMode = state.settings?.competitionMode;
-          const now = Date.now();
-          
-          // Normaalitilassa päivitetään 30 minuutin välein, kilpailumoodissa 30 sekunnin välein
-          if (!isCompMode && now - lastSyncTime < 30 * 60 * 1000) {
-            return;
-          }
-          // Älä päivitä jos käyttäjällä on jokin lomake tai modaali auki, jotta työ ei katoa
-          if (state.settings?.aircraftSpecFormOpen || 
-              state.settings?.eventFormOpen || 
-              state.settings?.competitionFormatModalOpen || 
-              state.settings?.scoreCardEditorOpen ||
-              state.settings?.mapEditorOpen ||
-              state.settings?.registrationFormOpen ||
-              state.settings?.editingAircraftId ||
-              state.settings?.editingPilotId) return;
-              
-          // Älä päivitä jos käyttäjä kirjoittaa johonkin kenttään
-          const activeTag = document.activeElement ? document.activeElement.tagName : "";
-          if (["INPUT", "TEXTAREA", "SELECT"].includes(activeTag)) return;
-
-          // Älä päivitä jos sivulla on tallentamattomia muutoksia lomakkeissa
-          if (document.querySelector('form[data-dirty="true"]')) return;
-
-          // Älä päivitä jos käyttäjä on tuloskorttinäkymässä
-          if (location.hash.startsWith("#/scorecard")) return;
-
-          // Älä päivitä 10 sekuntiin tallennuksen jälkeen, jotta hitaampi tietokanta ei ylikirjoita tuoretta paikallista tilaa (optimistic UI race condition)
-          if (state.settings?.lastSave?.time && (now - state.settings.lastSave.time < 10000)) return;
-
-          try {
-            lastSyncTime = now;
-            await executeCloudSync("auto_sync_background");
-          } catch (e) {
-            console.warn("Auto-sync failed:", e);
-          }
-        }, 30000);
-
       }
     } catch (err) {
       console.error("Failed to fetch cloud data:", err);
@@ -396,8 +352,7 @@ export async function executeCloudSync(reason = "auto_sync_background") {
     registrations: stateObj.registrations,
     settings: {
       systemUpdates: stateObj.settings?.systemUpdates,
-      organizerName: stateObj.settings?.organizerName,
-      competitionMode: stateObj.settings?.competitionMode
+      organizerName: stateObj.settings?.organizerName
     }
   });
 
@@ -418,7 +373,6 @@ export async function executeCloudSync(reason = "auto_sync_background") {
         s.settings = s.settings || {};
         if (cloudData.settings.systemUpdates) s.settings.systemUpdates = cloudData.settings.systemUpdates;
         if (cloudData.settings.organizerName) s.settings.organizerName = cloudData.settings.organizerName;
-        if (cloudData.settings.competitionMode !== undefined) s.settings.competitionMode = cloudData.settings.competitionMode;
         if (cloudData.settings.organizationLogoData) s.settings.organizationLogoData = cloudData.settings.organizationLogoData;
         if (cloudData.settings.whatsappReceivers) s.settings.whatsappReceivers = cloudData.settings.whatsappReceivers;
       }
