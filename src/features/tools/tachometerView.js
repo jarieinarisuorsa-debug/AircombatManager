@@ -6,6 +6,7 @@ import { AudioPitchAnalyzer } from "../../utils/audioPitchAnalyzer.js";
 let pitchAnalyzer = null;
 let canvasCtx = null;
 let animationFrameId = null;
+let rpmHistory = [];
 
 // Clean up function if the user navigates away
 export function unmountTachometer() {
@@ -209,6 +210,7 @@ export function renderTachometerView(state) {
 
       try {
         startBtn.textContent = t(state, "tachometer.starting", "Starting...");
+        rpmHistory = [];
         
         await pitchAnalyzer.start(
           (freq) => {
@@ -219,12 +221,18 @@ export function renderTachometerView(state) {
               
               // Only update if it's a reasonable RPM (e.g. 1000 - 40000)
               if (rpm > 500 && rpm < 50000) {
-                valueDisplay.textContent = rpm;
+                rpmHistory.push(rpm);
+                if (rpmHistory.length > 20) { // Smooth over ~20 frames
+                  rpmHistory.shift();
+                }
+                
+                const smoothedRpm = Math.round(rpmHistory.reduce((a, b) => a + b, 0) / rpmHistory.length);
+                valueDisplay.textContent = smoothedRpm;
                 
                 // Update SVG progress bar (Max 30,000 RPM = 754 offset)
                 if (gaugeProgress) {
                   const maxRpm = 30000;
-                  const percentage = Math.min(Math.max(rpm / maxRpm, 0), 1);
+                  const percentage = Math.min(Math.max(smoothedRpm / maxRpm, 0), 1);
                   const offset = 754 - (percentage * 754);
                   gaugeProgress.style.strokeDashoffset = offset;
                 }

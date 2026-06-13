@@ -17,6 +17,7 @@ export const en = {
     "nav.results": "Event Results",
     "nav.standings": "Season Standings",
     "nav.tachometer": "Tachometer",
+    "nav.speedometer": "Speedometer",
     "nav.settings": "Settings",
     "nav.mapeditor": "Map Editor",
     "nav.messages": "Messages",
@@ -1153,6 +1154,15 @@ export const en = {
     "tachometer.stop": "Stop Measuring",
     "tachometer.help_text": "Point your device's microphone towards the aircraft. For best results, stay close but safe. Ensure the correct blade multiplier is selected.",
     "tachometer.mic_error": "Microphone access denied or error occurred.",
+
+    // Speedometer
+    "speedometer.title": "Acoustic Speedometer",
+    "speedometer.panel_title": "Measure Speed (Doppler)",
+    "speedometer.start": "Start Recording",
+    "speedometer.stop": "Stop Recording",
+    "speedometer.help_text": "Stand safely aside. Press Start as the plane approaches, and press Stop after it has passed by.",
+    "speedometer.mic_error": "Microphone access denied or error occurred.",
+
     "about.guide_reg": "<strong>Registrations:</strong> Manage pilots entering the competition.",
     "about.guide_class": "<strong>Competition Class:</strong> Select the class to manage (e.g. WWII). This selection remains active when moving to other tabs.",
     "about.guide_format": "<strong>Competition Format:</strong> Define the number of rounds (qualifying, semifinal, final) for the class.",

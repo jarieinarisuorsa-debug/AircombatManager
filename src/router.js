@@ -29,6 +29,7 @@ import { renderLandingView } from "./features/landing/landingView.js";
 import { renderEnvironmentsView } from "./features/landing/environmentsView.js";
 import { renderBuildGuideView } from "./features/about/buildGuideView.js";
 import { renderTachometerView, unmountTachometer } from "./features/tools/tachometerView.js";
+import { renderSpeedometerView, unmountSpeedometer } from "./features/tools/speedometerView.js";
 
 import { t } from "./utils/i18n.js";
 
@@ -63,7 +64,8 @@ export const ROUTES = {
   landing: { title: (state) => "Tervetuloa / Welcome", render: renderLandingView },
   environments: { title: (state) => "Valitse maa / Select Country", render: renderEnvironmentsView },
   buildguide: { title: (state) => t(state, "about.guide_title"), render: renderBuildGuideView },
-  tachometer: { title: (state) => t(state, "tachometer.title"), render: renderTachometerView }
+  tachometer: { title: (state) => t(state, "tachometer.title"), render: renderTachometerView },
+  speedometer: { title: (state) => t(state, "speedometer.title"), render: renderSpeedometerView }
 };
 
 export function getCurrentRoute() {

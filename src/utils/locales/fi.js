@@ -17,6 +17,7 @@ export const fi = {
     "nav.results": "Kilpailutulokset",
     "nav.standings": "Sarjataulukko",
     "nav.tachometer": "Kierroslukumittari",
+    "nav.speedometer": "Nopeustutka",
     "nav.settings": "Asetukset",
     "nav.mapeditor": "Karttaeditori",
     "nav.messages": "Viestit",
@@ -1144,6 +1145,15 @@ export const fi = {
     "tachometer.stop": "Lopeta mittaus",
     "tachometer.help_text": "Osoita laitteen mikrofoni kohti konetta. Pysy riittävän lähellä luotettavan tuloksen saamiseksi, mutta muista turvallisuus! Valitse oikea potkurityyppi valikosta.",
     "tachometer.mic_error": "Virhe: Mikrofonin käyttö estetty tai laitetta ei löydy.",
+
+    // Speedometer
+    "speedometer.title": "Akustinen nopeustutka",
+    "speedometer.panel_title": "Mittaa nopeus (Doppler)",
+    "speedometer.start": "Aloita mittaus",
+    "speedometer.stop": "Lopeta mittaus",
+    "speedometer.help_text": "Pysy turvallisesti sivussa lentoradalta. Paina Aloita kun kone lähestyy, ja Lopeta kun se on ohittanut sinut.",
+    "speedometer.mic_error": "Virhe: Mikrofonin käyttö estetty tai laitetta ei löydy.",
+
     "about.guide_reg": "<strong>Ilmoittautumiset (Registrations):</strong> Hallitse kisaan tulevia pilotteja.",
     "about.guide_class": "<strong>Kilpailuluokka (Competition Class):</strong> Valitse käsiteltävä luokka (esim. WWII). Tämä valinta pysyy aktiivisena, kun siirryt muihin välilehtiin.",
     "about.guide_format": "<strong>Kilpailuformaatti (Competition Format):</strong> Määritä luokalle lennettävien kierrosten määrä (alkuerät, semifinaali, finaali).",

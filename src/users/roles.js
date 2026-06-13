@@ -40,7 +40,8 @@ export const ADMIN_ROUTE_KEYS = [
   "messages",
   "about",
   "buildguide",
-  "tachometer"
+  "tachometer",
+  "speedometer"
 ];
 
 export const PILOT_ROUTE_KEYS = [
@@ -59,7 +60,8 @@ export const PILOT_ROUTE_KEYS = [
   "messages",
   "about",
   "buildguide",
-  "tachometer"
+  "tachometer",
+  "speedometer"
 ];
 
 export const GUEST_ROUTE_KEYS = [
@@ -85,6 +87,7 @@ export const ADMIN_NAV_ROUTE_KEYS = [
   "documents",
   "messages",
   "tachometer",
+  "speedometer",
   "settings"
 ];
 
@@ -96,7 +99,8 @@ export const PILOT_NAV_ROUTE_KEYS = [
   "calendar",
   "results",
   "messages",
-  "tachometer"
+  "tachometer",
+  "speedometer"
 ];
 
 export const GUEST_NAV_ROUTE_KEYS = [
