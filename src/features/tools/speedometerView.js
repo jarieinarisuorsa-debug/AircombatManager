@@ -9,7 +9,11 @@ let isRecording = false;
 let maxFreq = 0;
 let minFreq = Infinity;
 let freqHistory = []; // Track recent frequencies to plot
+let allFrequencies = []; // Track all valid frequencies for percentile calculation
+let lastValidFreq = null;
+let smoothingBuffer = [];
 const HISTORY_SIZE = 300; // Approx 5 seconds at 60fps
+const SMOOTHING_SIZE = 5;
 
 // Speed of sound at ~20°C in m/s
 const SPEED_OF_SOUND = 343;
@@ -223,8 +227,16 @@ export function renderSpeedometerView(state) {
         
         const gaugeProgress = document.getElementById("speedo-progress");
         
-        // Calculate final speed
-        if (maxFreq > 0 && minFreq < Infinity && maxFreq > minFreq) {
+        // Calculate final speed using percentiles
+        if (allFrequencies.length > 20) {
+          allFrequencies.sort((a, b) => a - b);
+          // 95th percentile for max (approaching), 5th percentile for min (departing)
+          maxFreq = allFrequencies[Math.floor(allFrequencies.length * 0.95)];
+          minFreq = allFrequencies[Math.floor(allFrequencies.length * 0.05)];
+          
+          if (maxPitchDisplay) maxPitchDisplay.textContent = Math.round(maxFreq) + " Hz";
+          if (minPitchDisplay) minPitchDisplay.textContent = Math.round(minFreq) + " Hz";
+          
           // v = c * (f_high - f_low) / (f_high + f_low)
           const v_ms = SPEED_OF_SOUND * (maxFreq - minFreq) / (maxFreq + minFreq);
           const v_kmh = v_ms * 3.6;
@@ -252,6 +264,9 @@ export function renderSpeedometerView(state) {
         maxFreq = 0;
         minFreq = Infinity;
         freqHistory = new Array(HISTORY_SIZE).fill(null);
+        allFrequencies = [];
+        lastValidFreq = null;
+        smoothingBuffer = [];
         
         valueDisplay.textContent = "REC";
         valueDisplay.classList.add("recording");
@@ -269,21 +284,48 @@ export function renderSpeedometerView(state) {
         
         await pitchAnalyzer.start(
           (freq) => {
-            // Push to history array
-            freqHistory.push(freq);
-            if (freqHistory.length > HISTORY_SIZE) {
-              freqHistory.shift();
-            }
+            let validFreq = null;
             
             if (freq && freq > 100 && freq < 1000) { // Reasonable engine harmonic range
-              if (freq > maxFreq) {
-                maxFreq = freq;
-                maxPitchDisplay.textContent = Math.round(maxFreq) + " Hz";
+              if (lastValidFreq !== null) {
+                const diffRatio = Math.abs(freq - lastValidFreq) / lastValidFreq;
+                if (diffRatio < 0.15) { // Reject sudden jumps > 15% (e.g. octave errors)
+                  validFreq = freq;
+                  lastValidFreq = freq;
+                } else {
+                  // Jump too large, likely noise
+                }
+              } else {
+                validFreq = freq;
+                lastValidFreq = freq;
               }
-              if (freq < minFreq) {
-                minFreq = freq;
-                minPitchDisplay.textContent = Math.round(minFreq) + " Hz";
+            } else {
+              lastValidFreq = null; // Lost tracking
+            }
+            
+            if (validFreq !== null) {
+              // Moving average
+              smoothingBuffer.push(validFreq);
+              if (smoothingBuffer.length > SMOOTHING_SIZE) smoothingBuffer.shift();
+              
+              const smoothedFreq = smoothingBuffer.reduce((a, b) => a + b, 0) / smoothingBuffer.length;
+              allFrequencies.push(smoothedFreq);
+              
+              if (smoothedFreq > maxFreq) {
+                maxFreq = smoothedFreq;
+                if (maxPitchDisplay) maxPitchDisplay.textContent = Math.round(maxFreq) + " Hz";
               }
+              if (smoothedFreq < minFreq) {
+                minFreq = smoothedFreq;
+                if (minPitchDisplay) minPitchDisplay.textContent = Math.round(minFreq) + " Hz";
+              }
+              
+              freqHistory.push(smoothedFreq);
+              if (freqHistory.length > HISTORY_SIZE) freqHistory.shift();
+            } else {
+              smoothingBuffer = [];
+              freqHistory.push(null);
+              if (freqHistory.length > HISTORY_SIZE) freqHistory.shift();
             }
             
             // Draw history
